@@ -27,7 +27,7 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 
 public class ConfigScreen {
-    public static Boolean option;
+    public static Boolean option = false;
 
     public static Screen generate(Screen parent) {
         return YetAnotherConfigLib.createBuilder().title(Text.literal("Testing test"))
