@@ -1,38 +1,41 @@
 {
-	"schemaVersion": 1,
-	"id": "minefy",
-	"version": "${version}",
-	"name": "minefy",
-	"description": "Mod to control Spotify (and see its playback state)",
-	"authors": [
-		"gdar463"
-	],
-	"contact": {
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
-	},
-	"license": "GPL-3.0-only",
-	"icon": "assets/minefy/icon.png",
-	"environment": "*",
-	"entrypoints": {
-		"main": [
-			"com.gdar463.minefy.Minefy"
-		],
-		"client": [
-			"com.gdar463.minefy.MinefyClient"
-		]
-	},
-	"mixins": [
-		"minefy.mixins.json",
-		{
-			"config": "minefy.client.mixins.json",
-			"environment": "client"
-		}
-	],
-	"depends": {
-		"fabricloader": ">=0.17.2",
-		"minecraft": "~1.21.5",
-		"java": ">=21",
-		"fabric-api": "*",
-		"yet_another_config_lib_v3": "^3.8.0"
-	}
+  "schemaVersion": 1,
+  "id": "minefy",
+  "version": "${version}",
+  "name": "minefy",
+  "description": "Mod to control Spotify (and see its playback state)",
+  "authors": [
+    "gdar463"
+  ],
+  "contact": {
+    "sources": "https://github.com/FabricMC/fabric-example-mod"
+  },
+  "license": "GPL-3.0-only",
+  "icon": "assets/minefy/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.gdar463.minefy.Minefy"
+    ],
+    "client": [
+      "com.gdar463.minefy.MinefyClient"
+    ],
+    "modmenu": [
+      "com.gdar463.minefy.config.ModMenuIntegration"
+    ]
+  },
+  "mixins": [
+    "minefy.mixins.json",
+    {
+      "config": "minefy.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=0.17.2",
+    "minecraft": "~1.21.5",
+    "java": ">=21",
+    "fabric-api": "*",
+    "yet_another_config_lib_v3": "^3.8.0"
+  }
 }
