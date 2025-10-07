@@ -44,6 +44,7 @@ public class MinefyClient implements ClientModInitializer {
             }
         });
 
+        ConfigManager.init();
         ConfigCommand.init();
     }
 }

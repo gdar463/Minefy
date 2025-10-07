@@ -27,20 +27,18 @@ import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
 
 public class ConfigScreen {
-    public static Boolean option = false;
-
     public static Screen generate(Screen parent) {
-        return YetAnotherConfigLib.createBuilder().title(Text.literal("Testing test"))
+        Config config = ConfigManager.get();
+
+        return YetAnotherConfigLib.createBuilder().title(Text.literal("Minefy Config"))
                 .category(ConfigCategory.createBuilder()
-                        .name(Text.literal("CategoryName"))
-                        .tooltip(Text.literal("Tooltip magical"))
+                        .name(Text.literal("Hud"))
                         .group(OptionGroup.createBuilder()
-                                .name(Text.literal("GroupName"))
-                                .description(OptionDescription.of(Text.literal("GroupDesc")))
+                                .name(Text.literal("Playback"))
+                                .description(OptionDescription.of(Text.literal("Settings about the Playback HUD")))
                                 .option(Option.<Boolean>createBuilder()
-                                        .name(Text.literal("OptionName"))
-                                        .description(OptionDescription.of(Text.literal("OptionDesc")))
-                                        .binding(true, () -> option, val -> option = val)
+                                        .name(Text.literal("Enabled"))
+                                        .binding(true, () -> config.playbackHudEnabled, val -> config.playbackHudEnabled = val)
                                         .controller(TickBoxControllerBuilder::create).build()
                                 ).build()
                         ).build()
