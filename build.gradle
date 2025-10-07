@@ -45,8 +45,6 @@ processResources {
 
 	filesMatching("fabric.mod.json") {
 		expand "version": inputs.properties.version
-
-		expand "yacl_version": inputs.properties.yacl_version
 	}
 }
 
