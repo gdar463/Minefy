@@ -2,7 +2,9 @@
   "required": true,
   "package": "com.gdar463.minefy.mixin.client",
   "compatibilityLevel": "JAVA_21",
-  "client": [],
+  "client": [
+    "InGameHudMixin"
+  ],
   "injectors": {
     "defaultRequire": 1
   }
