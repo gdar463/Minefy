@@ -1,0 +1,39 @@
+/*
+ Copyright (c) gdar463 (Dario) <dev@gdar463.com>
+
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ (at your option) any later version.
+
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
+
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+package com.gdar463.minefy.config;
+
+import com.gdar463.minefy.MinefyClient;
+import com.mojang.brigadier.context.CommandContext;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
+import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
+import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+
+public class ConfigCommand {
+    public static void init() {
+        ClientCommandRegistrationCallback.EVENT.register((dispatcher, dedicated) ->
+                dispatcher.register(ClientCommandManager.literal("minefy")
+                        .executes(ConfigCommand::openConfigScreen)
+                        .then(ClientCommandManager.literal("config")
+                                .executes(ConfigCommand::openConfigScreen))));
+    }
+
+    private static int openConfigScreen(CommandContext<FabricClientCommandSource> ctx) {
+        MinefyClient.toOpen = ConfigScreen.generate(null);
+        return 0;
+    }
+}
