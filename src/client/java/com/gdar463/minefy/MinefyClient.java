@@ -18,6 +18,8 @@
 package com.gdar463.minefy;
 
 import com.gdar463.minefy.config.ConfigCommand;
+import com.gdar463.minefy.config.ConfigManager;
+import com.gdar463.minefy.ui.PlaybackHUD;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.gui.screen.Screen;
@@ -46,5 +48,6 @@ public class MinefyClient implements ClientModInitializer {
 
         ConfigManager.init();
         ConfigCommand.init();
+        PlaybackHUD.init();
     }
 }
