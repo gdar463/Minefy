@@ -17,6 +17,7 @@
 
 package com.gdar463.minefy.ui;
 
+import com.gdar463.minefy.MinefyClient;
 import com.gdar463.minefy.config.ConfigManager;
 import com.gdar463.minefy.events.HudRenderEvents;
 import net.minecraft.client.gui.DrawContext;
@@ -30,6 +31,7 @@ public class PlaybackHUD {
 
     public PlaybackHUD() {
         HudRenderEvents.AFTER_MAIN_HUD.register((this::render));
+        MinefyClient.LOGGER.debug("PlaybackHUD registered");
     }
 
     public static void init() {

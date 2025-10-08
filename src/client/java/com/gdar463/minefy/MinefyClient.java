@@ -35,6 +35,7 @@ public class MinefyClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
+        LOGGER.debug("Initializing MinefyClient");
         ClientTickEvents.START_CLIENT_TICK.register(client -> {
             if (toOpen != null) {
                 screenTicks++;
@@ -49,5 +50,6 @@ public class MinefyClient implements ClientModInitializer {
         ConfigManager.init();
         ConfigCommand.init();
         PlaybackHUD.init();
+        LOGGER.info("MinefyClient initialized");
     }
 }

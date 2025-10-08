@@ -30,6 +30,7 @@ public class ConfigCommand {
                         .executes(ConfigCommand::openConfigScreen)
                         .then(ClientCommandManager.literal("config")
                                 .executes(ConfigCommand::openConfigScreen))));
+        MinefyClient.LOGGER.debug("ConfigCommand registered");
     }
 
     private static int openConfigScreen(CommandContext<FabricClientCommandSource> ctx) {
