@@ -17,17 +17,12 @@
 
 package com.gdar463.minefy.util;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.Text;
-
-import java.awt.*;
 import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
 
 public class Utils {
     private static final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(5);
@@ -37,11 +32,24 @@ public class Utils {
     }
 
     public static void openUrl(String url) {
+        if (DesktopUtils.isLinux) {
+            //noinspection ResultOfMethodCallIgnored
+            Stream.of("xdg-open", "kde-open", "gnome-open").anyMatch(s -> run(s, new String[]{url}));
+        }
+        if (DesktopUtils.isMac) {
+            run("open", new String[]{url});
+        }
+        if (DesktopUtils.isWindows) {
+            run("rundll32", new String[]{"url.dll,FileProtocolHandler", url});
+        }
+    }
+
+    private static Boolean run(String cmd, String[] args) {
         try {
-            Desktop.getDesktop().browse(new URI(url));
-        } catch (IOException | URISyntaxException e) {
-            assert MinecraftClient.getInstance().player != null;
-            MinecraftClient.getInstance().player.sendMessage(Text.of("Couldn't open Url"), false);
+            Process proc = Runtime.getRuntime().exec(cmd, args);
+            return !proc.waitFor(3, TimeUnit.SECONDS) || proc.exitValue() == 0;
+        } catch (IOException | InterruptedException e) {
+            return false;
         }
     }
 }
