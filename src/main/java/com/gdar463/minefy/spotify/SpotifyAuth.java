@@ -33,7 +33,7 @@ import java.time.Duration;
 public class SpotifyAuth {
     // For Auth Url
     public static final String SPOTIFY_AUTH_URL = "https://accounts.spotify.com/authorize";
-    public static final String SPOTIFY_SCOPE = "user-read-currently-playing user-modify-playback-state user-read-playback-state user-read-private user-read-email";
+    public static final String SPOTIFY_SCOPE = "user-read-currently-playing%20user-modify-playback-state%20user-read-playback-state%20user-read-private%20user-read-email";
     public static final String SPOTIFY_RESPONSE_TYPE = "code";
     public static final String SPOTIFY_CODE_METHOD = "S256";
 
