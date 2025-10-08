@@ -18,9 +18,9 @@
 package com.gdar463.minefy.util;
 
 public class DesktopUtils {
-    public static Boolean isLinux;
-    public static Boolean isMac;
-    public static Boolean isWindows;
+    public static Boolean isLinux = false;
+    public static Boolean isMac = false;
+    public static Boolean isWindows = false;
 
     public DesktopUtils() {
         try {
