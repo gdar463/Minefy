@@ -17,34 +17,29 @@
 
 package com.gdar463.minefy.spotify;
 
-import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Base64;
 
 public class SpotifyPKCE {
-    public static final String POSSIBLE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789_.-~";
-    public static final int CODE_VERIFIER_LENGTH = 128;
+    public static final int CODE_VERIFIER_LENGTH = 96;
 
     public String codeVerifier;
 
     private void generateCodeVerifier() {
-        SecureRandom random = new SecureRandom(ByteBuffer.allocate(Long.BYTES).putLong(System.currentTimeMillis()).array());
-        StringBuilder codeBuilder = new StringBuilder();
-        for (int i = 0; i < CODE_VERIFIER_LENGTH; i++) {
-            int rand = random.nextInt(POSSIBLE_CHARS.length());
-            codeBuilder.append(POSSIBLE_CHARS.charAt(rand));
-        }
-        codeVerifier = codeBuilder.toString();
+        byte[] randomBytes = new byte[CODE_VERIFIER_LENGTH];
+        new SecureRandom().nextBytes(randomBytes);
+        codeVerifier = Base64.getUrlEncoder().withoutPadding().encodeToString(randomBytes);
     }
 
     public String getCodeChallenge() {
         generateCodeVerifier();
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
-            byte[] shaVerifier = digest.digest(codeVerifier.getBytes());
-            return Base64.getEncoder().encodeToString(shaVerifier);
+            byte[] shaVerifier = digest.digest(codeVerifier.getBytes(StandardCharsets.US_ASCII));
+            return Base64.getUrlEncoder().withoutPadding().encodeToString(shaVerifier);
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e);
         }
