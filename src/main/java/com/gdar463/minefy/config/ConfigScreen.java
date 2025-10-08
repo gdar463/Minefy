@@ -31,9 +31,8 @@ import net.minecraft.text.Text;
 
 public class ConfigScreen {
     public static Screen generate(Screen parent) {
-        Config config = ConfigManager.get();
-
-        return YetAnotherConfigLib.createBuilder().title(Text.translatable("text.minefy.config.title"))
+        return YetAnotherConfigLib.create(ConfigManager.HANDLER, ((defaults, config, builder) -> builder
+                .title(Text.translatable("text.minefy.config.title"))
                 .category(ConfigCategory.createBuilder()
                         .name(Text.translatable("text.minefy.config.category.hud"))
                         .group(OptionGroup.createBuilder()
@@ -90,7 +89,7 @@ public class ConfigScreen {
                                         .build())
                                 .build())
                         .build())
-                .build()
+                        .save(ConfigManager::save)))
                 .generateScreen(parent);
     }
 }

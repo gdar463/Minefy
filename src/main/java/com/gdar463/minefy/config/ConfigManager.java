@@ -43,4 +43,8 @@ public class ConfigManager {
         HANDLER.load();
         MinefyClient.LOGGER.debug("Config Handler loaded");
     }
+
+    public static void save() {
+        HANDLER.save();
+    }
 }
