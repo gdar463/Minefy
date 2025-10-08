@@ -34,19 +34,19 @@ public class Utils {
     public static void openUrl(String url) {
         if (DesktopUtils.isLinux) {
             //noinspection ResultOfMethodCallIgnored
-            Stream.of("xdg-open", "kde-open", "gnome-open").anyMatch(s -> run(s, new String[]{url}));
+            Stream.of("xdg-open", "kde-open", "gnome-open").anyMatch(s -> run(new String[]{s, url}));
         }
         if (DesktopUtils.isMac) {
-            run("open", new String[]{url});
+            run(new String[]{"open", url});
         }
         if (DesktopUtils.isWindows) {
-            run("rundll32", new String[]{"url.dll,FileProtocolHandler", url});
+            run(new String[]{"rundll32", "url.dll,FileProtocolHandler", url});
         }
     }
 
-    private static Boolean run(String cmd, String[] args) {
+    private static Boolean run(String[] cmd) {
         try {
-            Process proc = Runtime.getRuntime().exec(cmd, args);
+            Process proc = Runtime.getRuntime().exec(cmd);
             return !proc.waitFor(3, TimeUnit.SECONDS) || proc.exitValue() == 0;
         } catch (IOException | InterruptedException e) {
             return false;
