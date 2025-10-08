@@ -22,9 +22,6 @@ import com.gdar463.minefy.config.ConfigManager;
 import com.gdar463.minefy.events.HudRenderEvents;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.util.Util;
-import net.minecraft.util.math.ColorHelper;
-import net.minecraft.util.math.MathHelper;
 
 public class PlaybackHUD {
     public static PlaybackHUD INSTANCE;
@@ -41,14 +38,12 @@ public class PlaybackHUD {
     private void render(DrawContext ctx, RenderTickCounter tickCounter) {
         if (!ConfigManager.get().playbackHudEnabled) return;
 
-        int color = 0xFFFF0000;
-        int targetColor = 0xFF00FF00;
+        int bgColor = 0x88000000;
+        int borderColor = 0x50ffffff;
+        int width = 170, height = 70;
+        int x = 0, y = 0;
 
-        double currentTime = Util.getMeasuringTimeMs() / 1000.0;
-
-        float lerpedAmount = MathHelper.abs(MathHelper.sin((float) currentTime));
-        int lerpedColor = ColorHelper.lerp(lerpedAmount, color, targetColor);
-
-        ctx.fill(0, 0, 10, 10, lerpedColor);
+        ctx.fill(x, y, x + width, y + height, bgColor);
+        ctx.drawBorder(x, y, width, height, borderColor);
     }
 }
