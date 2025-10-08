@@ -22,4 +22,19 @@ import dev.isxander.yacl3.config.v2.api.SerialEntry;
 public class Config {
     @SerialEntry
     public boolean playbackHudEnabled = true;
+
+    @SerialEntry
+    public String spotifyClientId = "494bbac877a94427a5e6137a4a1816cc";
+
+    @SerialEntry
+    public String spotifyRedirectUri = "http://127.0.0.1:12589/callback";
+
+    @SerialEntry
+    public int spotifyCallbackPort = 12589;
+
+    @SerialEntry
+    public String spotifyAccessToken;
+
+    @SerialEntry
+    public String spotifyRefreshToken;
 }
