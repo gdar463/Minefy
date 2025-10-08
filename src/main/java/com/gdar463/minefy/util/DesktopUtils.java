@@ -18,18 +18,7 @@
 package com.gdar463.minefy.util;
 
 public class DesktopUtils {
-    public static Boolean isLinux = false;
-    public static Boolean isMac = false;
-    public static Boolean isWindows = false;
-
-    public DesktopUtils() {
-        try {
-            String osName = System.getProperty("os.name").toLowerCase();
-            if (osName.startsWith("linux")) isLinux = true;
-            if (osName.startsWith("max")) isMac = true;
-            if (osName.startsWith("windows")) isWindows = true;
-        } catch (SecurityException e) {
-            // empty
-        }
-    }
+    public static Boolean isLinux = System.getProperty("os.name").toLowerCase().startsWith("linux");
+    public static Boolean isMac = System.getProperty("os.name").toLowerCase().startsWith("mac");
+    public static Boolean isWindows = System.getProperty("os.name").toLowerCase().startsWith("windows");
 }
