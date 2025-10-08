@@ -1,0 +1,14 @@
+{
+  "text.minefy.config.title": "Minefy Config",
+  "text.minefy.config.category.hud": "Hud",
+  "text.minefy.config.hud.playback.name": "Playback",
+  "text.minefy.config.hud.playback.description": "Settings about the Playback HUD.",
+  "text.minefy.config.hud.playback.enabled.name": "Enable",
+  "text.minefy.config.category.spotify": "Spotify",
+  "text.minefy.config.spotify.tokens.name": "Tokens (DO NOT TOUCH)",
+  "text.minefy.config.spotify.tokens.description": "Touch only if you know what you're doing.",
+  "text.minefy.config.spotify.tokens.access.name": "Access Token",
+  "text.minefy.config.spotify.tokens.access.description": "Needed to authenticate each request with Spotify.",
+  "text.minefy.config.spotify.tokens.refresh.name": "Refresh Token",
+  "text.minefy.config.spotify.tokens.refresh.description": "Needed to refresh access token when it expires."
+}

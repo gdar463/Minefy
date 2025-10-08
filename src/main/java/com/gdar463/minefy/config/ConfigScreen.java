@@ -30,15 +30,15 @@ public class ConfigScreen {
     public static Screen generate(Screen parent) {
         Config config = ConfigManager.get();
 
-        return YetAnotherConfigLib.createBuilder().title(Text.literal("Minefy Config"))
+        return YetAnotherConfigLib.createBuilder().title(Text.translatable("text.minefy.config.title"))
                 .category(ConfigCategory.createBuilder()
-                        .name(Text.literal("Hud"))
+                        .name(Text.translatable("text.minefy.config.category.hud"))
                         .group(OptionGroup.createBuilder()
-                                .name(Text.literal("Playback"))
-                                .description(OptionDescription.of(Text.literal("Settings about the Playback HUD")))
+                                .name(Text.translatable("text.minefy.config.hud.playback.name"))
+                                .description(OptionDescription.of(Text.translatable("text.minefy.config.hud.playback.description")))
                                 .option(Option.<Boolean>createBuilder()
-                                        .name(Text.literal("Enabled"))
                                         .binding(true, () -> config.playbackHudEnabled, val -> config.playbackHudEnabled = val)
+                                        .name(Text.translatable("text.minefy.config.hud.playback.enabled.name"))
                                         .controller(TickBoxControllerBuilder::create).build()
                                 ).build()
                         ).build()
