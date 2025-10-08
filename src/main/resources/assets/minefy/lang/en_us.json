@@ -10,5 +10,13 @@
   "text.minefy.config.spotify.tokens.access.name": "Access Token",
   "text.minefy.config.spotify.tokens.access.description": "Needed to authenticate each request with Spotify.",
   "text.minefy.config.spotify.tokens.refresh.name": "Refresh Token",
-  "text.minefy.config.spotify.tokens.refresh.description": "Needed to refresh access token when it expires."
+  "text.minefy.config.spotify.tokens.refresh.description": "Needed to refresh access token when it expires.",
+  "text.minefy.config.spotify.client.name": "OAuth Client (DO NOT TOUCH)",
+  "text.minefy.config.spotify.client.description": "Touch only if you know what you're doing.",
+  "text.minefy.config.spotify.client.id.name": "Client ID",
+  "text.minefy.config.spotify.client.id.description": "The OAuth 2.0 Client Id from the Spotify for Developers Dashboard.",
+  "text.minefy.config.spotify.client.redirect.name": "Redirect URI",
+  "text.minefy.config.spotify.client.redirect.description": "The OAuth 2.0 Redirect URI configured in the Spotify for Developers Dashboard.",
+  "text.minefy.config.spotify.client.port.name": "Callback Port",
+  "text.minefy.config.spotify.client.port.description": "Port where to open the callback HttpServer."
 }
