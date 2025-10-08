@@ -76,13 +76,11 @@ public class SpotifyAuth {
                 .uri(URI.create(SPOTIFY_CODE_URL))
                 .timeout(Duration.ofSeconds(30))
                 .header("Content-Type", SPOTIFY_CONTENT_TYPE)
-                .POST(HttpRequest.BodyPublishers.ofString("{" +
-                        "client_id: " + SPOTIFY_CLIENT_ID + "," +
-                        "grant_type: " + SPOTIFY_GRANT_TYPE + "," +
-                        "code: " + code + "," +
-                        "redirect_uri: " + SPOTIFY_REDIRECT_URI + "," +
-                        "code_verifier: " + PKCE_ISTANCE.codeVerifier +
-                        "}"))
+                .POST(HttpRequest.BodyPublishers.ofString("client_id=" + SPOTIFY_CLIENT_ID +
+                        "&code=" + code.replace("code=", "") +
+                        "&redirect_uri=" + SPOTIFY_REDIRECT_URI +
+                        "&grant_type=" + SPOTIFY_GRANT_TYPE +
+                        "&code_verifier=" + PKCE_ISTANCE.codeVerifier))
                 .build();
         HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply(HttpResponse::body)
