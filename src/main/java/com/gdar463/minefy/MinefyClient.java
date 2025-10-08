@@ -21,11 +21,14 @@ import com.gdar463.minefy.config.ConfigCommand;
 import com.gdar463.minefy.config.ConfigManager;
 import com.gdar463.minefy.ui.PlaybackHUD;
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.minecraft.client.gui.screen.Screen;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Environment(EnvType.CLIENT)
 public class MinefyClient implements ClientModInitializer {
     public static final String MOD_ID = "minefy";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);

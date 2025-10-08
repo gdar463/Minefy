@@ -15,7 +15,7 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.gdar463.minefy.mixin.client;
+package com.gdar463.minefy.client;
 
 import com.gdar463.minefy.events.HudRenderEvents;
 import net.minecraft.client.gui.LayeredDrawer;

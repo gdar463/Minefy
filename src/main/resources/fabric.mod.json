@@ -14,9 +14,6 @@
   "icon": "assets/minefy/icon.png",
   "environment": "*",
   "entrypoints": {
-    "main": [
-      "com.gdar463.minefy.Minefy"
-    ],
     "client": [
       "com.gdar463.minefy.MinefyClient"
     ],
@@ -25,9 +22,8 @@
     ]
   },
   "mixins": [
-    "minefy.mixins.json",
     {
-      "config": "minefy.client.mixins.json",
+      "config": "minefy.mixins.json",
       "environment": "client"
     }
   ],
