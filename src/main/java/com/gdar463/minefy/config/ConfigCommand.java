@@ -18,6 +18,7 @@
 package com.gdar463.minefy.config;
 
 import com.gdar463.minefy.MinefyClient;
+import com.gdar463.minefy.spotify.SpotifyAuth;
 import com.mojang.brigadier.context.CommandContext;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
@@ -28,6 +29,8 @@ public class ConfigCommand {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, dedicated) ->
                 dispatcher.register(ClientCommandManager.literal("minefy")
                         .executes(ConfigCommand::openConfigScreen)
+                        .then(ClientCommandManager.literal("login")
+                                .executes(ConfigCommand::loginToSpotify))
                         .then(ClientCommandManager.literal("config")
                                 .executes(ConfigCommand::openConfigScreen))));
         MinefyClient.LOGGER.debug("ConfigCommand registered");
@@ -35,6 +38,11 @@ public class ConfigCommand {
 
     private static int openConfigScreen(CommandContext<FabricClientCommandSource> ctx) {
         MinefyClient.toOpen = ConfigScreen.generate(null);
+        return 0;
+    }
+
+    private static int loginToSpotify(CommandContext<FabricClientCommandSource> ctx) {
+        SpotifyAuth.startAuthProcess();
         return 0;
     }
 }
