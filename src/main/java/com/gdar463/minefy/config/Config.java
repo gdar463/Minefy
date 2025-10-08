@@ -33,8 +33,8 @@ public class Config {
     public int spotifyCallbackPort = 12589;
 
     @SerialEntry
-    public String spotifyAccessToken;
+    public String spotifyAccessToken = "";
 
     @SerialEntry
-    public String spotifyRefreshToken;
+    public String spotifyRefreshToken = "";
 }
