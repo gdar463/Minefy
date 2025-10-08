@@ -41,14 +41,11 @@ public class SpotifyAuth {
     public static final String SPOTIFY_CODE_URL = "https://accounts.spotify.com/api/token";
     public static final String SPOTIFY_CONTENT_TYPE = "application/x-www-form-urlencoded";
     public static final String SPOTIFY_GRANT_TYPE = "authorization_code";
+
     // From Config
     public static final String SPOTIFY_CLIENT_ID;
     public static final String SPOTIFY_REDIRECT_URI;
     public static final int SPOTIFY_CALLBACK_PORT;
-    private static final SpotifyPKCE PKCE_ISTANCE = new SpotifyPKCE();
-    private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
-            .version(HttpClient.Version.HTTP_1_1)
-            .build();
 
     static {
         Config config = ConfigManager.get();
@@ -56,6 +53,11 @@ public class SpotifyAuth {
         SPOTIFY_REDIRECT_URI = config.spotifyRedirectUri;
         SPOTIFY_CALLBACK_PORT = config.spotifyCallbackPort;
     }
+
+    private static final SpotifyPKCE PKCE_ISTANCE = new SpotifyPKCE();
+    private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
+            .version(HttpClient.Version.HTTP_1_1)
+            .build();
 
     public static void startAuthProcess() {
         String authUrl = SPOTIFY_AUTH_URL +
