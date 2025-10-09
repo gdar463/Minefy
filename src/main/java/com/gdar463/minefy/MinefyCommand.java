@@ -15,24 +15,24 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.gdar463.minefy.config;
+package com.gdar463.minefy;
 
-import com.gdar463.minefy.MinefyClient;
+import com.gdar463.minefy.config.ConfigScreen;
 import com.gdar463.minefy.spotify.SpotifyAuth;
 import com.mojang.brigadier.context.CommandContext;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
 
-public class ConfigCommand {
+public class MinefyCommand {
     public static void init() {
         ClientCommandRegistrationCallback.EVENT.register((dispatcher, dedicated) ->
                 dispatcher.register(ClientCommandManager.literal("minefy")
-                        .executes(ConfigCommand::openConfigScreen)
+                        .executes(MinefyCommand::openConfigScreen)
                         .then(ClientCommandManager.literal("login")
-                                .executes(ConfigCommand::loginToSpotify))
+                                .executes(MinefyCommand::loginToSpotify))
                         .then(ClientCommandManager.literal("config")
-                                .executes(ConfigCommand::openConfigScreen))));
+                                .executes(MinefyCommand::openConfigScreen))));
         MinefyClient.LOGGER.debug("ConfigCommand registered");
     }
 

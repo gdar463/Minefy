@@ -17,7 +17,6 @@
 
 package com.gdar463.minefy;
 
-import com.gdar463.minefy.config.ConfigCommand;
 import com.gdar463.minefy.config.ConfigManager;
 import com.gdar463.minefy.ui.PlaybackHUD;
 import net.fabricmc.api.ClientModInitializer;
@@ -51,7 +50,7 @@ public class MinefyClient implements ClientModInitializer {
         });
 
         ConfigManager.init();
-        ConfigCommand.init();
+        MinefyCommand.init();
         PlaybackHUD.init();
         LOGGER.info("MinefyClient initialized");
     }
