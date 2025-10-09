@@ -33,7 +33,7 @@ import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 
 public class SpotifyAPI {
-    public static final String API_BASE = "ttps://api.spotify.com/v1";
+    public static final String API_BASE = "https://api.spotify.com/v1";
 
     private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_1_1)
