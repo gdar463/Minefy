@@ -38,9 +38,12 @@ public class SpotifyAuth {
     public static final String SPOTIFY_CODE_METHOD = "S256";
 
     // For Code exchange
-    public static final String SPOTIFY_CODE_URL = "https://accounts.spotify.com/api/token";
+    public static final String SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token";
     public static final String SPOTIFY_CONTENT_TYPE = "application/x-www-form-urlencoded";
-    public static final String SPOTIFY_GRANT_TYPE = "authorization_code";
+    public static final String SPOTIFY_CODE_GRANT_TYPE = "authorization_code";
+
+    // For Refresh token
+    public static final String SPOTIFY_REFRESH_GRANT_TYPE = "refresh_token";
 
     // From Config
     public static final String SPOTIFY_CLIENT_ID;
@@ -57,6 +60,7 @@ public class SpotifyAuth {
     private static final SpotifyPKCE PKCE_ISTANCE = new SpotifyPKCE();
     private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_1_1)
+            .connectTimeout(Duration.ofSeconds(30))
             .build();
 
     public static void startAuthProcess() {
@@ -73,14 +77,27 @@ public class SpotifyAuth {
 
     public static void processCode(String code) {
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(SPOTIFY_CODE_URL))
-                .timeout(Duration.ofSeconds(30))
+                .uri(URI.create(SPOTIFY_TOKEN_URL))
                 .header("Content-Type", SPOTIFY_CONTENT_TYPE)
                 .POST(HttpRequest.BodyPublishers.ofString("client_id=" + SPOTIFY_CLIENT_ID +
                         "&code=" + code.replace("code=", "") +
                         "&redirect_uri=" + SPOTIFY_REDIRECT_URI +
-                        "&grant_type=" + SPOTIFY_GRANT_TYPE +
+                        "&grant_type=" + SPOTIFY_CODE_GRANT_TYPE +
                         "&code_verifier=" + PKCE_ISTANCE.codeVerifier))
+                .build();
+        HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                .thenApply(HttpResponse::body)
+                .thenAccept(SpotifyAuth::processTokens);
+    }
+
+    public static void refreshTokens() {
+        Config config = ConfigManager.get();
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(SPOTIFY_TOKEN_URL))
+                .header("Content-Type", SPOTIFY_CONTENT_TYPE)
+                .POST(HttpRequest.BodyPublishers.ofString("client_id=" + SPOTIFY_CLIENT_ID +
+                        "&refresh_token=" + config.spotifyRefreshToken +
+                        "&grant_type=" + SPOTIFY_REFRESH_GRANT_TYPE))
                 .build();
         HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply(HttpResponse::body)
