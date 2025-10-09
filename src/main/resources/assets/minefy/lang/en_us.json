@@ -18,5 +18,9 @@
   "text.minefy.config.spotify.client.redirect.name": "Redirect URI",
   "text.minefy.config.spotify.client.redirect.description": "The OAuth 2.0 Redirect URI configured in the Spotify for Developers Dashboard.",
   "text.minefy.config.spotify.client.port.name": "Callback Port",
-  "text.minefy.config.spotify.client.port.description": "Port where to open the callback HttpServer."
+  "text.minefy.config.spotify.client.port.description": "Port where to open the callback HttpServer.",
+  "text.minefy.config.spotify.debug.name": "Debug",
+  "text.minefy.config.spotify.debug.description": "Debug tests.",
+  "text.minefy.config.spotify.debug.player.name": "Test Player",
+  "text.minefy.config.spotify.config.debug.player.description": "Check console for log afterwards."
 }

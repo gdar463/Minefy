@@ -17,7 +17,12 @@
 
 package com.gdar463.minefy.config;
 
+import com.gdar463.minefy.MinefyClient;
 import com.gdar463.minefy.config.controllers.HiddenStringControllerBuilder;
+import com.gdar463.minefy.spotify.SpotifyAPI;
+import com.gdar463.minefy.spotify.SpotifyAuth;
+import com.gdar463.minefy.spotify.exceptions.BadTokenException;
+import dev.isxander.yacl3.api.ButtonOption;
 import dev.isxander.yacl3.api.ConfigCategory;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.OptionDescription;
@@ -26,8 +31,11 @@ import dev.isxander.yacl3.api.YetAnotherConfigLib;
 import dev.isxander.yacl3.api.controller.IntegerFieldControllerBuilder;
 import dev.isxander.yacl3.api.controller.StringControllerBuilder;
 import dev.isxander.yacl3.api.controller.TickBoxControllerBuilder;
+import dev.isxander.yacl3.gui.YACLScreen;
 import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.text.Text;
+
+import java.util.Arrays;
 
 public class ConfigScreen {
     public static Screen generate(Screen parent) {
@@ -88,8 +96,32 @@ public class ConfigScreen {
                                                 .controller(HiddenStringControllerBuilder::create)
                                                 .build())
                                         .build())
+                                .group(OptionGroup.createBuilder()
+                                        .name(Text.translatable("text.minefy.config.spotify.debug.name"))
+                                        .description(OptionDescription.of(Text.translatable("text.minefy.config.spotify.debug.description")))
+                                        .collapsed(true)
+                                        .option(ButtonOption.createBuilder()
+                                                .name(Text.translatable("text.minefy.config.spotify.debug.player.name"))
+                                                .description(OptionDescription.of(Text.translatable("text.minefy.config.spotify.config.debug.player.description")))
+                                                .action(ConfigScreen::testSpotifyPlayerAPI)
+                                                .build())
+                                        .build())
                                 .build())
                         .save(ConfigManager::save)))
                 .generateScreen(parent);
+    }
+
+    private static void testSpotifyPlayerAPI(YACLScreen screen) {
+        SpotifyAPI.getPlaybackState()
+                .thenAccept(player -> MinefyClient.LOGGER.info(player.toString()))
+                .exceptionally(error -> {
+                    if (error.getCause() instanceof BadTokenException) {
+                        SpotifyAuth.refreshTokens().join();
+                        testSpotifyPlayerAPI(null);
+                        return null;
+                    }
+                    MinefyClient.LOGGER.error("Error occured!\n{}\n{}", error.getCause(), Arrays.toString(error.getStackTrace()));
+                    return null;
+                });
     }
 }
