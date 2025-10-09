@@ -92,5 +92,6 @@ public class SpotifyAuth {
         Config config = ConfigManager.get();
         config.spotifyAccessToken = jsonObject.get("access_token").getAsString();
         config.spotifyRefreshToken = jsonObject.get("refresh_token").getAsString();
+        ConfigManager.save();
     }
 }
