@@ -19,6 +19,8 @@ package com.gdar463.minefy.util;
 
 import com.gdar463.minefy.util.json.JsonDeserializable;
 import com.google.gson.JsonParser;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.text.Text;
 
 import java.io.IOException;
 import java.util.concurrent.Executors;
@@ -36,6 +38,15 @@ public class Utils {
 
     public static <T> T convertFromJson(String json, JsonDeserializable<T> factory) {
         return factory.fromJson(JsonParser.parseString(json).getAsJsonObject());
+    }
+
+    public static void sendClientSideMessage(Text message) {
+        sendClientSideMessage(message, false);
+    }
+
+    public static void sendClientSideMessage(Text message, boolean overlay) {
+        assert MinecraftClient.getInstance().player != null;
+        MinecraftClient.getInstance().player.sendMessage(message, overlay);
     }
 
     public static void openUrl(String url) {
