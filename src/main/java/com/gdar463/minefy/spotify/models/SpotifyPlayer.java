@@ -40,4 +40,13 @@ public class SpotifyPlayer {
                 SpotifyTrack.fromJson(json.get("item").getAsJsonObject())
         );
     }
+
+    @Override
+    public String toString() {
+        return "SpotifyPlayer {\n" +
+                "\tisPlaying: " + isPlaying + "\n" +
+                "\tprogress: " + progress.toMillis() + "\n" +
+                "\ttrack: " + track.toString("\t") + "\n" +
+                "}";
+    }
 }

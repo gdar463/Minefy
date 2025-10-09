@@ -20,6 +20,7 @@ package com.gdar463.minefy.spotify.models;
 import com.google.gson.JsonObject;
 
 import java.time.Duration;
+import java.util.Arrays;
 
 public class SpotifyTrack {
     public String name;
@@ -41,5 +42,19 @@ public class SpotifyTrack {
                 Duration.ofMillis(json.get("duration_ms").getAsLong()),
                 SpotifyAlbumCover.fromJson(json.get("album").getAsJsonObject().get("images").getAsJsonArray())
         );
+    }
+
+    @Override
+    public String toString() {
+        return toString("");
+    }
+
+    public String toString(String padding) {
+        return "SpotifyTrack {\n" + padding +
+                "\tname: " + name + "\n" + padding +
+                "\tartists: " + Arrays.toString(artists) + "\n" + padding +
+                "\tduration: " + duration.toMillis() + "\n" + padding +
+                "\talbumCover: " + albumCover.toString(padding + "\t") + "\n" + padding +
+                "}";
     }
 }

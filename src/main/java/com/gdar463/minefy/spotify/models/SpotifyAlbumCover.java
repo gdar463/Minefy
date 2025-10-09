@@ -39,4 +39,17 @@ public class SpotifyAlbumCover {
                 lastCover.get("width").getAsInt()
         );
     }
+
+    @Override
+    public String toString() {
+        return toString("");
+    }
+
+    public String toString(String padding) {
+        return "SpotifyAlbumCover {\n" + padding +
+                "\turl: " + url + "\n" + padding +
+                "\theight: " + height + "\n" + padding +
+                "\twidth: " + width + "\n" + padding +
+                "}";
+    }
 }
