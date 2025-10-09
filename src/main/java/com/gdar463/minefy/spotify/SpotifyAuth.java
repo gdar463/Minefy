@@ -29,6 +29,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.concurrent.CompletableFuture;
 
 public class SpotifyAuth {
     // For Auth Url
@@ -90,7 +91,7 @@ public class SpotifyAuth {
                 .thenAccept(SpotifyAuth::processTokens);
     }
 
-    public static void refreshTokens() {
+    public static CompletableFuture<Void> refreshTokens() {
         Config config = ConfigManager.get();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(SPOTIFY_TOKEN_URL))
@@ -99,7 +100,7 @@ public class SpotifyAuth {
                         "&refresh_token=" + config.spotifyRefreshToken +
                         "&grant_type=" + SPOTIFY_REFRESH_GRANT_TYPE))
                 .build();
-        HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+        return HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply(HttpResponse::body)
                 .thenAccept(SpotifyAuth::processTokens);
     }
