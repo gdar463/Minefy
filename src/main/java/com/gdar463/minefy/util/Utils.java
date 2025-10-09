@@ -17,6 +17,9 @@
 
 package com.gdar463.minefy.util;
 
+import com.gdar463.minefy.util.json.JsonDeserializable;
+import com.google.gson.JsonParser;
+
 import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -29,6 +32,10 @@ public class Utils {
 
     public static ScheduledFuture<?> schedule(Runnable task, long delay, TimeUnit unit) {
         return scheduler.schedule(task, delay, unit);
+    }
+
+    public static <T> T convertFromJson(String json, JsonDeserializable<T> factory) {
+        return factory.fromJson(JsonParser.parseString(json).getAsJsonObject());
     }
 
     public static void openUrl(String url) {
