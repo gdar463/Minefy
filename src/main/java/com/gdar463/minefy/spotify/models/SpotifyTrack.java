@@ -17,10 +17,12 @@
 
 package com.gdar463.minefy.spotify.models;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.time.Duration;
 import java.util.Arrays;
+import java.util.List;
 
 public class SpotifyTrack {
     public String name;
@@ -28,17 +30,23 @@ public class SpotifyTrack {
     public Duration duration;
     public SpotifyAlbumCover albumCover;
 
-    public SpotifyTrack(String name, Object[] artists, Duration duration, SpotifyAlbumCover albumCover) {
+    public SpotifyTrack(String name, String[] artists, Duration duration, SpotifyAlbumCover albumCover) {
         this.name = name;
-        this.artists = (String[]) artists;
+        this.artists = artists;
         this.duration = duration;
         this.albumCover = albumCover;
     }
 
     public static SpotifyTrack fromJson(JsonObject json) {
+        List<JsonElement> artistsJson = json.get("artists").getAsJsonArray().asList();
+        String[] artists = new String[artistsJson.size()];
+        for (int i = 0; i < artistsJson.size(); i++) {
+            artists[i] = artistsJson.get(i).getAsJsonObject().get("name").getAsString();
+        }
+
         return new SpotifyTrack(
                 json.get("name").getAsString(),
-                json.get("artists").getAsJsonArray().asList().stream().map(element -> element.getAsJsonObject().get("name").getAsString()).toArray(),
+                artists,
                 Duration.ofMillis(json.get("duration_ms").getAsLong()),
                 SpotifyAlbumCover.fromJson(json.get("album").getAsJsonObject().get("images").getAsJsonArray())
         );
