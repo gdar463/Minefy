@@ -18,6 +18,9 @@
 package com.gdar463.minefy.spotify.models;
 
 import com.gdar463.minefy.MinefyClient;
+import com.gdar463.minefy.mixin.TextureManagerMixin;
+import com.gdar463.minefy.ui.PlaybackHUD;
+import com.gdar463.minefy.util.Utils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.client.MinecraftClient;
@@ -25,14 +28,16 @@ import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.util.Identifier;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
-import java.util.Arrays;
 
 public class SpotifyAlbumCover {
     public static final SpotifyAlbumCover EMPTY = new SpotifyAlbumCover();
@@ -45,7 +50,9 @@ public class SpotifyAlbumCover {
 
     public String url;
     public String trackId;
-    public Identifier id = null;
+    public Identifier id;
+    public boolean texturized;
+    public boolean texturizing;
     public int height;
     public int width;
 
@@ -56,12 +63,21 @@ public class SpotifyAlbumCover {
         JsonObject lastCover = json.get(json.size() - 1).getAsJsonObject();
 
         this.url = lastCover.get("url").getAsString();
-        this.trackId = trackId;
+        this.trackId = trackId.replace(":", "/").replaceAll("([A-Z])", "$1$1").toLowerCase();
         this.height = lastCover.get("height").getAsInt();
         this.width = lastCover.get("width").getAsInt();
+        this.texturized = false;
     }
 
     public void texturize() {
+        texturizing = true;
+        Identifier prev = this.id;
+        this.id = Identifier.of(MinefyClient.MOD_ID, this.trackId);
+        if (((TextureManagerMixin) client.getTextureManager()).getTextures().get(id) != null)
+            return;
+        client.getTextureManager().destroyTexture(prev);
+
+        MinefyClient.LOGGER.info("texturizing");
         HTTP_CLIENT.sendAsync(HttpRequest.newBuilder()
                                 .uri(URI.create(this.url))
                                 .build(),
@@ -69,12 +85,16 @@ public class SpotifyAlbumCover {
                 .thenApply(HttpResponse::body)
                 .thenAccept(bytes -> client.execute(() -> {
                     try {
-                        NativeImage image = NativeImage.read(new ByteArrayInputStream(bytes));
-                        Identifier id = Identifier.of(MinefyClient.MOD_ID, this.trackId);
-                        client.getTextureManager().registerTexture(id, new NativeImageBackedTexture(() -> this.trackId, image));
-                        this.id = id;
+                        BufferedImage jpeg = ImageIO.read(new ByteArrayInputStream(bytes));
+                        ByteArrayOutputStream pngBytes = new ByteArrayOutputStream();
+                        ImageIO.write(jpeg, "PNG", pngBytes);
+                        NativeImage image = NativeImage.read(new ByteArrayInputStream(pngBytes.toByteArray()));
+                        client.getTextureManager().registerTexture(id, new NativeImageBackedTexture(() -> this.id.toString(), image));
+                        PlaybackHUD.INSTANCE.player.track.albumCover.texturized = true;
                     } catch (IOException e) {
                         MinefyClient.LOGGER.error(Arrays.toString(e.getStackTrace()));
+                    } finally {
+                        PlaybackHUD.INSTANCE.player.track.albumCover.texturizing = false;
                     }
                 }));
     }
