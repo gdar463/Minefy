@@ -27,6 +27,7 @@ import com.gdar463.minefy.spotify.models.SpotifyPlayer;
 import com.gdar463.minefy.util.Utils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.text.Text;
 
@@ -67,6 +68,11 @@ public class PlaybackHUD {
 
         ctx.drawText(client.textRenderer, player.track.name, 10, 10, 0xFFFFFFFF, false);
         ctx.drawText(client.textRenderer, player.track.artists[0], 10, 30, 0xFFFFFFFF, false);
+        if (player.track.albumCover.texturized) {
+            ctx.drawTexture(RenderLayer::getGuiTextured, player.track.albumCover.id, 7, 7, 0f, 0f, 46, 46, 46, 46);
+        } else if (!player.track.albumCover.texturizing) {
+            player.track.albumCover.texturize();
+        }
     }
 
     public void getPlayer() {
