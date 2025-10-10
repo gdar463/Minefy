@@ -33,6 +33,8 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 
+import static com.gdar463.minefy.util.Utils.logError;
+
 public class SpotifyAuth {
     // For Auth Url
     public static final String SPOTIFY_AUTH_URL = "https://accounts.spotify.com/authorize";
@@ -93,7 +95,26 @@ public class SpotifyAuth {
                 .thenAccept(SpotifyAuth::processTokens);
     }
 
-    public static CompletableFuture<Void> refreshTokens() {
+    public static boolean refreshTokens() {
+        return _refreshTokens().thenApply(v -> true).exceptionallyAsync(error -> {
+            if (error.getCause() instanceof NoTokenSuppliedException) {
+                MinefyClient.LOGGER.error(error.getMessage());
+                return false;
+            }
+            logError(error);
+            return false;
+        }).join();
+    }
+
+    private static void processTokens(String response) {
+        JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
+        Config config = ConfigManager.get();
+        config.spotifyAccessToken = jsonObject.get("access_token").getAsString();
+        config.spotifyRefreshToken = jsonObject.get("refresh_token").getAsString();
+        ConfigManager.save();
+    }
+
+    private static CompletableFuture<Void> _refreshTokens() {
         Config config = ConfigManager.get();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(SPOTIFY_TOKEN_URL))
@@ -111,13 +132,5 @@ public class SpotifyAuth {
                     }
                     return CompletableFuture.completedStage(res.body());
                 }).thenAccept(SpotifyAuth::processTokens);
-    }
-
-    public static void processTokens(String response) {
-        JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
-        Config config = ConfigManager.get();
-        config.spotifyAccessToken = jsonObject.get("access_token").getAsString();
-        config.spotifyRefreshToken = jsonObject.get("refresh_token").getAsString();
-        ConfigManager.save();
     }
 }

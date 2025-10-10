@@ -17,18 +17,13 @@
 
 package com.gdar463.minefy.spotify.http;
 
-import com.gdar463.minefy.MinefyClient;
 import com.gdar463.minefy.spotify.SpotifyAuth;
-import com.gdar463.minefy.spotify.exceptions.BadTokenException;
-import com.gdar463.minefy.spotify.exceptions.NoTokenSuppliedException;
-import com.gdar463.minefy.spotify.exceptions.TooManyRequestsException;
 import com.gdar463.minefy.util.Utils;
 
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -43,34 +38,19 @@ public class WrapperHttpClient {
 
     public CompletableFuture<HttpResponse<String>> sendAsync(HttpRequest request) {
         return HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                .thenCompose(res -> {
+                .thenComposeAsync(res -> {
                     int code = res.statusCode();
                     return switch (code) {
-                        case 401 -> throw new BadTokenException();
-                        case 429 ->
-                                throw new TooManyRequestsException(res.headers().firstValueAsLong("Retry-After").orElse(10));
+                        case 400, 401 -> {
+                            if (SpotifyAuth.refreshTokens()) sendAsync(request);
+                            yield null;
+                        }
+                        case 429 -> {
+                            Utils.schedule(() -> sendAsync(request), res.headers().firstValueAsLong("Retry-After").orElse(30), TimeUnit.SECONDS);
+                            yield null;
+                        }
                         default -> CompletableFuture.completedStage(res);
                     };
-                })
-                .exceptionally(error -> {
-                    Throwable cause = error.getCause();
-                    if (cause instanceof BadTokenException) {
-                        boolean refreshed = SpotifyAuth.refreshTokens().thenApply(v -> true).exceptionally(refreshError -> {
-                            if (error.getCause() instanceof NoTokenSuppliedException) {
-                                MinefyClient.LOGGER.error(error.getMessage());
-                                return false;
-                            }
-                            MinefyClient.LOGGER.error("Error occured!\n{}\n{}", error.getCause(), Arrays.toString(error.getStackTrace()));
-                            return false;
-                        }).join();
-                        if (refreshed) sendAsync(request);
-                        return null;
-                    }
-                    if (cause instanceof TooManyRequestsException) {
-                        Utils.schedule(() -> sendAsync(request), ((TooManyRequestsException) cause).timeOut, TimeUnit.SECONDS);
-                    }
-                    MinefyClient.LOGGER.error("Error occured!\n{}\n{}", cause, Arrays.toString(error.getStackTrace()));
-                    return null;
                 });
     }
 }
