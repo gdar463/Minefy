@@ -17,12 +17,9 @@
 
 package com.gdar463.minefy.spotify;
 
-import com.gdar463.minefy.config.Config;
-import com.gdar463.minefy.config.ConfigManager;
 import com.gdar463.minefy.spotify.http.WrapperHttpClient;
 import com.gdar463.minefy.spotify.models.SpotifyPlayer;
 import com.gdar463.minefy.util.Utils;
-import net.minecraft.text.Text;
 
 import java.net.URI;
 import java.net.http.HttpRequest;
@@ -33,15 +30,10 @@ public class SpotifyAPI {
 
     private static final WrapperHttpClient HTTP_CLIENT = new WrapperHttpClient();
 
-    public static CompletableFuture<SpotifyPlayer> getPlaybackState() {
-        Config config = ConfigManager.get();
-        if (config.spotifyAccessToken == null) {
-            Utils.sendClientSideMessage(Text.literal("Login needed before trying to connect to API"));
-            return CompletableFuture.completedFuture(null);
-        }
+    public static CompletableFuture<SpotifyPlayer> getPlaybackState(String spotifyAccessToken) {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(API_BASE + "/me/player"))
-                .header("Authorization", "Bearer " + config.spotifyAccessToken)
+                .header("Authorization", "Bearer " + spotifyAccessToken)
                 .header("Content-Type", "application/json")
                 .GET().build();
         return HTTP_CLIENT.sendAsync(request)
