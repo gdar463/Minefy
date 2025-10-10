@@ -19,6 +19,7 @@ package com.gdar463.minefy.spotify;
 
 import com.gdar463.minefy.config.Config;
 import com.gdar463.minefy.config.ConfigManager;
+import com.gdar463.minefy.spotify.exceptions.NoTokenSuppliedException;
 import com.gdar463.minefy.spotify.server.LoginServer;
 import com.gdar463.minefy.util.Utils;
 import com.google.gson.JsonObject;
@@ -101,8 +102,13 @@ public class SpotifyAuth {
                         "&grant_type=" + SPOTIFY_REFRESH_GRANT_TYPE))
                 .build();
         return HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString())
-                .thenApply(HttpResponse::body)
-                .thenAccept(SpotifyAuth::processTokens);
+                .thenCompose(res -> {
+                    int code = res.statusCode();
+                    if (code == 400 && res.body().contains("refresh")) {
+                        throw new NoTokenSuppliedException();
+                    }
+                    return CompletableFuture.completedStage(res.body());
+                }).thenAccept(SpotifyAuth::processTokens);
     }
 
     public static void processTokens(String response) {
