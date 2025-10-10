@@ -19,26 +19,19 @@ package com.gdar463.minefy.spotify;
 
 import com.gdar463.minefy.config.Config;
 import com.gdar463.minefy.config.ConfigManager;
-import com.gdar463.minefy.spotify.exceptions.BadTokenException;
-import com.gdar463.minefy.spotify.exceptions.TooManyRequestsException;
+import com.gdar463.minefy.spotify.http.WrapperHttpClient;
 import com.gdar463.minefy.spotify.models.SpotifyPlayer;
 import com.gdar463.minefy.util.Utils;
 import net.minecraft.text.Text;
 
 import java.net.URI;
-import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 
 public class SpotifyAPI {
     public static final String API_BASE = "https://api.spotify.com/v1";
 
-    private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
-            .version(HttpClient.Version.HTTP_1_1)
-            .connectTimeout(Duration.ofSeconds(30))
-            .build();
+    private static final WrapperHttpClient HTTP_CLIENT = new WrapperHttpClient();
 
     public static CompletableFuture<SpotifyPlayer> getPlaybackState() {
         Config config = ConfigManager.get();
@@ -51,15 +44,11 @@ public class SpotifyAPI {
                 .header("Authorization", "Bearer " + config.spotifyAccessToken)
                 .header("Content-Type", "application/json")
                 .GET().build();
-        return HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+        return HTTP_CLIENT.sendAsync(request)
                 .thenCompose(res -> {
                     int code = res.statusCode();
-                    return switch (code) {
-                        case 204 -> CompletableFuture.completedFuture(null);
-                        case 401 -> throw new BadTokenException();
-                        case 429 -> throw new TooManyRequestsException();
-                        default -> CompletableFuture.completedStage(res.body());
-                    };
+                    if (code == 204) return CompletableFuture.completedFuture("{}");
+                    return CompletableFuture.completedStage(res.body());
                 })
                 .thenApply(s -> Utils.convertFromJson(s, SpotifyPlayer::fromJson));
     }
