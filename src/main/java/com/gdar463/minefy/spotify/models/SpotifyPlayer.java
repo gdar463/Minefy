@@ -22,18 +22,25 @@ import com.google.gson.JsonObject;
 import java.time.Duration;
 
 public class SpotifyPlayer {
+    public boolean found;
     public boolean isPlaying;
     public Duration progress;
 
     public SpotifyTrack track;
 
+    public SpotifyPlayer() {
+        this.found = false;
+    }
+
     public SpotifyPlayer(boolean isPlaying, Duration progress, SpotifyTrack track) {
+        this.found = true;
         this.isPlaying = isPlaying;
         this.progress = progress;
         this.track = track;
     }
 
     public static SpotifyPlayer fromJson(JsonObject json) {
+        if (json.isEmpty()) return new SpotifyPlayer();
         return new SpotifyPlayer(
                 json.get("is_playing").getAsBoolean(),
                 Duration.ofMillis(json.get("progress_ms").getAsLong()),
