@@ -20,14 +20,25 @@ package com.gdar463.minefy.ui;
 import com.gdar463.minefy.MinefyClient;
 import com.gdar463.minefy.config.ConfigManager;
 import com.gdar463.minefy.events.HudRenderEvents;
+import com.gdar463.minefy.spotify.SpotifyAPI;
+import com.gdar463.minefy.spotify.models.SpotifyPlayer;
+import com.gdar463.minefy.util.Utils;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
+
+import java.util.concurrent.TimeUnit;
 
 public class PlaybackHUD {
     public static PlaybackHUD INSTANCE;
 
+    private final MinecraftClient client;
+    public SpotifyPlayer player = null;
+
     public PlaybackHUD() {
-        HudRenderEvents.AFTER_MAIN_HUD.register((this::render));
+        this.client = MinecraftClient.getInstance();
+        HudRenderEvents.AFTER_MAIN_HUD.register(this::render);
+        Utils.schedule(this::getPlayer, 2, TimeUnit.SECONDS);
         MinefyClient.LOGGER.debug("PlaybackHUD registered");
     }
 
@@ -36,6 +47,7 @@ public class PlaybackHUD {
     }
 
     private void render(DrawContext ctx, RenderTickCounter tickCounter) {
+        if (player == null || !player.found) return;
         if (!ConfigManager.get().playbackHudEnabled) return;
 
         int bgColor = 0x88000000;
@@ -45,5 +57,15 @@ public class PlaybackHUD {
 
         ctx.fill(x, y, x + width, y + height, bgColor);
         ctx.drawBorder(x, y, width, height, borderColor);
+
+        ctx.drawText(client.textRenderer, player.track.name, 10, 10, 0xFFFFFFFF, false);
+        ctx.drawText(client.textRenderer, player.track.artists[0], 10, 30, 0xFFFFFFFF, false);
+    }
+
+    public void getPlayer() {
+        SpotifyAPI.getPlaybackState().thenAccept(player -> {
+            this.player = player;
+            Utils.schedule(this::getPlayer, 2, TimeUnit.SECONDS);
+        });
     }
 }
