@@ -52,15 +52,13 @@ public class SpotifyAlbumCover {
     public SpotifyAlbumCover() {
     }
 
-    public SpotifyAlbumCover fromJson(JsonArray json, String trackId) {
+    public void fromJson(JsonArray json, String trackId) {
         JsonObject lastCover = json.get(json.size() - 1).getAsJsonObject();
 
         this.url = lastCover.get("url").getAsString();
         this.trackId = trackId;
         this.height = lastCover.get("height").getAsInt();
         this.width = lastCover.get("width").getAsInt();
-
-        return this;
     }
 
     public void texturize() {

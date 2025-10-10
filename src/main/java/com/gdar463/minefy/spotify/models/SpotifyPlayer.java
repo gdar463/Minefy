@@ -44,7 +44,7 @@ public class SpotifyPlayer {
 
         String trackUri = json.get("item").getAsJsonObject().get("uri").getAsString();
         if (!Objects.equals(trackUri, this.track.id))
-            this.track = this.track.fromJson(json.get("item").getAsJsonObject());
+            this.track.fromJson(json.get("item").getAsJsonObject());
         return this;
     }
 

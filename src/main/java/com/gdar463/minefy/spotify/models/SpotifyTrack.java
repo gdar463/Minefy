@@ -47,19 +47,18 @@ public class SpotifyTrack {
         return arr;
     }
 
-    public SpotifyTrack fromJson(JsonObject json) {
+    public void fromJson(JsonObject json) {
         this.id = json.get("uri").getAsString();
         this.name = json.get("name").getAsString();
         this.artists = getArtistsFromJson(json.get("artists").getAsJsonArray());
         this.duration = Duration.ofMillis(json.get("duration_ms").getAsLong());
 
-        String coverUrl = json.get("album").getAsJsonObject().get("images")
-                .getAsJsonArray().get(json.size() - 1).getAsJsonObject()
+        JsonArray albumImages = json.get("album").getAsJsonObject().get("images")
+                .getAsJsonArray();
+        String coverUrl = albumImages.get(albumImages.size() - 1).getAsJsonObject()
                 .get("url").getAsString();
         if (!Objects.equals(coverUrl, this.albumCover.url))
-            this.albumCover = this.albumCover.fromJson(json.get("album").getAsJsonObject().get("images").getAsJsonArray(), this.id);
-
-        return this;
+            this.albumCover.fromJson(json.get("album").getAsJsonObject().get("images").getAsJsonArray(), this.id);
     }
 
     @Override
