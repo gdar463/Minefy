@@ -21,23 +21,25 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
 public class SpotifyAlbumCover {
+    public static final SpotifyAlbumCover EMPTY = new SpotifyAlbumCover();
+
     public String url;
+    public String trackId;
     public int height;
     public int width;
 
-    public SpotifyAlbumCover(String url, int height, int width) {
-        this.url = url;
-        this.height = height;
-        this.width = width;
+    public SpotifyAlbumCover() {
     }
 
-    public static SpotifyAlbumCover fromJson(JsonArray json) {
+    public SpotifyAlbumCover fromJson(JsonArray json, String trackId) {
         JsonObject lastCover = json.get(json.size() - 1).getAsJsonObject();
-        return new SpotifyAlbumCover(
-                lastCover.get("url").getAsString(),
-                lastCover.get("height").getAsInt(),
-                lastCover.get("width").getAsInt()
-        );
+
+        this.url = lastCover.get("url").getAsString();
+        this.trackId = trackId;
+        this.height = lastCover.get("height").getAsInt();
+        this.width = lastCover.get("width").getAsInt();
+
+        return this;
     }
 
     @Override

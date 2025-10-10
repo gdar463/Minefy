@@ -18,8 +18,6 @@
 package com.gdar463.minefy.spotify;
 
 import com.gdar463.minefy.spotify.http.WrapperHttpClient;
-import com.gdar463.minefy.spotify.models.SpotifyPlayer;
-import com.gdar463.minefy.util.Utils;
 
 import java.net.URI;
 import java.net.http.HttpRequest;
@@ -30,7 +28,7 @@ public class SpotifyAPI {
 
     private static final WrapperHttpClient HTTP_CLIENT = new WrapperHttpClient();
 
-    public static CompletableFuture<SpotifyPlayer> getPlaybackState(String spotifyAccessToken) {
+    public static CompletableFuture<String> getPlaybackState(String spotifyAccessToken) {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(API_BASE + "/me/player"))
                 .header("Authorization", "Bearer " + spotifyAccessToken)
@@ -41,7 +39,6 @@ public class SpotifyAPI {
                     int code = res.statusCode();
                     if (code == 204) return CompletableFuture.completedFuture("{}");
                     return CompletableFuture.completedStage(res.body());
-                })
-                .thenApply(s -> Utils.convertFromJson(s, SpotifyPlayer::fromJson));
+                });
     }
 }

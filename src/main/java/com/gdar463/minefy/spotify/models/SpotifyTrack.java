@@ -17,42 +17,49 @@
 
 package com.gdar463.minefy.spotify.models;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.time.Duration;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class SpotifyTrack {
+    public static final SpotifyTrack EMPTY = new SpotifyTrack();
+
     public String id;
     public String name;
     public String[] artists;
     public Duration duration;
-    public SpotifyAlbumCover albumCover;
+    public SpotifyAlbumCover albumCover = SpotifyAlbumCover.EMPTY;
 
-    public SpotifyTrack(String id, String name, String[] artists, Duration duration, SpotifyAlbumCover albumCover) {
-        this.id = id;
-        this.name = name;
-        this.artists = artists;
-        this.duration = duration;
-        this.albumCover = albumCover;
+    public SpotifyTrack() {
     }
 
-    public static SpotifyTrack fromJson(JsonObject json) {
-        List<JsonElement> artistsJson = json.get("artists").getAsJsonArray().asList();
-        String[] artists = new String[artistsJson.size()];
-        for (int i = 0; i < artistsJson.size(); i++) {
-            artists[i] = artistsJson.get(i).getAsJsonObject().get("name").getAsString();
+    private static String[] getArtistsFromJson(JsonArray json) {
+        List<JsonElement> arrJson = json.asList();
+        String[] arr = new String[arrJson.size()];
+        for (int i = 0; i < arrJson.size(); i++) {
+            arr[i] = arrJson.get(i).getAsJsonObject().get("name").getAsString();
         }
+        return arr;
+    }
 
-        return new SpotifyTrack(
-                json.get("uri").getAsString(),
-                json.get("name").getAsString(),
-                artists,
-                Duration.ofMillis(json.get("duration_ms").getAsLong()),
-                SpotifyAlbumCover.fromJson(json.get("album").getAsJsonObject().get("images").getAsJsonArray())
-        );
+    public SpotifyTrack fromJson(JsonObject json) {
+        this.id = json.get("uri").getAsString();
+        this.name = json.get("name").getAsString();
+        this.artists = getArtistsFromJson(json.get("artists").getAsJsonArray());
+        this.duration = Duration.ofMillis(json.get("duration_ms").getAsLong());
+
+        String coverUrl = json.get("album").getAsJsonObject().get("images")
+                .getAsJsonArray().get(json.size() - 1).getAsJsonObject()
+                .get("url").getAsString();
+        if (!Objects.equals(coverUrl, this.albumCover.url))
+            this.albumCover = this.albumCover.fromJson(json.get("album").getAsJsonObject().get("images").getAsJsonArray(), this.id);
+
+        return this;
     }
 
     @Override

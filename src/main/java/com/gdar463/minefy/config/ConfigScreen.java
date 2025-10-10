@@ -20,6 +20,8 @@ package com.gdar463.minefy.config;
 import com.gdar463.minefy.MinefyClient;
 import com.gdar463.minefy.config.controllers.HiddenStringControllerBuilder;
 import com.gdar463.minefy.spotify.SpotifyAPI;
+import com.gdar463.minefy.spotify.models.SpotifyPlayer;
+import com.gdar463.minefy.util.Utils;
 import dev.isxander.yacl3.api.ButtonOption;
 import dev.isxander.yacl3.api.ConfigCategory;
 import dev.isxander.yacl3.api.Option;
@@ -109,6 +111,7 @@ public class ConfigScreen {
 
     private static void testSpotifyPlayerAPI(YACLScreen screen) {
         SpotifyAPI.getPlaybackState(ConfigManager.get().spotifyAccessToken)
+                .thenApply(s -> new SpotifyPlayer().fromJson(Utils.convertToJsonObject(s)))
                 .thenAccept(player -> MinefyClient.LOGGER.info(player.toString()));
     }
 }

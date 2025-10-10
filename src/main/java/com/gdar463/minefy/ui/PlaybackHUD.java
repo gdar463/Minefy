@@ -37,7 +37,7 @@ public class PlaybackHUD {
 
     private final MinecraftClient client;
     private final Config config;
-    public SpotifyPlayer player = null;
+    public SpotifyPlayer player = SpotifyPlayer.EMPTY;
 
     public PlaybackHUD() {
         this.client = MinecraftClient.getInstance();
@@ -83,9 +83,11 @@ public class PlaybackHUD {
             if (SpotifyAuth.refreshTokens()) Utils.schedule(this::getPlayer, 2, TimeUnit.SECONDS);
             return;
         }
-        SpotifyAPI.getPlaybackState(config.spotifyAccessToken).thenAccept(player -> {
-            this.player = player;
-            Utils.schedule(this::getPlayer, 2, TimeUnit.SECONDS);
-        });
+        SpotifyAPI.getPlaybackState(config.spotifyAccessToken)
+                .thenApply(s -> this.player.fromJson(Utils.convertToJsonObject(s)))
+                .thenAccept(player -> {
+                    this.player = player;
+                    Utils.schedule(this::getPlayer, 2, TimeUnit.SECONDS);
+                });
     }
 }

@@ -18,7 +18,7 @@
 package com.gdar463.minefy.util;
 
 import com.gdar463.minefy.MinefyClient;
-import com.gdar463.minefy.util.json.JsonDeserializable;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
@@ -38,8 +38,8 @@ public class Utils {
         return scheduler.schedule(task, delay, unit);
     }
 
-    public static <T> T convertFromJson(String json, JsonDeserializable<T> factory) {
-        return factory.fromJson(JsonParser.parseString(json).getAsJsonObject());
+    public static JsonObject convertToJsonObject(String json) {
+        return JsonParser.parseString(json).getAsJsonObject();
     }
 
     public static void sendClientSideMessage(Text message) {

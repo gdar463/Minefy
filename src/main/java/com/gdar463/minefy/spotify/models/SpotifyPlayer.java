@@ -20,32 +20,32 @@ package com.gdar463.minefy.spotify.models;
 import com.google.gson.JsonObject;
 
 import java.time.Duration;
+import java.util.Objects;
 
 public class SpotifyPlayer {
+    public static final SpotifyPlayer EMPTY = new SpotifyPlayer();
+
     public boolean found;
     public boolean isPlaying;
     public Duration progress;
 
-    public SpotifyTrack track;
+    public SpotifyTrack track = SpotifyTrack.EMPTY;
 
     public SpotifyPlayer() {
         this.found = false;
     }
 
-    public SpotifyPlayer(boolean isPlaying, Duration progress, SpotifyTrack track) {
-        this.found = true;
-        this.isPlaying = isPlaying;
-        this.progress = progress;
-        this.track = track;
-    }
+    public SpotifyPlayer fromJson(JsonObject json) {
+        if (json.isEmpty()) return this;
 
-    public static SpotifyPlayer fromJson(JsonObject json) {
-        if (json.isEmpty()) return new SpotifyPlayer();
-        return new SpotifyPlayer(
-                json.get("is_playing").getAsBoolean(),
-                Duration.ofMillis(json.get("progress_ms").getAsLong()),
-                SpotifyTrack.fromJson(json.get("item").getAsJsonObject())
-        );
+        this.found = true;
+        this.isPlaying = json.get("is_playing").getAsBoolean();
+        this.progress = Duration.ofMillis(json.get("progress_ms").getAsLong());
+
+        String trackUri = json.get("item").getAsJsonObject().get("uri").getAsString();
+        if (!Objects.equals(trackUri, this.track.id))
+            this.track = this.track.fromJson(json.get("item").getAsJsonObject());
+        return this;
     }
 
     @Override
