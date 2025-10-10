@@ -54,6 +54,11 @@ public class SpotifyAuth {
     public static final String SPOTIFY_CLIENT_ID;
     public static final String SPOTIFY_REDIRECT_URI;
     public static final int SPOTIFY_CALLBACK_PORT;
+    private static final SpotifyPKCE PKCE_ISTANCE = new SpotifyPKCE();
+    private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
+            .version(HttpClient.Version.HTTP_1_1)
+            .connectTimeout(Duration.ofSeconds(30))
+            .build();
 
     static {
         Config config = ConfigManager.get();
@@ -61,12 +66,6 @@ public class SpotifyAuth {
         SPOTIFY_REDIRECT_URI = config.spotifyRedirectUri;
         SPOTIFY_CALLBACK_PORT = config.spotifyCallbackPort;
     }
-
-    private static final SpotifyPKCE PKCE_ISTANCE = new SpotifyPKCE();
-    private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
-            .version(HttpClient.Version.HTTP_1_1)
-            .connectTimeout(Duration.ofSeconds(30))
-            .build();
 
     public static void startAuthProcess() {
         String authUrl = SPOTIFY_AUTH_URL +
@@ -101,7 +100,7 @@ public class SpotifyAuth {
                 MinefyClient.LOGGER.error(error.getMessage());
                 return false;
             }
-            logError(error);
+            logError(error.getCause());
             return false;
         }).join();
     }

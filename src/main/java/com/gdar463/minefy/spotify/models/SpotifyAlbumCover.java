@@ -92,7 +92,7 @@ public class SpotifyAlbumCover {
                         client.getTextureManager().registerTexture(id, new NativeImageBackedTexture(() -> this.id.toString(), image));
                         PlaybackHUD.INSTANCE.player.track.albumCover.texturized = true;
                     } catch (IOException e) {
-                        MinefyClient.LOGGER.error(Arrays.toString(e.getStackTrace()));
+                        Utils.logError(e);
                     } finally {
                         PlaybackHUD.INSTANCE.player.track.albumCover.texturizing = false;
                     }
@@ -107,6 +107,8 @@ public class SpotifyAlbumCover {
     public String toString(String padding) {
         return "SpotifyAlbumCover {\n" + padding +
                 "\turl: " + url + "\n" + padding +
+                "\ttrackId: " + trackId + "\n" + padding +
+                "\tid: " + id + "\n" + padding +
                 "\theight: " + height + "\n" + padding +
                 "\twidth: " + width + "\n" + padding +
                 "}";

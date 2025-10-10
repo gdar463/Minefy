@@ -34,8 +34,11 @@ import net.minecraft.text.Text;
 import java.util.concurrent.TimeUnit;
 
 public class PlaybackHUD {
+    private static final int bgColor = 0x50121212;
+    private static final int borderColor = 0x881ED760;
+    private static final int width = 178, height = 60;
+    private static final int x = 0, y = 0;
     public static PlaybackHUD INSTANCE;
-
     private final MinecraftClient client;
     private final Config config;
     public SpotifyPlayer player = SpotifyPlayer.EMPTY;
@@ -58,21 +61,17 @@ public class PlaybackHUD {
         if (player == null || !player.found) return;
         if (!ConfigManager.get().playbackHudEnabled) return;
 
-        int bgColor = 0x50121212;
-        int borderColor = 0x881ED760;
-        int width = 170, height = 60;
-        int x = 0, y = 0;
-
         ctx.fill(x, y, x + width, y + height, bgColor);
         Utils.drawBorder(ctx, x, y, width, height, borderColor, 2);
 
-        ctx.drawText(client.textRenderer, player.track.name, 10, 10, 0xFFFFFFFF, false);
-        ctx.drawText(client.textRenderer, player.track.artists[0], 10, 30, 0xFFFFFFFF, false);
         if (player.track.albumCover.texturized) {
             ctx.drawTexture(RenderLayer::getGuiTextured, player.track.albumCover.id, 7, 7, 0f, 0f, 46, 46, 46, 46);
         } else if (!player.track.albumCover.texturizing) {
             player.track.albumCover.texturize();
         }
+
+        ctx.drawText(client.textRenderer, player.track.name, 61, 16, borderColor & 0x00FFFFFF, false);
+        ctx.drawText(client.textRenderer, player.track.artists[0], 61, 28, 0xFFFFFFFF, false);
     }
 
     public void getPlayer() {
