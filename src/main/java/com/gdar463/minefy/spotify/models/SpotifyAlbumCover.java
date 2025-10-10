@@ -17,14 +17,35 @@
 
 package com.gdar463.minefy.spotify.models;
 
+import com.gdar463.minefy.MinefyClient;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.texture.NativeImage;
+import net.minecraft.client.texture.NativeImageBackedTexture;
+import net.minecraft.util.Identifier;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
+import java.util.Arrays;
 
 public class SpotifyAlbumCover {
     public static final SpotifyAlbumCover EMPTY = new SpotifyAlbumCover();
 
+    public static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
+            .version(HttpClient.Version.HTTP_1_1)
+            .connectTimeout(Duration.ofSeconds(30))
+            .build();
+    private static final MinecraftClient client = MinecraftClient.getInstance();
+
     public String url;
     public String trackId;
+    public Identifier id = null;
     public int height;
     public int width;
 
@@ -40,6 +61,24 @@ public class SpotifyAlbumCover {
         this.width = lastCover.get("width").getAsInt();
 
         return this;
+    }
+
+    public void texturize() {
+        HTTP_CLIENT.sendAsync(HttpRequest.newBuilder()
+                                .uri(URI.create(this.url))
+                                .build(),
+                        HttpResponse.BodyHandlers.ofByteArray())
+                .thenApply(HttpResponse::body)
+                .thenAccept(bytes -> client.execute(() -> {
+                    try {
+                        NativeImage image = NativeImage.read(new ByteArrayInputStream(bytes));
+                        Identifier id = Identifier.of(MinefyClient.MOD_ID, this.trackId);
+                        client.getTextureManager().registerTexture(id, new NativeImageBackedTexture(() -> this.trackId, image));
+                        this.id = id;
+                    } catch (IOException e) {
+                        MinefyClient.LOGGER.error(Arrays.toString(e.getStackTrace()));
+                    }
+                }));
     }
 
     @Override
