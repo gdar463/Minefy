@@ -63,7 +63,7 @@ public class PlaybackHUD {
         int x = 0, y = 0;
 
         ctx.fill(x, y, x + width, y + height, bgColor);
-        ctx.drawBorder(x, y, width, height, borderColor);
+        Utils.drawBorder(ctx, x, y, width, height, borderColor, 2);
 
         ctx.drawText(client.textRenderer, player.track.name, 10, 10, 0xFFFFFFFF, false);
         ctx.drawText(client.textRenderer, player.track.artists[0], 10, 30, 0xFFFFFFFF, false);

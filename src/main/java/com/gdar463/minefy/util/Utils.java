@@ -21,6 +21,7 @@ import com.gdar463.minefy.MinefyClient;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 
 import java.io.IOException;
@@ -52,7 +53,14 @@ public class Utils {
     }
 
     public static void logError(Throwable e) {
-        MinefyClient.LOGGER.error("Error occured!\n{}\n{}", e.getCause(), Arrays.toString(e.getCause().getStackTrace()));
+        MinefyClient.LOGGER.error("Error occured!\n{}\n{}", e, Arrays.toString(e.getStackTrace()));
+    }
+
+    public static void drawBorder(DrawContext ctx, int x, int y, int width, int height, int color, int size) {
+        ctx.fill(x, y, x + width, y + size, color);
+        ctx.fill(x, y + height - size, x + width, y + height, color);
+        ctx.fill(x, y + size, x + size, y + height - size, color);
+        ctx.fill(x + width - size, y + size, x + width, y + height - size, color);
     }
 
     public static void openUrl(String url) {
