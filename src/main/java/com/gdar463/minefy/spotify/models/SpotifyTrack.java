@@ -25,12 +25,14 @@ import java.util.Arrays;
 import java.util.List;
 
 public class SpotifyTrack {
+    public String id;
     public String name;
     public String[] artists;
     public Duration duration;
     public SpotifyAlbumCover albumCover;
 
-    public SpotifyTrack(String name, String[] artists, Duration duration, SpotifyAlbumCover albumCover) {
+    public SpotifyTrack(String id, String name, String[] artists, Duration duration, SpotifyAlbumCover albumCover) {
+        this.id = id;
         this.name = name;
         this.artists = artists;
         this.duration = duration;
@@ -45,6 +47,7 @@ public class SpotifyTrack {
         }
 
         return new SpotifyTrack(
+                json.get("uri").getAsString(),
                 json.get("name").getAsString(),
                 artists,
                 Duration.ofMillis(json.get("duration_ms").getAsLong()),
@@ -59,6 +62,7 @@ public class SpotifyTrack {
 
     public String toString(String padding) {
         return "SpotifyTrack {\n" + padding +
+                "\tid: " + id + "\n" + padding +
                 "\tname: " + name + "\n" + padding +
                 "\tartists: " + Arrays.toString(artists) + "\n" + padding +
                 "\tduration: " + duration.toMillis() + "\n" + padding +
