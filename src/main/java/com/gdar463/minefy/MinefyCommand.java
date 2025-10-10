@@ -19,6 +19,7 @@ package com.gdar463.minefy;
 
 import com.gdar463.minefy.config.ConfigScreen;
 import com.gdar463.minefy.spotify.SpotifyAuth;
+import com.gdar463.minefy.ui.PlaybackHUD;
 import com.mojang.brigadier.context.CommandContext;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
@@ -32,7 +33,10 @@ public class MinefyCommand {
                         .then(ClientCommandManager.literal("login")
                                 .executes(MinefyCommand::loginToSpotify))
                         .then(ClientCommandManager.literal("config")
-                                .executes(MinefyCommand::openConfigScreen))));
+                                .executes(MinefyCommand::openConfigScreen))
+                        .then(ClientCommandManager.literal("debug")
+                                .then(ClientCommandManager.literal("get_player")
+                                        .executes(MinefyCommand::getPlayer)))));
         MinefyClient.LOGGER.debug("ConfigCommand registered");
     }
 
@@ -43,6 +47,11 @@ public class MinefyCommand {
 
     private static int loginToSpotify(CommandContext<FabricClientCommandSource> ctx) {
         SpotifyAuth.startAuthProcess();
+        return 0;
+    }
+
+    private static int getPlayer(CommandContext<FabricClientCommandSource> ctx) {
+        PlaybackHUD.INSTANCE.getPlayer();
         return 0;
     }
 }
