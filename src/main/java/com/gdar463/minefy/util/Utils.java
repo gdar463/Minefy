@@ -17,12 +17,14 @@
 
 package com.gdar463.minefy.util;
 
+import com.gdar463.minefy.MinefyClient;
 import com.gdar463.minefy.util.json.JsonDeserializable;
 import com.google.gson.JsonParser;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -47,6 +49,10 @@ public class Utils {
     public static void sendClientSideMessage(Text message, boolean overlay) {
         assert MinecraftClient.getInstance().player != null;
         MinecraftClient.getInstance().player.sendMessage(message, overlay);
+    }
+
+    public static void logError(Throwable e) {
+        MinefyClient.LOGGER.error("Error occured!\n{}\n{}", e.getCause(), Arrays.toString(e.getCause().getStackTrace()));
     }
 
     public static void openUrl(String url) {
