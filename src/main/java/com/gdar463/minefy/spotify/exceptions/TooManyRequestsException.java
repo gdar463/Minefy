@@ -18,7 +18,10 @@
 package com.gdar463.minefy.spotify.exceptions;
 
 public class TooManyRequestsException extends RuntimeException {
-    public TooManyRequestsException() {
+    public final long timeOut;
+
+    public TooManyRequestsException(long timeOut) {
         super("API client made too many requests");
+        this.timeOut = timeOut;
     }
 }
