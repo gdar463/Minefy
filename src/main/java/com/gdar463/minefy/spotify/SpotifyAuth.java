@@ -17,6 +17,7 @@
 
 package com.gdar463.minefy.spotify;
 
+import com.gdar463.minefy.MinefyClient;
 import com.gdar463.minefy.config.Config;
 import com.gdar463.minefy.config.ConfigManager;
 import com.gdar463.minefy.spotify.exceptions.NoTokenSuppliedException;
@@ -101,6 +102,7 @@ public class SpotifyAuth {
                         "&refresh_token=" + config.spotifyRefreshToken +
                         "&grant_type=" + SPOTIFY_REFRESH_GRANT_TYPE))
                 .build();
+        MinefyClient.LOGGER.debug("Refreshing tokens...");
         return HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenCompose(res -> {
                     int code = res.statusCode();
