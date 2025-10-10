@@ -3,7 +3,8 @@
   "package": "com.gdar463.minefy.mixin",
   "compatibilityLevel": "JAVA_21",
   "client": [
-    "InGameHudMixin"
+    "InGameHudMixin",
+    "TextureManagerMixin"
   ],
   "injectors": {
     "defaultRequire": 1
