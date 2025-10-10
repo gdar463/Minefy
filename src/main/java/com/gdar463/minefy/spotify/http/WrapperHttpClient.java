@@ -17,6 +17,8 @@
 
 package com.gdar463.minefy.spotify.http;
 
+import com.gdar463.minefy.config.Config;
+import com.gdar463.minefy.config.ConfigManager;
 import com.gdar463.minefy.spotify.SpotifyAuth;
 import com.gdar463.minefy.util.Utils;
 
@@ -28,6 +30,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public class WrapperHttpClient {
+    public static final Config config = ConfigManager.get();
+
     public static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_1_1)
             .connectTimeout(Duration.ofSeconds(30))
@@ -36,17 +40,22 @@ public class WrapperHttpClient {
     public WrapperHttpClient() {
     }
 
-    public CompletableFuture<HttpResponse<String>> sendAsync(HttpRequest request) {
-        return HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+    public CompletableFuture<HttpResponse<String>> sendAsync(HttpRequest.Builder builder, String spotifyAccessToken) {
+        return HTTP_CLIENT.sendAsync(builder.header("Authorization", "Bearer " + spotifyAccessToken)
+                                .build(),
+                        HttpResponse.BodyHandlers.ofString())
                 .thenComposeAsync(res -> {
                     int code = res.statusCode();
                     return switch (code) {
                         case 400, 401 -> {
-                            if (SpotifyAuth.refreshTokens()) sendAsync(request);
+                            if (SpotifyAuth.refreshTokens())
+                                sendAsync(builder, config.spotifyAccessToken);
                             yield null;
                         }
                         case 429 -> {
-                            Utils.schedule(() -> sendAsync(request), res.headers().firstValueAsLong("Retry-After").orElse(30), TimeUnit.SECONDS);
+                            Utils.schedule(() -> sendAsync(builder, config.spotifyAccessToken),
+                                    res.headers().firstValueAsLong("Retry-After").orElse(30),
+                                    TimeUnit.SECONDS);
                             yield null;
                         }
                         default -> CompletableFuture.completedStage(res);

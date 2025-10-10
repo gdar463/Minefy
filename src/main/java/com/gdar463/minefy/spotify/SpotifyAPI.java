@@ -29,12 +29,11 @@ public class SpotifyAPI {
     private static final WrapperHttpClient HTTP_CLIENT = new WrapperHttpClient();
 
     public static CompletableFuture<String> getPlaybackState(String spotifyAccessToken) {
-        HttpRequest request = HttpRequest.newBuilder()
+        HttpRequest.Builder request = HttpRequest.newBuilder()
                 .uri(URI.create(API_BASE + "/me/player"))
-                .header("Authorization", "Bearer " + spotifyAccessToken)
                 .header("Content-Type", "application/json")
-                .GET().build();
-        return HTTP_CLIENT.sendAsync(request)
+                .GET();
+        return HTTP_CLIENT.sendAsync(request, spotifyAccessToken)
                 .thenCompose(res -> {
                     int code = res.statusCode();
                     if (code == 204) return CompletableFuture.completedFuture("{}");
