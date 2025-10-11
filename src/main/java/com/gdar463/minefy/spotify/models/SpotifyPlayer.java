@@ -19,7 +19,6 @@ package com.gdar463.minefy.spotify.models;
 
 import com.google.gson.JsonObject;
 
-import java.time.Duration;
 import java.util.Objects;
 
 public class SpotifyPlayer {
@@ -27,7 +26,7 @@ public class SpotifyPlayer {
 
     public boolean found;
     public boolean isPlaying;
-    public Duration progress;
+    public long progressMs;
 
     public SpotifyTrack track = SpotifyTrack.EMPTY;
 
@@ -40,7 +39,7 @@ public class SpotifyPlayer {
 
         this.found = true;
         this.isPlaying = json.get("is_playing").getAsBoolean();
-        this.progress = Duration.ofMillis(json.get("progress_ms").getAsLong());
+        this.progressMs = json.get("progress_ms").getAsLong();
 
         String trackUri = json.get("item").getAsJsonObject().get("uri").getAsString();
         if (!Objects.equals(trackUri, this.track.id))
@@ -52,7 +51,7 @@ public class SpotifyPlayer {
     public String toString() {
         return "SpotifyPlayer {\n" +
                 "\tisPlaying: " + isPlaying + "\n" +
-                "\tprogress: " + progress.toMillis() + "\n" +
+                "\tprogress: " + progressMs + "\n" +
                 "\ttrack: " + track.toString("\t") + "\n" +
                 "}";
     }
