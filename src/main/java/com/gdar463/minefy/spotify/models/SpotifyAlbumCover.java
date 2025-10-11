@@ -73,8 +73,10 @@ public class SpotifyAlbumCover {
         this.textureState = TextureState.TEXTURIZING;
         Identifier prev = this.id;
         this.id = Identifier.of(MinefyClient.MOD_ID, this.trackId);
-        if (((TextureManagerMixin) client.getTextureManager()).getTextures().get(id) != null)
+        if (((TextureManagerMixin) client.getTextureManager()).getTextures().get(id) != null) {
+            this.textureState = TextureState.READY;
             return;
+        }
         client.getTextureManager().destroyTexture(prev);
 
         MinefyClient.LOGGER.info("texturizing");

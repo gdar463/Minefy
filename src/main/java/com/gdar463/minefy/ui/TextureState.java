@@ -18,7 +18,7 @@
 package com.gdar463.minefy.ui;
 
 public enum TextureState {
-    READY,
+    NOT_READY,
     TEXTURIZING,
-    NOT_READY
+    READY
 }
