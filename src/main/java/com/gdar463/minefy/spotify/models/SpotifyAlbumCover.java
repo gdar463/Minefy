@@ -92,6 +92,8 @@ public class SpotifyAlbumCover {
                         ImageIO.write(jpeg, "PNG", pngBytes);
                         NativeImage image = NativeImage.read(new ByteArrayInputStream(pngBytes.toByteArray()));
                         client.getTextureManager().registerTexture(id, new NativeImageBackedTexture(() -> this.id.toString(), image));
+                        PlaybackHUD.INSTANCE.player.track.albumCover.width = image.getWidth();
+                        PlaybackHUD.INSTANCE.player.track.albumCover.height = image.getHeight();
                         PlaybackHUD.INSTANCE.player.track.albumCover.textureState = TextureState.READY;
                     } catch (IOException e) {
                         Utils.logError(e);
