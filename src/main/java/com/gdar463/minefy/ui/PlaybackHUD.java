@@ -35,7 +35,7 @@ import java.util.concurrent.TimeUnit;
 
 public class PlaybackHUD {
     private static final int bgColor = 0x50121212;
-    private static final int borderColor = 0x881ED760;
+    private static final int spotifyColor = 0x1ED760;
     private static final int width = 178, height = 60;
     private static final int x = 0, y = 0;
     public static PlaybackHUD INSTANCE;
@@ -62,7 +62,7 @@ public class PlaybackHUD {
         if (!ConfigManager.get().playbackHudEnabled) return;
 
         ctx.fill(x, y, x + width, y + height, bgColor);
-        Utils.drawBorder(ctx, x, y, width, height, borderColor, 2);
+        Utils.drawBorder(ctx, x, y, width, height, spotifyColor + 0x88000000, 2);
 
         if (player.track.albumCover.textureState == TextureState.READY) {
             ctx.drawTexture(RenderLayer::getGuiTextured, player.track.albumCover.id, 7, 7, 0, 0, 46, 46, player.track.albumCover.width, player.track.albumCover.height, player.track.albumCover.width, player.track.albumCover.height);
@@ -71,8 +71,8 @@ public class PlaybackHUD {
             player.track.albumCover.texturize();
         }
 
-        ctx.drawText(client.textRenderer, player.track.name, 61, 16, borderColor & 0x00FFFFFF, false);
         ctx.drawText(client.textRenderer, player.track.artists[0], 61, 28, 0xFFFFFFFF, false);
+        ctx.drawText(client.textRenderer, player.track.name, 61, 16, spotifyColor, false);
     }
 
     public void getPlayer() {
