@@ -20,6 +20,7 @@ package com.gdar463.minefy.spotify.models;
 import com.gdar463.minefy.MinefyClient;
 import com.gdar463.minefy.mixin.TextureManagerMixin;
 import com.gdar463.minefy.ui.PlaybackHUD;
+import com.gdar463.minefy.ui.TextureState;
 import com.gdar463.minefy.util.Utils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -51,8 +52,7 @@ public class SpotifyAlbumCover {
     public String url;
     public String trackId;
     public Identifier id;
-    public boolean texturized;
-    public boolean texturizing;
+    public TextureState textureState = TextureState.NOT_READY;
     public int height;
     public int width;
 
@@ -66,11 +66,11 @@ public class SpotifyAlbumCover {
         this.trackId = trackId.replace(":", "/").replaceAll("([A-Z])", "$1$1").toLowerCase();
         this.height = lastCover.get("height").getAsInt();
         this.width = lastCover.get("width").getAsInt();
-        this.texturized = false;
+        this.textureState = TextureState.NOT_READY;
     }
 
     public void texturize() {
-        texturizing = true;
+        this.textureState = TextureState.TEXTURIZING;
         Identifier prev = this.id;
         this.id = Identifier.of(MinefyClient.MOD_ID, this.trackId);
         if (((TextureManagerMixin) client.getTextureManager()).getTextures().get(id) != null)
@@ -90,11 +90,11 @@ public class SpotifyAlbumCover {
                         ImageIO.write(jpeg, "PNG", pngBytes);
                         NativeImage image = NativeImage.read(new ByteArrayInputStream(pngBytes.toByteArray()));
                         client.getTextureManager().registerTexture(id, new NativeImageBackedTexture(() -> this.id.toString(), image));
-                        PlaybackHUD.INSTANCE.player.track.albumCover.texturized = true;
+                        PlaybackHUD.INSTANCE.player.track.albumCover.textureState = TextureState.READY;
                     } catch (IOException e) {
                         Utils.logError(e);
                     } finally {
-                        PlaybackHUD.INSTANCE.player.track.albumCover.texturizing = false;
+                        PlaybackHUD.INSTANCE.player.track.albumCover.textureState = TextureState.NOT_READY;
                     }
                 }));
     }

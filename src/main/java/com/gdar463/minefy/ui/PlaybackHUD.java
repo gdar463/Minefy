@@ -64,9 +64,9 @@ public class PlaybackHUD {
         ctx.fill(x, y, x + width, y + height, bgColor);
         Utils.drawBorder(ctx, x, y, width, height, borderColor, 2);
 
-        if (player.track.albumCover.texturized) {
+        if (player.track.albumCover.textureState == TextureState.READY) {
             ctx.drawTexture(RenderLayer::getGuiTextured, player.track.albumCover.id, 7, 7, 0f, 0f, 46, 46, 46, 46);
-        } else if (!player.track.albumCover.texturizing) {
+        } else if (player.track.albumCover.textureState == TextureState.NOT_READY) {
             player.track.albumCover.texturize();
         }
 
