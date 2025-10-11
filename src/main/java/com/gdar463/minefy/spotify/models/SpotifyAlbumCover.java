@@ -60,7 +60,7 @@ public class SpotifyAlbumCover {
     }
 
     public void fromJson(JsonArray json, String trackId) {
-        JsonObject lastCover = json.get(json.size() - 1).getAsJsonObject();
+        JsonObject lastCover = json.get(json.size() - 2).getAsJsonObject();
 
         this.url = lastCover.get("url").getAsString();
         this.trackId = trackId.replace(":", "/").replaceAll("([A-Z])", "$1$1").toLowerCase();
