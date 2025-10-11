@@ -31,6 +31,7 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.text.Text;
 
+import java.time.Duration;
 import java.util.concurrent.TimeUnit;
 
 public class PlaybackHUD {
@@ -38,10 +39,16 @@ public class PlaybackHUD {
     private static final int spotifyColor = 0x1ED760;
     private static final int width = 178, height = 60;
     private static final int x = 0, y = 0;
+    private static final int barSize = 80;
+
     public static PlaybackHUD INSTANCE;
     private final MinecraftClient client;
     private final Config config;
     public SpotifyPlayer player = SpotifyPlayer.EMPTY;
+
+    private DurationSource durationSource;
+    private Duration duration;
+    private long progress;
 
     public PlaybackHUD() {
         this.client = MinecraftClient.getInstance();
@@ -71,8 +78,18 @@ public class PlaybackHUD {
             player.track.albumCover.texturize();
         }
 
-        ctx.drawText(client.textRenderer, player.track.artists[0], 61, 28, 0xFFFFFFFF, false);
-        ctx.drawText(client.textRenderer, player.track.name, 61, 16, spotifyColor, false);
+        if (this.durationSource != DurationSource.PLAYER) {
+            this.duration = this.duration.plusNanos((long) tickCounter.getDynamicDeltaTicks() * 1000);
+        }
+        this.durationSource = DurationSource.DELTA_TIME;
+
+        int lerpedAmount = Math.toIntExact(this.progress * barSize / this.duration.toMillis());
+
+        ctx.fill(61, 46, 61 + lerpedAmount, 49, spotifyColor + 0xFF000000);
+        ctx.fill(61 + lerpedAmount, 46, 61 + barSize, 49, 0xFF000000);
+
+        ctx.drawText(client.textRenderer, player.track.name, 61, 12, spotifyColor, false);
+        ctx.drawText(client.textRenderer, player.track.artists[0], 61, 25, 0xFFFFFFFF, false);
     }
 
     public void getPlayer() {
@@ -93,6 +110,9 @@ public class PlaybackHUD {
                 .thenApply(s -> this.player.fromJson(Utils.convertToJsonObject(s)))
                 .thenAccept(player -> {
                     this.player = player;
+                    this.durationSource = DurationSource.PLAYER;
+                    this.duration = player.track.duration;
+                    this.progress = player.progressMs;
                     Utils.schedule(this::getPlayer, 2, TimeUnit.SECONDS);
                 });
     }
