@@ -106,7 +106,7 @@ public class SpotifyAuth {
     }
 
     private static void processTokens(String response) {
-        JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
+        JsonObject jsonObject = JsonParser.parseString(response).getAsJsonObject();
         Config config = ConfigManager.get();
         config.spotifyAccessToken = jsonObject.get("access_token").getAsString();
         config.spotifyRefreshToken = jsonObject.get("refresh_token").getAsString();

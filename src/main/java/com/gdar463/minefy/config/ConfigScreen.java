@@ -109,7 +109,7 @@ public class ConfigScreen {
                 .generateScreen(parent);
     }
 
-    private static void testSpotifyPlayerAPI(YACLScreen screen) {
+    private static void testSpotifyPlayerAPI(YACLScreen screen, ButtonOption option) {
         SpotifyAPI.getPlaybackState(ConfigManager.get().spotifyAccessToken)
                 .thenApply(s -> new SpotifyPlayer().fromJson(Utils.convertToJsonObject(s)))
                 .thenAccept(player -> MinefyClient.LOGGER.info(player.toString()));

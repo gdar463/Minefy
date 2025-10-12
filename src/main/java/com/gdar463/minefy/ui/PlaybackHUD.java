@@ -26,8 +26,8 @@ import com.gdar463.minefy.spotify.SpotifyAuth;
 import com.gdar463.minefy.spotify.models.SpotifyPlayer;
 import com.gdar463.minefy.util.Utils;
 import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.text.Text;
 
@@ -72,7 +72,7 @@ public class PlaybackHUD {
         Utils.drawBorder(ctx, x, y, width, height, spotifyColor + 0x88000000, 2);
 
         if (player.track.albumCover.textureState == TextureState.READY) {
-            ctx.drawTexture(RenderLayer::getGuiTextured, player.track.albumCover.id, 7, 7, 0, 0, 46, 46, player.track.albumCover.width, player.track.albumCover.height, player.track.albumCover.width, player.track.albumCover.height);
+            ctx.drawTexture(RenderPipelines.GUI_TEXTURED, player.track.albumCover.id, 7, 7, 0, 0, 46, 46, player.track.albumCover.width, player.track.albumCover.height, player.track.albumCover.width, player.track.albumCover.height);
         } else if (player.track.albumCover.textureState == TextureState.NOT_READY) {
             player.track.albumCover.textureState = TextureState.TEXTURIZING;
             player.track.albumCover.texturize();
@@ -88,7 +88,7 @@ public class PlaybackHUD {
         ctx.fill(61, 46, 61 + lerpedAmount, 49, spotifyColor + 0xFF000000);
         ctx.fill(61 + lerpedAmount, 46, 61 + barSize, 49, 0xFF000000);
 
-        ctx.drawText(client.textRenderer, player.track.name, 61, 12, spotifyColor, false);
+        ctx.drawText(client.textRenderer, player.track.name, 61, 12, spotifyColor + 0xFF000000, false);
         ctx.drawText(client.textRenderer, player.track.artists[0], 61, 25, 0xFFFFFFFF, false);
     }
 
