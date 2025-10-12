@@ -24,20 +24,19 @@ import java.util.Objects;
 public class SpotifyPlayer {
     public static final SpotifyPlayer EMPTY = new SpotifyPlayer();
 
-    public boolean found;
     public boolean isPlaying;
     public long progressMs;
+    public SpotifyPlayerState state = SpotifyPlayerState.NULL;
 
     public SpotifyTrack track = SpotifyTrack.EMPTY;
 
     public SpotifyPlayer() {
-        this.found = false;
     }
 
     public SpotifyPlayer fromJson(JsonObject json) {
         if (json.isEmpty()) return this;
+        this.state = SpotifyPlayerState.PARSING;
 
-        this.found = true;
         this.isPlaying = json.get("is_playing").getAsBoolean();
         this.progressMs = json.get("progress_ms").getAsLong();
 
@@ -49,7 +48,9 @@ public class SpotifyPlayer {
 
     @Override
     public String toString() {
+        if (state == SpotifyPlayerState.NULL) return "SpotifyPlayer { NULL }";
         return "SpotifyPlayer {\n" +
+                "\tstate: " + state + "\n" +
                 "\tisPlaying: " + isPlaying + "\n" +
                 "\tprogress: " + progressMs + "\n" +
                 "\ttrack: " + track.toString("\t") + "\n" +

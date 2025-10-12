@@ -24,14 +24,17 @@ import com.gdar463.minefy.events.HudRenderEvents;
 import com.gdar463.minefy.spotify.SpotifyAPI;
 import com.gdar463.minefy.spotify.SpotifyAuth;
 import com.gdar463.minefy.spotify.models.SpotifyPlayer;
+import com.gdar463.minefy.spotify.models.SpotifyPlayerState;
 import com.gdar463.minefy.util.Utils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.text.Text;
+import org.joml.Matrix3x2fStack;
 
 import java.time.Duration;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class PlaybackHUD {
@@ -42,6 +45,9 @@ public class PlaybackHUD {
     private static final float textScale = 0.75F;
     private static final int barSize = 100;
 
+    private static final int titleMarqueeCap = 20, titleMarqueeSpaces = 4, titleMarqueeTicks = 25;
+    private static final int artistsMarqueeCap = 27, artistsMarqueeSpaces = 6, artistsMarqueeTicks = 40;
+
     public static PlaybackHUD INSTANCE;
     private final MinecraftClient client;
     private final Config config;
@@ -50,6 +56,10 @@ public class PlaybackHUD {
     private DurationSource durationSource;
     private Duration duration;
     private long progress;
+    private String trackId = "";
+
+    private TextMarquee titleMarquee;
+    private TextMarquee artistsMarquee;
 
     public PlaybackHUD() {
         this.client = MinecraftClient.getInstance();
@@ -67,7 +77,7 @@ public class PlaybackHUD {
 
     private void render(DrawContext ctx, RenderTickCounter tickCounter) {
         if (client.getDebugHud().shouldShowDebugHud()) return;
-        if (player == null || !player.found) return;
+        if (player == null || player.state != SpotifyPlayerState.READY) return;
         if (!ConfigManager.get().playbackHudEnabled) return;
 
         ctx.fill(x, y, x + width, y + height, bgColor);
@@ -90,12 +100,12 @@ public class PlaybackHUD {
         ctx.fill(61, 46, 61 + lerpedAmount, 49, spotifyColor + 0xFF000000);
         ctx.fill(61 + lerpedAmount, 46, 61 + barSize, 49, 0xFF242424);
 
-        ctx.getMatrices().pushMatrix();
-        ctx.getMatrices().translate(61, 10);
-        ctx.drawText(client.textRenderer, player.track.name, 0, 0, spotifyColor + 0xFF000000, false);
-        ctx.getMatrices().scale(textScale, textScale);
-        ctx.drawText(client.textRenderer, player.track.artists[0], 0, client.textRenderer.fontHeight + 6, 0xFFFFFFFF, false);
-        ctx.getMatrices().popMatrix();
+        Matrix3x2fStack stack = ctx.getMatrices().pushMatrix();
+        stack.translate(61, 10);
+        this.titleMarquee.render(ctx, spotifyColor + 0xFF000000, false);
+        stack.scale(textScale, textScale);
+        this.artistsMarquee.render(ctx, 0xFFFFFFFF, false, 0, client.textRenderer.fontHeight + 6);
+        stack.popMatrix();
     }
 
     public void getPlayer() {
@@ -115,10 +125,23 @@ public class PlaybackHUD {
         SpotifyAPI.getPlaybackState(config.spotifyAccessToken)
                 .thenApply(s -> this.player.fromJson(Utils.convertToJsonObject(s)))
                 .thenAccept(player -> {
-                    this.player = player;
-                    this.durationSource = DurationSource.PLAYER;
-                    this.duration = player.track.duration;
-                    this.progress = player.progressMs;
+                    if (player.state == SpotifyPlayerState.PARSING) {
+                        this.durationSource = DurationSource.PLAYER;
+                        this.duration = player.track.duration;
+                        this.progress = player.progressMs;
+                        if (!Objects.equals(player.track.id, this.trackId)) {
+                            this.trackId = player.track.id;
+                            this.titleMarquee = new TextMarquee(player.track.name,
+                                    titleMarqueeSpaces,
+                                    titleMarqueeCap,
+                                    titleMarqueeTicks);
+                            this.artistsMarquee = new TextMarquee(player.track.artistsToString(),
+                                    artistsMarqueeSpaces,
+                                    artistsMarqueeCap,
+                                    artistsMarqueeTicks);
+                        }
+                        this.player.state = SpotifyPlayerState.READY;
+                    }
                     Utils.schedule(this::getPlayer, 2, TimeUnit.SECONDS);
                 });
     }

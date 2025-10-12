@@ -22,7 +22,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -70,9 +69,18 @@ public class SpotifyTrack {
         return "SpotifyTrack {\n" + padding +
                 "\tid: " + id + "\n" + padding +
                 "\tname: " + name + "\n" + padding +
-                "\tartists: " + Arrays.toString(artists) + "\n" + padding +
+                "\tartists: " + artistsToString() + "\n" + padding +
                 "\tduration: " + duration.toMillis() + "\n" + padding +
                 "\talbumCover: " + albumCover.toString(padding + "\t") + "\n" + padding +
                 "}";
+    }
+
+    public String artistsToString() {
+        StringBuilder out = new StringBuilder();
+        for (int i = 0; i < this.artists.length; i++) {
+            out.append(artists[i]);
+            if (i != this.artists.length - 1) out.append(", ");
+        }
+        return out.toString();
     }
 }
