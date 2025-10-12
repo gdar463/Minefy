@@ -65,6 +65,7 @@ public class PlaybackHUD {
     }
 
     private void render(DrawContext ctx, RenderTickCounter tickCounter) {
+        if (client.getDebugHud().shouldShowDebugHud()) return;
         if (player == null || !player.found) return;
         if (!ConfigManager.get().playbackHudEnabled) return;
 
