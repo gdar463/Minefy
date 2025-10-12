@@ -39,6 +39,7 @@ public class PlaybackHUD {
     private static final int spotifyColor = 0x1ED760;
     private static final int width = 178, height = 60;
     private static final int x = 0, y = 0;
+    private static final float textScale = 0.75F;
     private static final int barSize = 100;
 
     public static PlaybackHUD INSTANCE;
@@ -89,8 +90,12 @@ public class PlaybackHUD {
         ctx.fill(61, 46, 61 + lerpedAmount, 49, spotifyColor + 0xFF000000);
         ctx.fill(61 + lerpedAmount, 46, 61 + barSize, 49, 0xFF000000);
 
-        ctx.drawText(client.textRenderer, player.track.name, 61, 12, spotifyColor + 0xFF000000, false);
-        ctx.drawText(client.textRenderer, player.track.artists[0], 61, 25, 0xFFFFFFFF, false);
+        ctx.getMatrices().pushMatrix();
+        ctx.getMatrices().translate(61, 10);
+        ctx.drawText(client.textRenderer, player.track.name, 0, 0, spotifyColor + 0xFF000000, false);
+        ctx.getMatrices().scale(textScale, textScale);
+        ctx.drawText(client.textRenderer, player.track.artists[0], 0, client.textRenderer.fontHeight + 6, 0xFFFFFFFF, false);
+        ctx.getMatrices().popMatrix();
     }
 
     public void getPlayer() {
