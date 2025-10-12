@@ -22,9 +22,11 @@ import com.gdar463.minefy.config.Config;
 import com.gdar463.minefy.config.ConfigManager;
 import com.gdar463.minefy.spotify.exceptions.NoTokenSuppliedException;
 import com.gdar463.minefy.spotify.server.LoginServer;
+import com.gdar463.minefy.ui.PlaybackHUD;
 import com.gdar463.minefy.util.Utils;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import net.minecraft.client.MinecraftClient;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -111,6 +113,7 @@ public class SpotifyAuth {
         config.spotifyAccessToken = jsonObject.get("access_token").getAsString();
         config.spotifyRefreshToken = jsonObject.get("refresh_token").getAsString();
         ConfigManager.save();
+        if (MinecraftClient.getInstance().player != null) PlaybackHUD.INSTANCE.getPlayer();
     }
 
     private static CompletableFuture<Void> _refreshTokens() {
