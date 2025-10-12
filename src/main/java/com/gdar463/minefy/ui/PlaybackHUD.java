@@ -88,7 +88,7 @@ public class PlaybackHUD {
         int lerpedAmount = Math.toIntExact(this.progress * barSize / this.duration.toMillis());
 
         ctx.fill(61, 46, 61 + lerpedAmount, 49, spotifyColor + 0xFF000000);
-        ctx.fill(61 + lerpedAmount, 46, 61 + barSize, 49, 0xFF000000);
+        ctx.fill(61 + lerpedAmount, 46, 61 + barSize, 49, 0xFF242424);
 
         ctx.getMatrices().pushMatrix();
         ctx.getMatrices().translate(61, 10);
