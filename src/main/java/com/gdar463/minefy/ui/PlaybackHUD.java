@@ -31,9 +31,11 @@ import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.text.Text;
+import net.minecraft.util.Util;
 import org.joml.Matrix3x2fStack;
 
 import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
@@ -42,7 +44,7 @@ public class PlaybackHUD {
     private static final int spotifyColor = 0x1ED760;
     private static final int width = 178, height = 60;
     private static final int x = 0, y = 0;
-    private static final float textScale = 0.75F;
+    private static final float artistsScale = 0.75F, barTextScale = 0.5F;
     private static final int barSize = 100;
 
     private static final int titleMarqueeCap = 20, titleMarqueeSpaces = 4, titleMarqueeTicks = 25;
@@ -55,7 +57,8 @@ public class PlaybackHUD {
 
     private DurationSource durationSource;
     private Duration duration;
-    private long progress;
+    private long lastMeasure = 0;
+    private Duration progress;
     private String trackId = "";
 
     private TextMarquee titleMarquee;
@@ -90,20 +93,30 @@ public class PlaybackHUD {
             player.track.albumCover.texturize();
         }
 
-        if (this.durationSource != DurationSource.PLAYER) {
-            this.duration = this.duration.plusNanos((long) tickCounter.getDynamicDeltaTicks() * 1000);
+        if (durationSource == DurationSource.DELTA_TIME && this.progress.getSeconds() < this.duration.getSeconds()) {
+            long measure = Util.getMeasuringTimeMs();
+            this.progress = this.progress.plusMillis(measure - lastMeasure);
+            lastMeasure = measure;
+        } else {
+            lastMeasure = Util.getMeasuringTimeMs();
+            durationSource = DurationSource.DELTA_TIME;
         }
-        this.durationSource = DurationSource.DELTA_TIME;
 
-        int lerpedAmount = Math.toIntExact(this.progress * barSize / this.duration.toMillis());
+        int lerpedAmount = Math.toIntExact(progress.toMillis() * barSize / this.duration.toMillis());
 
-        ctx.fill(61, 46, 61 + lerpedAmount, 49, spotifyColor + 0xFF000000);
-        ctx.fill(61 + lerpedAmount, 46, 61 + barSize, 49, 0xFF242424);
+        Matrix3x2fStack barStack = ctx.getMatrices().pushMatrix();
+        barStack.translate(61, 42);
+        ctx.fill(0, 6, lerpedAmount, 9, spotifyColor + 0xFF000000);
+        ctx.fill(lerpedAmount, 6, barSize, 9, 0xFF242424);
+        barStack.scale(barTextScale, barTextScale);
+        ctx.drawText(client.textRenderer, Utils.durationToString(progress), 0, 0, 0xFFFFFFFF, false);
+        ctx.drawText(client.textRenderer, Utils.durationToString(duration), barSize * 2 - 20, 0, 0xFFFFFFFF, false);
+        barStack.popMatrix();
 
         Matrix3x2fStack stack = ctx.getMatrices().pushMatrix();
         stack.translate(61, 10);
         this.titleMarquee.render(ctx, spotifyColor + 0xFF000000, false);
-        stack.scale(textScale, textScale);
+        stack.scale(artistsScale, artistsScale);
         this.artistsMarquee.render(ctx, 0xFFFFFFFF, false, 0, client.textRenderer.fontHeight + 6);
         stack.popMatrix();
     }
@@ -128,7 +141,7 @@ public class PlaybackHUD {
                     if (player.state == SpotifyPlayerState.PARSING) {
                         this.durationSource = DurationSource.PLAYER;
                         this.duration = player.track.duration;
-                        this.progress = player.progressMs;
+                        this.progress = Duration.of(player.progressMs, ChronoUnit.MILLIS);
                         if (!Objects.equals(player.track.id, this.trackId)) {
                             this.trackId = player.track.id;
                             this.titleMarquee = new TextMarquee(player.track.name,

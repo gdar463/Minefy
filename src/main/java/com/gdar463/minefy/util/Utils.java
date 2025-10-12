@@ -25,6 +25,7 @@ import net.minecraft.client.gui.DrawContext;
 import net.minecraft.text.Text;
 
 import java.io.IOException;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -54,6 +55,11 @@ public class Utils {
 
     public static void logError(Throwable e) {
         MinefyClient.LOGGER.error("Error occured!\n{}\n{}", e, Arrays.toString(e.getStackTrace()));
+    }
+
+    public static String durationToString(Duration dur) {
+        return (int) (dur.getSeconds() / 60) + ":" +
+                String.format("%02d", dur.getSeconds() % 60);
     }
 
     public static void drawBorder(DrawContext ctx, int x, int y, int width, int height, int color, int size) {
