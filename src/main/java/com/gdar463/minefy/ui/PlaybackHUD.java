@@ -39,7 +39,7 @@ public class PlaybackHUD {
     private static final int spotifyColor = 0x1ED760;
     private static final int width = 178, height = 60;
     private static final int x = 0, y = 0;
-    private static final int barSize = 80;
+    private static final int barSize = 100;
 
     public static PlaybackHUD INSTANCE;
     private final MinecraftClient client;
