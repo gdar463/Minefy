@@ -1,6 +1,7 @@
 plugins {
     id 'fabric-loom' version "${loom_version}"
     id 'maven-publish'
+    id 'it.nicolasfarabegoli.conventional-commits' version "${conv_commits_version}"
 }
 
 version = project.mod_version
@@ -33,6 +34,11 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
     modImplementation "dev.isxander:yet-another-config-lib:${project.yacl_version}"
     modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}")
+}
+
+conventionalCommits {
+    successMessage = null
+    failureMessage = "The commit message does not meet the Conventional Commits stantard. Check out CONTRIBUTING.md for more information."
 }
 
 processResources {
