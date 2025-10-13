@@ -23,7 +23,7 @@ import com.gdar463.minefy.config.builders.OptionGroupBuilder;
 import dev.isxander.yacl3.api.ConfigCategory;
 import net.minecraft.text.Text;
 
-public class PlaybackConfigCategory {
+public class HudConfigCategory {
     public static ConfigCategory create(MinefyConfig config) {
         return ConfigCategory.createBuilder()
                 .name(Text.translatable("text.minefy.config.category.hud"))

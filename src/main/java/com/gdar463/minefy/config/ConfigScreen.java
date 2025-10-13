@@ -17,7 +17,7 @@
 
 package com.gdar463.minefy.config;
 
-import com.gdar463.minefy.config.categories.PlaybackConfigCategory;
+import com.gdar463.minefy.config.categories.HudConfigCategory;
 import com.gdar463.minefy.config.categories.SpotifyConfigCategory;
 import dev.isxander.yacl3.api.YetAnotherConfigLib;
 import net.minecraft.client.gui.screen.Screen;
@@ -27,7 +27,7 @@ public class ConfigScreen {
     public static Screen generate(Screen parent) {
         return YetAnotherConfigLib.create(ConfigManager.HANDLER, ((defaults, config, builder) -> builder
                         .title(Text.translatable("text.minefy.config.title"))
-                        .category(PlaybackConfigCategory.create(config))
+                        .category(HudConfigCategory.create(config))
                         .category(SpotifyConfigCategory.create(config))
                         .save(ConfigManager::save)))
                 .generateScreen(parent);
