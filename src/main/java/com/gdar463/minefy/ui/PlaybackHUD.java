@@ -1,19 +1,19 @@
 /*
- Copyright (c) gdar463 (Dario) <dev@gdar463.com>
-
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *  Copyright (c) gdar463 (Dario) <dev@gdar463.com>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 package com.gdar463.minefy.ui;
 
@@ -47,14 +47,22 @@ import java.util.concurrent.TimeUnit;
 
 public class PlaybackHUD {
     private static final int bgColor = 0x50121212;
-    private static final int spotifyColor = 0x1ED760;
+    private static final int textColor = 0xFFFFFF;
+    private static final int accentColor = 0x1ED760;
+    private static final int emptyBarColor = 0x242424;
     private static final int width = 178, height = 60;
     private static final int x = 0, y = 0;
+    private static final int borderSize = 2;
     private static final float artistsScale = 0.75F, barTextScale = 0.5F;
-    private static final int barSize = 105;
-
+    private static final int barSizeX = 105, barSizeY = 3;
+    private static final int columnX = 61, columnY = 10;
+    private static final int barY = 42, barOffsetY = 6;
+    private static final int coverX = 7, coverY = 7;
+    private static final int coverSize = 46;
+    private static final int artistsOffsetY = 6;
     private static final int titleMarqueeCap = 20, titleMarqueeSpaces = 4, titleMarqueeTicks = 25;
     private static final int artistsMarqueeCap = 27, artistsMarqueeSpaces = 6, artistsMarqueeTicks = 40;
+
     private static final Logger LOGGER = MinefyClient.LOGGER;
     private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
     private static final MinefyConfig CONFIG = ConfigManager.get();
@@ -87,10 +95,10 @@ public class PlaybackHUD {
         if (!CONFIG.playbackHudEnabled) return;
 
         ctx.fill(x, y, x + width, y + height, bgColor);
-        DrawingUtils.drawBorder(ctx, x, y, width, height, spotifyColor + 0x88000000, 2);
+        DrawingUtils.drawBorder(ctx, x, y, width, height, accentColor + 0x88000000, borderSize);
 
         if (player.track.albumCover.textureState == TextureState.READY) {
-            ctx.drawTexture(RenderPipelines.GUI_TEXTURED, player.track.albumCover.id, 7, 7, 0, 0, 46, 46, player.track.albumCover.width, player.track.albumCover.height, player.track.albumCover.width, player.track.albumCover.height);
+            ctx.drawTexture(RenderPipelines.GUI_TEXTURED, player.track.albumCover.id, coverX, coverY, 0, 0, coverSize, coverSize, player.track.albumCover.width, player.track.albumCover.height, player.track.albumCover.width, player.track.albumCover.height);
         } else if (player.track.albumCover.textureState == TextureState.NOT_READY) {
             player.track.albumCover.textureState = TextureState.TEXTURIZING;
             player.track.albumCover.texturize();
@@ -107,22 +115,22 @@ public class PlaybackHUD {
             durationSource = DurationSource.DELTA_TIME;
         }
 
-        int lerpedAmount = Math.toIntExact(progress.toMillis() * barSize / this.duration.toMillis());
+        int lerpedAmount = Math.toIntExact(progress.toMillis() * barSizeX / this.duration.toMillis());
 
         Matrix3x2fStack barStack = ctx.getMatrices().pushMatrix();
-        barStack.translate(61, 42);
-        ctx.fill(0, 6, lerpedAmount, 9, spotifyColor + 0xFF000000);
-        ctx.fill(lerpedAmount, 6, barSize, 9, 0xFF242424);
+        barStack.translate(columnX, barY);
+        ctx.fill(0, barOffsetY, lerpedAmount, barOffsetY + barSizeY, accentColor + 0xFF000000);
+        ctx.fill(lerpedAmount, barOffsetY, barSizeX, barOffsetY + barSizeY, emptyBarColor + 0xFF000000);
         barStack.scale(barTextScale, barTextScale);
-        ctx.drawText(CLIENT.textRenderer, Utils.durationToString(progress), 0, 0, 0xFFFFFFFF, false);
-        ctx.drawText(CLIENT.textRenderer, Utils.durationToString(duration), barSize * 2 - (int) (10 / barTextScale), 0, 0xFFFFFFFF, false);
+        ctx.drawText(CLIENT.textRenderer, Utils.durationToString(progress), 0, 0, textColor + 0xFF000000, false);
+        ctx.drawText(CLIENT.textRenderer, Utils.durationToString(duration), barSizeX * 2 - (int) (10 / barTextScale), 0, textColor + 0xFF000000, false);
         barStack.popMatrix();
 
         Matrix3x2fStack stack = ctx.getMatrices().pushMatrix();
-        stack.translate(61, 10);
-        this.titleMarquee.render(ctx, spotifyColor + 0xFF000000, false);
+        stack.translate(columnX, columnY);
+        this.titleMarquee.render(ctx, accentColor + 0xFF000000, false);
         stack.scale(artistsScale, artistsScale);
-        this.artistsMarquee.render(ctx, 0xFFFFFFFF, false, 0, CLIENT.textRenderer.fontHeight + 6);
+        this.artistsMarquee.render(ctx, textColor + 0xFF000000, false, 0, CLIENT.textRenderer.fontHeight + artistsOffsetY);
         stack.popMatrix();
     }
 
