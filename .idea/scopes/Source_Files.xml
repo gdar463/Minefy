@@ -1,0 +1,3 @@
+<component name="DependencyValidationManager">
+  <scope name="Source Files" pattern="src[Minefy.main]:com.gdar463.minefy..*" />
+</component>
