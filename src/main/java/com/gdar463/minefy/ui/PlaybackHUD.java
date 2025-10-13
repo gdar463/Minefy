@@ -128,7 +128,7 @@ public class PlaybackHUD {
         int lerpedAmount = Math.toIntExact(progress.toMillis() * HUD_THEME.bar.sizeX / this.duration.toMillis());
 
         Matrix3x2fStack barStack = ctx.getMatrices().pushMatrix();
-        barStack.translate(HUD_THEME.sizes.columnX, HUD_THEME.bar.Y);
+        barStack.translate(HUD_THEME.sizes.columnX, HUD_THEME.bar.y);
         ctx.fill(0, HUD_THEME.bar.progressY, lerpedAmount, HUD_THEME.bar.progressY + HUD_THEME.bar.sizeY, HUD_THEME.colors.accentColor.getRGB());
         ctx.fill(lerpedAmount, HUD_THEME.bar.progressY, HUD_THEME.bar.sizeX, HUD_THEME.bar.progressY + HUD_THEME.bar.sizeY, HUD_THEME.colors.emptyBarColor.getRGB());
         barStack.scale(HUD_THEME.bar.textScale, HUD_THEME.bar.textScale);

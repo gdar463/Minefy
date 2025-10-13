@@ -68,7 +68,7 @@ public class HudConfig {
             @SerialEntry
             public int sizeX = 105, sizeY = 3;
             @SerialEntry
-            public int Y = 42, progressY = 6;
+            public int y = 42, progressY = 6;
             @SerialEntry
             public float textScale = 0.5F;
         }
