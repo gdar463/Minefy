@@ -21,6 +21,7 @@ import com.gdar463.minefy.MinefyClient;
 import com.gdar463.minefy.config.ConfigManager;
 import com.gdar463.minefy.config.MinefyConfig;
 import com.gdar463.minefy.spotify.exceptions.NoTokenSuppliedException;
+import com.gdar463.minefy.spotify.exceptions.RefreshTokenRevokedException;
 import com.gdar463.minefy.spotify.server.LoginServer;
 import com.gdar463.minefy.ui.PlaybackHUD;
 import com.gdar463.minefy.util.DesktopUtils;
@@ -102,8 +103,11 @@ public class SpotifyAuth {
 
     public static boolean refreshTokens() {
         return _refreshTokens().thenApply(v -> true).exceptionallyAsync(error -> {
-            if (error.getCause() instanceof NoTokenSuppliedException) {
-                LOGGER.error(error.getMessage());
+            if (error.getCause() instanceof RefreshTokenRevokedException) {
+                CONFIG.spotifyAccessToken = "";
+                CONFIG.spotifyRefreshToken = "";
+                ConfigManager.save();
+                logError(error.getCause());
                 return false;
             }
             logError(error.getCause());
@@ -133,6 +137,9 @@ public class SpotifyAuth {
                     int code = res.statusCode();
                     if (code == 400 && res.body().contains("refresh")) {
                         throw new NoTokenSuppliedException();
+                    }
+                    if (code == 401 && res.body().contains("Invalid refresh")) {
+                        throw new RefreshTokenRevokedException();
                     }
                     return CompletableFuture.completedStage(res.body());
                 }).thenAccept(SpotifyAuth::processTokens);
