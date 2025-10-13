@@ -41,7 +41,7 @@ public class WrapperHttpClient {
     }
 
     public CompletableFuture<HttpResponse<String>> sendAsync(HttpRequest.Builder builder, String spotifyAccessToken) {
-        return HTTP_CLIENT.sendAsync(builder.header("Authorization", "Bearer " + spotifyAccessToken)
+        return HTTP_CLIENT.sendAsync(builder.setHeader("Authorization", "Bearer " + spotifyAccessToken)
                                 .build(),
                         HttpResponse.BodyHandlers.ofString())
                 .thenComposeAsync(res -> {
