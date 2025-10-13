@@ -28,7 +28,7 @@ import java.awt.*;
 public class ColorOptionBuilder {
     public static Option.Builder<Color> create(@Translatable String nameKey,
                                                @Translatable String descriptionKey) {
-        return create(nameKey, descriptionKey, false);
+        return create(nameKey, descriptionKey, true);
     }
 
     public static Option.Builder<Color> create(@Translatable String nameKey,
