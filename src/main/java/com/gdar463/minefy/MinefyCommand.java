@@ -34,9 +34,8 @@ public class MinefyCommand {
                                 .executes(MinefyCommand::loginToSpotify))
                         .then(ClientCommandManager.literal("config")
                                 .executes(MinefyCommand::openConfigScreen))
-                        .then(ClientCommandManager.literal("debug")
-                                .then(ClientCommandManager.literal("get_player")
-                                        .executes(MinefyCommand::getPlayer)))));
+                        .then(ClientCommandManager.literal("reload_player")
+                                .executes(MinefyCommand::reloadPlayer))));
         MinefyClient.LOGGER.debug("ConfigCommand registered");
     }
 
@@ -50,7 +49,7 @@ public class MinefyCommand {
         return 0;
     }
 
-    private static int getPlayer(CommandContext<FabricClientCommandSource> ctx) {
+    private static int reloadPlayer(CommandContext<FabricClientCommandSource> ctx) {
         PlaybackHUD.INSTANCE.getPlayer();
         return 0;
     }
