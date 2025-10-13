@@ -26,8 +26,8 @@ import net.minecraft.text.Text;
 public class IntegerFieldOptionBuilder {
     public static Option.Builder<Integer> create(@Translatable String nameKey,
                                                  @Translatable String descriptionKey,
-                                                 int max,
-                                                 int min) {
+                                                 int min,
+                                                 int max) {
         return Option.<Integer>createBuilder()
                 .name(Text.translatable(nameKey))
                 .description(OptionDescription.of(Text.translatable(descriptionKey)))
