@@ -22,7 +22,7 @@ import net.minecraft.client.gui.DrawContext;
 import java.awt.*;
 
 public class DrawingUtils {
-    public static int getRGBA(Color color) {
+    public static int getARGB(Color color) {
         return color.getAlpha() * 0x1000000 + color.getRGB();
     }
 
