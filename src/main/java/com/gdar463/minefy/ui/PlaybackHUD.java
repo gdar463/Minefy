@@ -115,7 +115,7 @@ public class PlaybackHUD {
         ctx.fill(lerpedAmount, 6, barSize, 9, 0xFF242424);
         barStack.scale(barTextScale, barTextScale);
         ctx.drawText(CLIENT.textRenderer, Utils.durationToString(progress), 0, 0, 0xFFFFFFFF, false);
-        ctx.drawText(CLIENT.textRenderer, Utils.durationToString(duration), barSize * 2 - 20, 0, 0xFFFFFFFF, false);
+        ctx.drawText(CLIENT.textRenderer, Utils.durationToString(duration), barSize * 2 - (int) (10 / barTextScale), 0, 0xFFFFFFFF, false);
         barStack.popMatrix();
 
         Matrix3x2fStack stack = ctx.getMatrices().pushMatrix();
