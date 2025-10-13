@@ -51,7 +51,7 @@ public class PlaybackHUD {
     private static final int width = 178, height = 60;
     private static final int x = 0, y = 0;
     private static final float artistsScale = 0.75F, barTextScale = 0.5F;
-    private static final int barSize = 100;
+    private static final int barSize = 105;
 
     private static final int titleMarqueeCap = 20, titleMarqueeSpaces = 4, titleMarqueeTicks = 25;
     private static final int artistsMarqueeCap = 27, artistsMarqueeSpaces = 6, artistsMarqueeTicks = 40;
