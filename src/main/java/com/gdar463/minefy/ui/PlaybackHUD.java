@@ -96,7 +96,9 @@ public class PlaybackHUD {
             player.track.albumCover.texturize();
         }
 
-        if (durationSource == DurationSource.DELTA_TIME && this.progress.getSeconds() < this.duration.getSeconds()) {
+        if (durationSource == DurationSource.DELTA_TIME &&
+                this.progress.getSeconds() < this.duration.getSeconds() &&
+                this.player.isPlaying) {
             long measure = Util.getMeasuringTimeMs();
             this.progress = this.progress.plusMillis(measure - lastMeasure);
             lastMeasure = measure;
