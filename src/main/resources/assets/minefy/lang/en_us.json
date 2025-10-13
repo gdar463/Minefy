@@ -22,6 +22,6 @@
   "text.minefy.config.spotify.debug.name": "Debug",
   "text.minefy.config.spotify.debug.description": "Debug tests.",
   "text.minefy.config.spotify.debug.player.name": "Test Player",
-  "text.minefy.config.spotify.config.debug.player.description": "Check console for log afterwards.",
+  "text.minefy.config.spotify.debug.player.description": "Check console for log afterwards.",
   "text.minefy.config.hud.playback.enabled.description": "Toggle for Playback HUD"
 }
