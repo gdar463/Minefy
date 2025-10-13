@@ -19,7 +19,13 @@ package com.gdar463.minefy.util;
 
 import net.minecraft.client.gui.DrawContext;
 
+import java.awt.*;
+
 public class DrawingUtils {
+    public static int getRGBA(Color color) {
+        return color.getAlpha() * 0x1000000 + color.getRGB();
+    }
+
     public static void drawBorder(DrawContext ctx, int x, int y, int width, int height, int color, int size) {
         ctx.fill(x, y, x + width, y + size, color);
         ctx.fill(x, y + height - size, x + width, y + height, color);

@@ -40,16 +40,18 @@ import net.minecraft.util.Util;
 import org.joml.Matrix3x2fStack;
 import org.slf4j.Logger;
 
+import java.awt.*;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class PlaybackHUD {
-    private static final int bgColor = 0x50121212;
-    private static final int textColor = 0xFFFFFF;
-    private static final int accentColor = 0x1ED760;
-    private static final int emptyBarColor = 0x242424;
+    private static final Color bgColor = new Color(0x50121212, true);
+    private static final Color textColor = new Color(0xFFFFFFFF, true);
+    private static final Color borderColor = new Color(0x881ED760, true);
+    private static final Color accentColor = new Color(0xFF1ED760, true);
+    private static final Color emptyBarColor = new Color(0xFF242424, true);
     private static final int width = 178, height = 60;
     private static final int x = 0, y = 0;
     private static final int borderSize = 2;
@@ -94,8 +96,8 @@ public class PlaybackHUD {
         if (player == null || player.state != SpotifyPlayerState.READY) return;
         if (!CONFIG.hud.enabled) return;
 
-        ctx.fill(x, y, x + width, y + height, bgColor);
-        DrawingUtils.drawBorder(ctx, x, y, width, height, accentColor + 0x88000000, borderSize);
+        ctx.fill(x, y, x + width, y + height, DrawingUtils.getRGBA(bgColor));
+        DrawingUtils.drawBorder(ctx, x, y, width, height, DrawingUtils.getRGBA(borderColor), borderSize);
 
         if (player.track.albumCover.textureState == TextureState.READY) {
             ctx.drawTexture(RenderPipelines.GUI_TEXTURED, player.track.albumCover.id, coverX, coverY, 0, 0, coverSize, coverSize, player.track.albumCover.width, player.track.albumCover.height, player.track.albumCover.width, player.track.albumCover.height);
@@ -119,18 +121,18 @@ public class PlaybackHUD {
 
         Matrix3x2fStack barStack = ctx.getMatrices().pushMatrix();
         barStack.translate(columnX, barY);
-        ctx.fill(0, barOffsetY, lerpedAmount, barOffsetY + barSizeY, accentColor + 0xFF000000);
-        ctx.fill(lerpedAmount, barOffsetY, barSizeX, barOffsetY + barSizeY, emptyBarColor + 0xFF000000);
+        ctx.fill(0, barOffsetY, lerpedAmount, barOffsetY + barSizeY, DrawingUtils.getRGBA(accentColor));
+        ctx.fill(lerpedAmount, barOffsetY, barSizeX, barOffsetY + barSizeY, DrawingUtils.getRGBA(emptyBarColor));
         barStack.scale(barTextScale, barTextScale);
-        ctx.drawText(CLIENT.textRenderer, Utils.durationToString(progress), 0, 0, textColor + 0xFF000000, false);
-        ctx.drawText(CLIENT.textRenderer, Utils.durationToString(duration), barSizeX * 2 - (int) (10 / barTextScale), 0, textColor + 0xFF000000, false);
+        ctx.drawText(CLIENT.textRenderer, Utils.durationToString(progress), 0, 0, DrawingUtils.getRGBA(textColor), false);
+        ctx.drawText(CLIENT.textRenderer, Utils.durationToString(duration), barSizeX * 2 - (int) (10 / barTextScale), 0, DrawingUtils.getRGBA(textColor), false);
         barStack.popMatrix();
 
         Matrix3x2fStack stack = ctx.getMatrices().pushMatrix();
         stack.translate(columnX, columnY);
-        this.titleMarquee.render(ctx, accentColor + 0xFF000000, false);
+        this.titleMarquee.render(ctx, DrawingUtils.getRGBA(accentColor), false);
         stack.scale(artistsScale, artistsScale);
-        this.artistsMarquee.render(ctx, textColor + 0xFF000000, false, 0, CLIENT.textRenderer.fontHeight + artistsOffsetY);
+        this.artistsMarquee.render(ctx, DrawingUtils.getRGBA(textColor), false, 0, CLIENT.textRenderer.fontHeight + artistsOffsetY);
         stack.popMatrix();
     }
 
