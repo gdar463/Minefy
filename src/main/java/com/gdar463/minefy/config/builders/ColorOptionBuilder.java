@@ -28,9 +28,16 @@ import java.awt.*;
 public class ColorOptionBuilder {
     public static Option.Builder<Color> create(@Translatable String nameKey,
                                                @Translatable String descriptionKey) {
+        return create(nameKey, descriptionKey, false);
+    }
+
+    public static Option.Builder<Color> create(@Translatable String nameKey,
+                                               @Translatable String descriptionKey,
+                                               boolean hasAlpha) {
         return Option.<Color>createBuilder()
                 .name(Text.translatable(nameKey))
                 .description(OptionDescription.of(Text.translatable(descriptionKey)))
-                .controller(ColorControllerBuilder::create);
+                .controller(opt -> ColorControllerBuilder.create(opt)
+                        .allowAlpha(hasAlpha));
     }
 }
