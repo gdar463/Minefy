@@ -26,8 +26,8 @@ import net.minecraft.text.Text;
 public class FloatFieldOptionBuilder {
     public static Option.Builder<Float> create(@Translatable String nameKey,
                                                @Translatable String descriptionKey,
-                                               float max,
-                                               float min) {
+                                               float min,
+                                               float max) {
         return Option.<Float>createBuilder()
                 .name(Text.translatable(nameKey))
                 .description(OptionDescription.of(Text.translatable(descriptionKey)))
