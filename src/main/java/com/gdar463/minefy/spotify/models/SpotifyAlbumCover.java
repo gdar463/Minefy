@@ -19,15 +19,15 @@ package com.gdar463.minefy.spotify.models;
 
 import com.gdar463.minefy.MinefyClient;
 import com.gdar463.minefy.mixin.TextureManagerMixin;
-import com.gdar463.minefy.ui.PlaybackHUD;
-import com.gdar463.minefy.ui.TextureState;
-import com.gdar463.minefy.util.Utils;
+import com.gdar463.minefy.spotify.models.state.TextureState;
+import com.gdar463.minefy.util.ClientUtils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.texture.NativeImage;
 import net.minecraft.client.texture.NativeImageBackedTexture;
 import net.minecraft.util.Identifier;
+import org.slf4j.Logger;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -43,11 +43,12 @@ import java.time.Duration;
 public class SpotifyAlbumCover {
     public static final SpotifyAlbumCover EMPTY = new SpotifyAlbumCover();
 
-    public static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
+    private static final Logger LOGGER = MinefyClient.LOGGER;
+    private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_1_1)
             .connectTimeout(Duration.ofSeconds(30))
             .build();
-    private static final MinecraftClient client = MinecraftClient.getInstance();
+    private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
 
     public String url;
     public String trackId;
@@ -73,32 +74,31 @@ public class SpotifyAlbumCover {
         this.textureState = TextureState.TEXTURIZING;
         Identifier prev = this.id;
         this.id = Identifier.of(MinefyClient.MOD_ID, this.trackId);
-        if (((TextureManagerMixin) client.getTextureManager()).getTextures().get(id) != null) {
+        if (((TextureManagerMixin) CLIENT.getTextureManager()).getTextures().get(id) != null) {
             this.textureState = TextureState.READY;
             return;
         }
-        client.getTextureManager().destroyTexture(prev);
+        CLIENT.getTextureManager().destroyTexture(prev);
 
-        MinefyClient.LOGGER.info("texturizing");
+        LOGGER.debug("texturizing");
         HTTP_CLIENT.sendAsync(HttpRequest.newBuilder()
                                 .uri(URI.create(this.url))
                                 .build(),
                         HttpResponse.BodyHandlers.ofByteArray())
                 .thenApply(HttpResponse::body)
-                .thenAccept(bytes -> client.execute(() -> {
+                .thenAccept(bytes -> CLIENT.execute(() -> {
                     try {
                         BufferedImage jpeg = ImageIO.read(new ByteArrayInputStream(bytes));
                         ByteArrayOutputStream pngBytes = new ByteArrayOutputStream();
                         ImageIO.write(jpeg, "PNG", pngBytes);
                         NativeImage image = NativeImage.read(new ByteArrayInputStream(pngBytes.toByteArray()));
-                        client.getTextureManager().registerTexture(id, new NativeImageBackedTexture(() -> this.id.toString(), image));
-                        PlaybackHUD.INSTANCE.player.track.albumCover.width = image.getWidth();
-                        PlaybackHUD.INSTANCE.player.track.albumCover.height = image.getHeight();
-                        PlaybackHUD.INSTANCE.player.track.albumCover.textureState = TextureState.READY;
+                        CLIENT.getTextureManager().registerTexture(id, new NativeImageBackedTexture(() -> this.id.toString(), image));
+                        this.width = image.getWidth();
+                        this.height = image.getHeight();
+                        this.textureState = TextureState.READY;
                     } catch (IOException e) {
-                        Utils.logError(e);
-                    } finally {
-                        PlaybackHUD.INSTANCE.player.track.albumCover.textureState = TextureState.NOT_READY;
+                        this.textureState = TextureState.NOT_READY;
+                        ClientUtils.logError(e);
                     }
                 }));
     }

@@ -17,10 +17,9 @@
 
 package com.gdar463.minefy.spotify.server;
 
-import com.gdar463.minefy.MinefyClient;
-import com.gdar463.minefy.util.Utils;
+import com.gdar463.minefy.util.ClientUtils;
+import com.gdar463.minefy.util.Scheduler;
 import com.sun.net.httpserver.HttpServer;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.Text;
 
 import java.io.IOException;
@@ -44,14 +43,13 @@ public class LoginServer {
                 scheduleTimeout();
             }
         } catch (IOException e) {
-            MinefyClient.LOGGER.error(e.getMessage());
-            assert MinecraftClient.getInstance().player != null;
-            MinecraftClient.getInstance().player.sendMessage(Text.of("Failed to start Callback Server"), false);
+            ClientUtils.logError(e);
+            ClientUtils.sendClientSideMessage(Text.of("Failed to start Callback Server"));
         }
     }
 
     private static void scheduleTimeout() {
-        timeout = Utils.schedule(() -> {
+        timeout = Scheduler.schedule(() -> {
             if (server != null) {
                 server.stop(0);
                 destroyServer();

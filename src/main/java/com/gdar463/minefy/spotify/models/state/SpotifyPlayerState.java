@@ -15,9 +15,10 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.gdar463.minefy.ui;
+package com.gdar463.minefy.spotify.models.state;
 
-public enum DurationSource {
-    PLAYER,
-    DELTA_TIME
+public enum SpotifyPlayerState {
+    NULL,
+    PARSING,
+    READY
 }

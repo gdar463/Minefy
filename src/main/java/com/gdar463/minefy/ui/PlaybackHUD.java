@@ -24,7 +24,12 @@ import com.gdar463.minefy.events.HudRenderEvents;
 import com.gdar463.minefy.spotify.SpotifyAPI;
 import com.gdar463.minefy.spotify.SpotifyAuth;
 import com.gdar463.minefy.spotify.models.SpotifyPlayer;
-import com.gdar463.minefy.spotify.models.SpotifyPlayerState;
+import com.gdar463.minefy.spotify.models.state.SpotifyPlayerState;
+import com.gdar463.minefy.spotify.models.state.TextureState;
+import com.gdar463.minefy.ui.state.DurationSource;
+import com.gdar463.minefy.util.ClientUtils;
+import com.gdar463.minefy.util.DrawingUtils;
+import com.gdar463.minefy.util.Scheduler;
 import com.gdar463.minefy.util.Utils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.RenderPipelines;
@@ -33,6 +38,7 @@ import net.minecraft.client.render.RenderTickCounter;
 import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import org.joml.Matrix3x2fStack;
+import org.slf4j.Logger;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
@@ -49,10 +55,10 @@ public class PlaybackHUD {
 
     private static final int titleMarqueeCap = 20, titleMarqueeSpaces = 4, titleMarqueeTicks = 25;
     private static final int artistsMarqueeCap = 27, artistsMarqueeSpaces = 6, artistsMarqueeTicks = 40;
-
+    private static final Logger LOGGER = MinefyClient.LOGGER;
+    private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
+    private static final Config CONFIG = ConfigManager.get();
     public static PlaybackHUD INSTANCE;
-    private final MinecraftClient client;
-    private final Config config;
     public SpotifyPlayer player = SpotifyPlayer.EMPTY;
 
     private DurationSource durationSource;
@@ -65,13 +71,10 @@ public class PlaybackHUD {
     private TextMarquee artistsMarquee;
 
     public PlaybackHUD() {
-        this.client = MinecraftClient.getInstance();
-        this.config = ConfigManager.get();
-
         HudRenderEvents.AFTER_MAIN_HUD.register(this::render);
-        Utils.schedule(() -> getPlayer(true), 2, TimeUnit.SECONDS);
+        Scheduler.schedule(() -> getPlayer(true), 2, TimeUnit.SECONDS);
 
-        MinefyClient.LOGGER.debug("PlaybackHUD registered");
+        LOGGER.debug("PlaybackHUD registered");
     }
 
     public static void init() {
@@ -79,12 +82,12 @@ public class PlaybackHUD {
     }
 
     private void render(DrawContext ctx, RenderTickCounter tickCounter) {
-        if (client.getDebugHud().shouldShowDebugHud()) return;
+        if (CLIENT.getDebugHud().shouldShowDebugHud()) return;
         if (player == null || player.state != SpotifyPlayerState.READY) return;
-        if (!ConfigManager.get().playbackHudEnabled) return;
+        if (!CONFIG.playbackHudEnabled) return;
 
         ctx.fill(x, y, x + width, y + height, bgColor);
-        Utils.drawBorder(ctx, x, y, width, height, spotifyColor + 0x88000000, 2);
+        DrawingUtils.drawBorder(ctx, x, y, width, height, spotifyColor + 0x88000000, 2);
 
         if (player.track.albumCover.textureState == TextureState.READY) {
             ctx.drawTexture(RenderPipelines.GUI_TEXTURED, player.track.albumCover.id, 7, 7, 0, 0, 46, 46, player.track.albumCover.width, player.track.albumCover.height, player.track.albumCover.width, player.track.albumCover.height);
@@ -109,15 +112,15 @@ public class PlaybackHUD {
         ctx.fill(0, 6, lerpedAmount, 9, spotifyColor + 0xFF000000);
         ctx.fill(lerpedAmount, 6, barSize, 9, 0xFF242424);
         barStack.scale(barTextScale, barTextScale);
-        ctx.drawText(client.textRenderer, Utils.durationToString(progress), 0, 0, 0xFFFFFFFF, false);
-        ctx.drawText(client.textRenderer, Utils.durationToString(duration), barSize * 2 - 20, 0, 0xFFFFFFFF, false);
+        ctx.drawText(CLIENT.textRenderer, Utils.durationToString(progress), 0, 0, 0xFFFFFFFF, false);
+        ctx.drawText(CLIENT.textRenderer, Utils.durationToString(duration), barSize * 2 - 20, 0, 0xFFFFFFFF, false);
         barStack.popMatrix();
 
         Matrix3x2fStack stack = ctx.getMatrices().pushMatrix();
         stack.translate(61, 10);
         this.titleMarquee.render(ctx, spotifyColor + 0xFF000000, false);
         stack.scale(artistsScale, artistsScale);
-        this.artistsMarquee.render(ctx, 0xFFFFFFFF, false, 0, client.textRenderer.fontHeight + 6);
+        this.artistsMarquee.render(ctx, 0xFFFFFFFF, false, 0, CLIENT.textRenderer.fontHeight + 6);
         stack.popMatrix();
     }
 
@@ -126,16 +129,17 @@ public class PlaybackHUD {
     }
 
     public void getPlayer(boolean firstRun) {
-        if (!firstRun && (config.spotifyAccessToken == null || config.spotifyAccessToken.isEmpty())) {
-            if (config.spotifyRefreshToken == null || config.spotifyRefreshToken.isEmpty()) {
-                MinefyClient.LOGGER.error("tried to go to api without refresh token");
-                Utils.sendClientSideMessage(Text.of("Please login, before trying to access anything"));
+        if (!firstRun && (CONFIG.spotifyAccessToken == null || CONFIG.spotifyAccessToken.isEmpty())) {
+            if (CONFIG.spotifyRefreshToken == null || CONFIG.spotifyRefreshToken.isEmpty()) {
+                LOGGER.error("tried to go to api without refresh token");
+                ClientUtils.sendClientSideMessage(Text.of("Please login, before trying to access anything"));
                 return;
             }
-            if (SpotifyAuth.refreshTokens()) Utils.schedule(this::getPlayer, 2, TimeUnit.SECONDS);
+            if (SpotifyAuth.refreshTokens())
+                Scheduler.schedule(this::getPlayer, 2, TimeUnit.SECONDS);
             return;
         }
-        SpotifyAPI.getPlaybackState(config.spotifyAccessToken)
+        SpotifyAPI.getPlaybackState(CONFIG.spotifyAccessToken)
                 .thenApply(s -> this.player.fromJson(Utils.convertToJsonObject(s)))
                 .thenAccept(player -> {
                     if (player.state == SpotifyPlayerState.PARSING) {
@@ -155,7 +159,7 @@ public class PlaybackHUD {
                         }
                         this.player.state = SpotifyPlayerState.READY;
                     }
-                    Utils.schedule(this::getPlayer, 2, TimeUnit.SECONDS);
+                    Scheduler.schedule(this::getPlayer, 2, TimeUnit.SECONDS);
                 });
     }
 }

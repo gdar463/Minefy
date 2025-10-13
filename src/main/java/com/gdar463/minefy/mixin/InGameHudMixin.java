@@ -42,7 +42,7 @@ public abstract class InGameHudMixin {
 
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/hud/InGameHud;renderChat(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/client/render/RenderTickCounter;)V"))
     private void minefy$beforeChat(DrawContext context, RenderTickCounter tickCounter, CallbackInfo ci) {
-        HudRenderEvents.AFTER_MAIN_HUD.invoker().onRender(context, tickCounter);
+        HudRenderEvents.BEFORE_CHAT.invoker().onRender(context, tickCounter);
     }
 
     @Inject(method = "render", at = @At("TAIL"))

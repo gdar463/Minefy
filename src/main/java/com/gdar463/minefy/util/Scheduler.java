@@ -15,10 +15,22 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.gdar463.minefy.spotify.models;
+package com.gdar463.minefy.util;
 
-public enum SpotifyPlayerState {
-    NULL,
-    PARSING,
-    READY
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
+
+public class Scheduler {
+    private static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(5,
+            new ThreadFactoryBuilder()
+                    .setNameFormat("MinefyThread-%d")
+                    .build());
+
+    public static ScheduledFuture<?> schedule(Runnable task, long delay, TimeUnit unit) {
+        return SCHEDULER.schedule(task, delay, unit);
+    }
 }

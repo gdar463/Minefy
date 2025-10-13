@@ -15,13 +15,9 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.gdar463.minefy.spotify.exceptions;
+package com.gdar463.minefy.ui.state;
 
-public class TooManyRequestsException extends RuntimeException {
-    public final long timeOut;
-
-    public TooManyRequestsException(long timeOut) {
-        super("API client made too many requests");
-        this.timeOut = timeOut;
-    }
+public enum DurationSource {
+    PLAYER,
+    DELTA_TIME
 }

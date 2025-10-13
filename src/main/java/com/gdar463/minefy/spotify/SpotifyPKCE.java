@@ -24,7 +24,7 @@ import java.security.SecureRandom;
 import java.util.Base64;
 
 public class SpotifyPKCE {
-    public static final int CODE_VERIFIER_LENGTH = 96;
+    private static final int CODE_VERIFIER_LENGTH = 96;
 
     public String codeVerifier;
 

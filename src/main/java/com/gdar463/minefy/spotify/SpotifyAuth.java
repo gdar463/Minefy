@@ -23,10 +23,10 @@ import com.gdar463.minefy.config.ConfigManager;
 import com.gdar463.minefy.spotify.exceptions.NoTokenSuppliedException;
 import com.gdar463.minefy.spotify.server.LoginServer;
 import com.gdar463.minefy.ui.PlaybackHUD;
-import com.gdar463.minefy.util.Utils;
+import com.gdar463.minefy.util.DesktopUtils;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import net.minecraft.client.MinecraftClient;
+import org.slf4j.Logger;
 
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -35,38 +35,42 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;
 
-import static com.gdar463.minefy.util.Utils.logError;
+import static com.gdar463.minefy.util.ClientUtils.logError;
+import static com.gdar463.minefy.util.Utils.convertToJsonObject;
 
 public class SpotifyAuth {
     // For Auth Url
-    public static final String SPOTIFY_AUTH_URL = "https://accounts.spotify.com/authorize";
-    public static final String SPOTIFY_SCOPE = "user-read-currently-playing%20user-modify-playback-state%20user-read-playback-state%20user-read-private%20user-read-email";
-    public static final String SPOTIFY_RESPONSE_TYPE = "code";
-    public static final String SPOTIFY_CODE_METHOD = "S256";
+    private static final String SPOTIFY_AUTH_URL = "https://accounts.spotify.com/authorize";
+    private static final String SPOTIFY_SCOPE = "user-read-currently-playing%20user-modify-playback-state%20user-read-playback-state%20user-read-private%20user-read-email";
+    private static final String SPOTIFY_RESPONSE_TYPE = "code";
+    private static final String SPOTIFY_CODE_METHOD = "S256";
 
     // For Code exchange
-    public static final String SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token";
-    public static final String SPOTIFY_CONTENT_TYPE = "application/x-www-form-urlencoded";
-    public static final String SPOTIFY_CODE_GRANT_TYPE = "authorization_code";
+    private static final String SPOTIFY_TOKEN_URL = "https://accounts.spotify.com/api/token";
+    private static final String SPOTIFY_CONTENT_TYPE = "application/x-www-form-urlencoded";
+    private static final String SPOTIFY_CODE_GRANT_TYPE = "authorization_code";
 
     // For Refresh token
-    public static final String SPOTIFY_REFRESH_GRANT_TYPE = "refresh_token";
+    private static final String SPOTIFY_REFRESH_GRANT_TYPE = "refresh_token";
 
     // From Config
-    public static final String SPOTIFY_CLIENT_ID;
-    public static final String SPOTIFY_REDIRECT_URI;
-    public static final int SPOTIFY_CALLBACK_PORT;
-    private static final SpotifyPKCE PKCE_ISTANCE = new SpotifyPKCE();
+    private static final String SPOTIFY_CLIENT_ID;
+    private static final String SPOTIFY_REDIRECT_URI;
+    private static final int SPOTIFY_CALLBACK_PORT;
+
+    private static final Logger LOGGER = MinefyClient.LOGGER;
+    private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
+    private static final Config CONFIG = ConfigManager.get();
+    private static final SpotifyPKCE PKCE_INSTANCE = new SpotifyPKCE();
     private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_1_1)
             .connectTimeout(Duration.ofSeconds(30))
             .build();
 
     static {
-        Config config = ConfigManager.get();
-        SPOTIFY_CLIENT_ID = config.spotifyClientId;
-        SPOTIFY_REDIRECT_URI = config.spotifyRedirectUri;
-        SPOTIFY_CALLBACK_PORT = config.spotifyCallbackPort;
+        SPOTIFY_CLIENT_ID = CONFIG.spotifyClientId;
+        SPOTIFY_REDIRECT_URI = CONFIG.spotifyRedirectUri;
+        SPOTIFY_CALLBACK_PORT = CONFIG.spotifyCallbackPort;
     }
 
     public static void startAuthProcess() {
@@ -76,9 +80,9 @@ public class SpotifyAuth {
                 "&redirect_uri=" + SPOTIFY_REDIRECT_URI +
                 "&scope=" + SPOTIFY_SCOPE +
                 "&code_challenge_method=" + SPOTIFY_CODE_METHOD +
-                "&code_challenge=" + PKCE_ISTANCE.getCodeChallenge();
+                "&code_challenge=" + PKCE_INSTANCE.getCodeChallenge();
         LoginServer.createServer(SPOTIFY_CALLBACK_PORT);
-        Utils.openUrl(authUrl);
+        DesktopUtils.openUrl(authUrl);
     }
 
     public static void processCode(String code) {
@@ -89,7 +93,7 @@ public class SpotifyAuth {
                         "&code=" + code.replace("code=", "") +
                         "&redirect_uri=" + SPOTIFY_REDIRECT_URI +
                         "&grant_type=" + SPOTIFY_CODE_GRANT_TYPE +
-                        "&code_verifier=" + PKCE_ISTANCE.codeVerifier))
+                        "&code_verifier=" + PKCE_INSTANCE.codeVerifier))
                 .build();
         HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenApply(HttpResponse::body)
@@ -99,7 +103,7 @@ public class SpotifyAuth {
     public static boolean refreshTokens() {
         return _refreshTokens().thenApply(v -> true).exceptionallyAsync(error -> {
             if (error.getCause() instanceof NoTokenSuppliedException) {
-                MinefyClient.LOGGER.error(error.getMessage());
+                LOGGER.error(error.getMessage());
                 return false;
             }
             logError(error.getCause());
@@ -108,24 +112,22 @@ public class SpotifyAuth {
     }
 
     private static void processTokens(String response) {
-        JsonObject jsonObject = JsonParser.parseString(response).getAsJsonObject();
-        Config config = ConfigManager.get();
-        config.spotifyAccessToken = jsonObject.get("access_token").getAsString();
-        config.spotifyRefreshToken = jsonObject.get("refresh_token").getAsString();
+        JsonObject jsonObject = convertToJsonObject(response);
+        CONFIG.spotifyAccessToken = jsonObject.get("access_token").getAsString();
+        CONFIG.spotifyRefreshToken = jsonObject.get("refresh_token").getAsString();
         ConfigManager.save();
-        if (MinecraftClient.getInstance().player != null) PlaybackHUD.INSTANCE.getPlayer();
+        if (CLIENT.player != null) PlaybackHUD.INSTANCE.getPlayer();
     }
 
     private static CompletableFuture<Void> _refreshTokens() {
-        Config config = ConfigManager.get();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(SPOTIFY_TOKEN_URL))
                 .header("Content-Type", SPOTIFY_CONTENT_TYPE)
                 .POST(HttpRequest.BodyPublishers.ofString("client_id=" + SPOTIFY_CLIENT_ID +
-                        "&refresh_token=" + config.spotifyRefreshToken +
+                        "&refresh_token=" + CONFIG.spotifyRefreshToken +
                         "&grant_type=" + SPOTIFY_REFRESH_GRANT_TYPE))
                 .build();
-        MinefyClient.LOGGER.debug("Refreshing tokens...");
+        LOGGER.debug("Refreshing tokens...");
         return HTTP_CLIENT.sendAsync(request, HttpResponse.BodyHandlers.ofString())
                 .thenCompose(res -> {
                     int code = res.statusCode();

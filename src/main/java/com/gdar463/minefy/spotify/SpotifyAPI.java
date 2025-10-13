@@ -33,6 +33,7 @@ public class SpotifyAPI {
                 .uri(URI.create(API_BASE + "/me/player"))
                 .header("Content-Type", "application/json")
                 .GET();
+
         return HTTP_CLIENT.sendAsync(request, spotifyAccessToken)
                 .thenCompose(res -> {
                     int code = res.statusCode();

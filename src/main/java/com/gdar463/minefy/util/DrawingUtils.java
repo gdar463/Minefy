@@ -15,10 +15,15 @@
  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package com.gdar463.minefy.spotify.exceptions;
+package com.gdar463.minefy.util;
 
-public class BadTokenException extends RuntimeException {
-    public BadTokenException() {
-        super("Access token is invalid or expired or revoked");
+import net.minecraft.client.gui.DrawContext;
+
+public class DrawingUtils {
+    public static void drawBorder(DrawContext ctx, int x, int y, int width, int height, int color, int size) {
+        ctx.fill(x, y, x + width, y + size, color);
+        ctx.fill(x, y + height - size, x + width, y + height, color);
+        ctx.fill(x, y + size, x + size, y + height - size, color);
+        ctx.fill(x + width - size, y + size, x + width, y + height - size, color);
     }
 }

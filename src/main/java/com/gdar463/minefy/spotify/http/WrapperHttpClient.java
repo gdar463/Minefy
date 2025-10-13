@@ -20,7 +20,7 @@ package com.gdar463.minefy.spotify.http;
 import com.gdar463.minefy.config.Config;
 import com.gdar463.minefy.config.ConfigManager;
 import com.gdar463.minefy.spotify.SpotifyAuth;
-import com.gdar463.minefy.util.Utils;
+import com.gdar463.minefy.util.Scheduler;
 
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -30,7 +30,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public class WrapperHttpClient {
-    public static final Config config = ConfigManager.get();
+    public static final Config CONFIG = ConfigManager.get();
 
     public static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_1_1)
@@ -49,11 +49,11 @@ public class WrapperHttpClient {
                     return switch (code) {
                         case 400, 401 -> {
                             if (SpotifyAuth.refreshTokens())
-                                sendAsync(builder, config.spotifyAccessToken);
+                                sendAsync(builder, CONFIG.spotifyAccessToken);
                             yield null;
                         }
                         case 429 -> {
-                            Utils.schedule(() -> sendAsync(builder, config.spotifyAccessToken),
+                            Scheduler.schedule(() -> sendAsync(builder, CONFIG.spotifyAccessToken),
                                     res.headers().firstValueAsLong("Retry-After").orElse(30),
                                     TimeUnit.SECONDS);
                             yield null;

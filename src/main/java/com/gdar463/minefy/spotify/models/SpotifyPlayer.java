@@ -17,6 +17,7 @@
 
 package com.gdar463.minefy.spotify.models;
 
+import com.gdar463.minefy.spotify.models.state.SpotifyPlayerState;
 import com.google.gson.JsonObject;
 
 import java.util.Objects;

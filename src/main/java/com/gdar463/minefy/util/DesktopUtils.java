@@ -17,8 +17,34 @@
 
 package com.gdar463.minefy.util;
 
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Stream;
+
 public class DesktopUtils {
-    public static Boolean isLinux = System.getProperty("os.name").toLowerCase().startsWith("linux");
-    public static Boolean isMac = System.getProperty("os.name").toLowerCase().startsWith("mac");
-    public static Boolean isWindows = System.getProperty("os.name").toLowerCase().startsWith("windows");
+    public static final Boolean IS_LINUX = System.getProperty("os.name").toLowerCase().startsWith("linux");
+    public static final Boolean IS_MAC = System.getProperty("os.name").toLowerCase().startsWith("mac");
+    public static final Boolean IS_WINDOWS = System.getProperty("os.name").toLowerCase().startsWith("windows");
+
+    public static void openUrl(String url) {
+        if (IS_LINUX) {
+            //noinspection ResultOfMethodCallIgnored
+            Stream.of("xdg-open", "kde-open", "gnome-open").anyMatch(s -> run(new String[]{s, url}));
+        }
+        if (IS_MAC) {
+            run(new String[]{"open", url});
+        }
+        if (IS_WINDOWS) {
+            run(new String[]{"rundll32", "url.dll,FileProtocolHandler", url});
+        }
+    }
+
+    private static Boolean run(String[] cmd) {
+        try {
+            Process proc = Runtime.getRuntime().exec(cmd);
+            return !proc.waitFor(3, TimeUnit.SECONDS) || proc.exitValue() == 0;
+        } catch (IOException | InterruptedException e) {
+            return false;
+        }
+    }
 }
