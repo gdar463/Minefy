@@ -19,9 +19,12 @@ package com.gdar463.minefy.config;
 
 import com.gdar463.minefy.config.configs.HudConfig;
 import com.gdar463.minefy.config.configs.SpotifyConfig;
+import dev.isxander.yacl3.config.v2.api.SerialEntry;
 
 public class MinefyConfig {
+    @SerialEntry
     public HudConfig hud = new HudConfig();
 
+    @SerialEntry
     public SpotifyConfig spotify = new SpotifyConfig();
 }

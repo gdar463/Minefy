@@ -20,6 +20,7 @@ package com.gdar463.minefy.ui;
 import com.gdar463.minefy.MinefyClient;
 import com.gdar463.minefy.config.ConfigManager;
 import com.gdar463.minefy.config.MinefyConfig;
+import com.gdar463.minefy.config.configs.HudConfig;
 import com.gdar463.minefy.events.HudRenderEvents;
 import com.gdar463.minefy.spotify.SpotifyAPI;
 import com.gdar463.minefy.spotify.SpotifyAuth;
@@ -40,34 +41,17 @@ import net.minecraft.util.Util;
 import org.joml.Matrix3x2fStack;
 import org.slf4j.Logger;
 
-import java.awt.*;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class PlaybackHUD {
-    private static final Color bgColor = new Color(0x12121250, true);
-    private static final Color textColor = new Color(0xFFFFFFFF, true);
-    private static final Color borderColor = new Color(0x1ED76088, true);
-    private static final Color accentColor = new Color(0x1ED760FF, true);
-    private static final Color emptyBarColor = new Color(0x242424FF, true);
-    private static final int width = 178, height = 60;
-    private static final int x = 0, y = 0;
-    private static final int borderSize = 2;
-    private static final float artistsScale = 0.75F, barTextScale = 0.5F;
-    private static final int barSizeX = 105, barSizeY = 3;
-    private static final int columnX = 61, columnY = 10;
-    private static final int barY = 42, barOffsetY = 6;
-    private static final int coverX = 7, coverY = 7;
-    private static final int coverSize = 46;
-    private static final int artistsOffsetY = 6;
-    private static final int titleMarqueeCap = 20, titleMarqueeSpaces = 4, titleMarqueeTicks = 25;
-    private static final int artistsMarqueeCap = 27, artistsMarqueeSpaces = 6, artistsMarqueeTicks = 40;
-
     private static final Logger LOGGER = MinefyClient.LOGGER;
     private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
     private static final MinefyConfig CONFIG = ConfigManager.get();
+    private static final HudConfig.HudThemeConfig HUD_THEME = CONFIG.hud.theme;
+
     public static PlaybackHUD INSTANCE;
     public SpotifyPlayer player = SpotifyPlayer.EMPTY;
 
@@ -96,11 +80,22 @@ public class PlaybackHUD {
         if (player == null || player.state != SpotifyPlayerState.READY) return;
         if (!CONFIG.hud.enabled) return;
 
-        ctx.fill(x, y, x + width, y + height, DrawingUtils.getARGB(bgColor));
-        DrawingUtils.drawBorder(ctx, x, y, width, height, DrawingUtils.getARGB(borderColor), borderSize);
+        ctx.fill(HUD_THEME.sizes.x, HUD_THEME.sizes.y,
+                HUD_THEME.sizes.x + HUD_THEME.sizes.width,
+                HUD_THEME.sizes.y + HUD_THEME.sizes.height,
+                HUD_THEME.colors.bgColor.getRGB());
+        DrawingUtils.drawBorder(ctx, HUD_THEME.sizes.x, HUD_THEME.sizes.y,
+                HUD_THEME.sizes.width, HUD_THEME.sizes.height,
+                HUD_THEME.colors.borderColor.getRGB(),
+                HUD_THEME.sizes.borderSize);
 
         if (player.track.albumCover.textureState == TextureState.READY) {
-            ctx.drawTexture(RenderPipelines.GUI_TEXTURED, player.track.albumCover.id, coverX, coverY, 0, 0, coverSize, coverSize, player.track.albumCover.width, player.track.albumCover.height, player.track.albumCover.width, player.track.albumCover.height);
+            ctx.drawTexture(RenderPipelines.GUI_TEXTURED,
+                    player.track.albumCover.id,
+                    HUD_THEME.cover.x, HUD_THEME.cover.y, 0, 0,
+                    HUD_THEME.cover.size, HUD_THEME.cover.size,
+                    player.track.albumCover.width, player.track.albumCover.height,
+                    player.track.albumCover.width, player.track.albumCover.height);
         } else if (player.track.albumCover.textureState == TextureState.NOT_READY) {
             player.track.albumCover.textureState = TextureState.TEXTURIZING;
             player.track.albumCover.texturize();
@@ -117,22 +112,22 @@ public class PlaybackHUD {
             durationSource = DurationSource.DELTA_TIME;
         }
 
-        int lerpedAmount = Math.toIntExact(progress.toMillis() * barSizeX / this.duration.toMillis());
+        int lerpedAmount = Math.toIntExact(progress.toMillis() * HUD_THEME.bar.sizeX / this.duration.toMillis());
 
         Matrix3x2fStack barStack = ctx.getMatrices().pushMatrix();
-        barStack.translate(columnX, barY);
-        ctx.fill(0, barOffsetY, lerpedAmount, barOffsetY + barSizeY, DrawingUtils.getARGB(accentColor));
-        ctx.fill(lerpedAmount, barOffsetY, barSizeX, barOffsetY + barSizeY, DrawingUtils.getARGB(emptyBarColor));
-        barStack.scale(barTextScale, barTextScale);
-        ctx.drawText(CLIENT.textRenderer, Utils.durationToString(progress), 0, 0, DrawingUtils.getARGB(textColor), false);
-        ctx.drawText(CLIENT.textRenderer, Utils.durationToString(duration), barSizeX * 2 - (int) (10 / barTextScale), 0, DrawingUtils.getARGB(textColor), false);
+        barStack.translate(HUD_THEME.sizes.columnX, HUD_THEME.bar.Y);
+        ctx.fill(0, HUD_THEME.bar.progressY, lerpedAmount, HUD_THEME.bar.progressY + HUD_THEME.bar.sizeY, HUD_THEME.colors.accentColor.getRGB());
+        ctx.fill(lerpedAmount, HUD_THEME.bar.progressY, HUD_THEME.bar.sizeX, HUD_THEME.bar.progressY + HUD_THEME.bar.sizeY, HUD_THEME.colors.emptyBarColor.getRGB());
+        barStack.scale(HUD_THEME.bar.textScale, HUD_THEME.bar.textScale);
+        ctx.drawText(CLIENT.textRenderer, Utils.durationToString(progress), 0, 0, HUD_THEME.colors.textColor.getRGB(), false);
+        ctx.drawText(CLIENT.textRenderer, Utils.durationToString(duration), HUD_THEME.bar.sizeX * 2 - (int) (10 / HUD_THEME.bar.textScale), 0, HUD_THEME.colors.textColor.getRGB(), false);
         barStack.popMatrix();
 
         Matrix3x2fStack stack = ctx.getMatrices().pushMatrix();
-        stack.translate(columnX, columnY);
-        this.titleMarquee.render(ctx, DrawingUtils.getARGB(accentColor), false);
-        stack.scale(artistsScale, artistsScale);
-        this.artistsMarquee.render(ctx, DrawingUtils.getARGB(textColor), false, 0, CLIENT.textRenderer.fontHeight + artistsOffsetY);
+        stack.translate(HUD_THEME.sizes.columnX, HUD_THEME.sizes.columnY);
+        this.titleMarquee.render(ctx, HUD_THEME.colors.accentColor.getRGB(), false);
+        stack.scale(HUD_THEME.text.artistsScale, HUD_THEME.text.artistsScale);
+        this.artistsMarquee.render(ctx, HUD_THEME.colors.textColor.getRGB(), false, 0, CLIENT.textRenderer.fontHeight + HUD_THEME.text.artistsOffsetY);
         stack.popMatrix();
     }
 
@@ -161,13 +156,13 @@ public class PlaybackHUD {
                         if (!Objects.equals(player.track.id, this.trackId)) {
                             this.trackId = player.track.id;
                             this.titleMarquee = new TextMarquee(player.track.name,
-                                    titleMarqueeSpaces,
-                                    titleMarqueeCap,
-                                    titleMarqueeTicks);
+                                    HUD_THEME.text.titleMarqueeSpaces,
+                                    HUD_THEME.text.titleMarqueeCap,
+                                    HUD_THEME.text.titleMarqueeTicks);
                             this.artistsMarquee = new TextMarquee(player.track.artistsToString(),
-                                    artistsMarqueeSpaces,
-                                    artistsMarqueeCap,
-                                    artistsMarqueeTicks);
+                                    HUD_THEME.text.artistsMarqueeSpaces,
+                                    HUD_THEME.text.artistsMarqueeCap,
+                                    HUD_THEME.text.artistsMarqueeTicks);
                         }
                         this.player.state = SpotifyPlayerState.READY;
                     }

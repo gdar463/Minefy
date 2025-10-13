@@ -20,6 +20,7 @@ package com.gdar463.minefy.config.configs;
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
 
 public class SpotifyConfig {
+    @SerialEntry
     public OAuthClient oAuthClient = new OAuthClient();
 
     @SerialEntry
