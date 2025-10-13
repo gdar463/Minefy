@@ -27,7 +27,7 @@ import java.nio.file.Path;
 
 public class ConfigManager {
     private static final Path CONFIG_FILE = FabricLoader.getInstance().getConfigDir().resolve("minefy.json");
-    public static ConfigClassHandler<Config> HANDLER = ConfigClassHandler.createBuilder(Config.class)
+    public static ConfigClassHandler<MinefyConfig> HANDLER = ConfigClassHandler.createBuilder(MinefyConfig.class)
             .id(Identifier.of(MinefyClient.MOD_ID, "config"))
             .serializer(config -> GsonConfigSerializerBuilder.create(config)
                     .setPath(CONFIG_FILE)
@@ -35,7 +35,7 @@ public class ConfigManager {
                     .build()
             ).build();
 
-    public static Config get() {
+    public static MinefyConfig get() {
         return HANDLER.instance();
     }
 

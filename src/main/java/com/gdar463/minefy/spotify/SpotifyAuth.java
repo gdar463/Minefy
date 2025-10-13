@@ -18,8 +18,8 @@
 package com.gdar463.minefy.spotify;
 
 import com.gdar463.minefy.MinefyClient;
-import com.gdar463.minefy.config.Config;
 import com.gdar463.minefy.config.ConfigManager;
+import com.gdar463.minefy.config.MinefyConfig;
 import com.gdar463.minefy.spotify.exceptions.NoTokenSuppliedException;
 import com.gdar463.minefy.spotify.server.LoginServer;
 import com.gdar463.minefy.ui.PlaybackHUD;
@@ -60,7 +60,7 @@ public class SpotifyAuth {
 
     private static final Logger LOGGER = MinefyClient.LOGGER;
     private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
-    private static final Config CONFIG = ConfigManager.get();
+    private static final MinefyConfig CONFIG = ConfigManager.get();
     private static final SpotifyPKCE PKCE_INSTANCE = new SpotifyPKCE();
     private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_1_1)

@@ -19,7 +19,7 @@ package com.gdar463.minefy.config;
 
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
 
-public class Config {
+public class MinefyConfig {
     @SerialEntry
     public boolean playbackHudEnabled = true;
 

@@ -17,8 +17,8 @@
 
 package com.gdar463.minefy.spotify.http;
 
-import com.gdar463.minefy.config.Config;
 import com.gdar463.minefy.config.ConfigManager;
+import com.gdar463.minefy.config.MinefyConfig;
 import com.gdar463.minefy.spotify.SpotifyAuth;
 import com.gdar463.minefy.util.Scheduler;
 
@@ -30,7 +30,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
 public class WrapperHttpClient {
-    public static final Config CONFIG = ConfigManager.get();
+    public static final MinefyConfig CONFIG = ConfigManager.get();
 
     public static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_1_1)

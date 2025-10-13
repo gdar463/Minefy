@@ -18,8 +18,8 @@
 package com.gdar463.minefy.ui;
 
 import com.gdar463.minefy.MinefyClient;
-import com.gdar463.minefy.config.Config;
 import com.gdar463.minefy.config.ConfigManager;
+import com.gdar463.minefy.config.MinefyConfig;
 import com.gdar463.minefy.events.HudRenderEvents;
 import com.gdar463.minefy.spotify.SpotifyAPI;
 import com.gdar463.minefy.spotify.SpotifyAuth;
@@ -57,7 +57,7 @@ public class PlaybackHUD {
     private static final int artistsMarqueeCap = 27, artistsMarqueeSpaces = 6, artistsMarqueeTicks = 40;
     private static final Logger LOGGER = MinefyClient.LOGGER;
     private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
-    private static final Config CONFIG = ConfigManager.get();
+    private static final MinefyConfig CONFIG = ConfigManager.get();
     public static PlaybackHUD INSTANCE;
     public SpotifyPlayer player = SpotifyPlayer.EMPTY;
 
