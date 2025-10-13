@@ -41,6 +41,9 @@ body = """
 """
 # Remove leading and trailing whitespaces from the changelog's body.
 trim = true
+footer = """
+Initial Starting point with CHANGELOG
+"""
 # postprocessors
 postprocessors = [
     # Replace the placeholder `<REPO>` with a URL.
