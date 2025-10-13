@@ -15,13 +15,27 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.gdar463.minefy.config;
+package com.gdar463.minefy.config.configs;
 
-import com.gdar463.minefy.config.configs.HudConfig;
-import com.gdar463.minefy.config.configs.SpotifyConfig;
+import dev.isxander.yacl3.config.v2.api.SerialEntry;
 
-public class MinefyConfig {
-    public HudConfig hud = new HudConfig();
+public class SpotifyConfig {
+    public OAuthClient oAuthClient = new OAuthClient();
 
-    public SpotifyConfig spotify = new SpotifyConfig();
+    @SerialEntry
+    public String accessToken = "";
+
+    @SerialEntry
+    public String refreshToken = "";
+
+    public static class OAuthClient {
+        @SerialEntry
+        public String clientId = "494bbac877a94427a5e6137a4a1816cc";
+
+        @SerialEntry
+        public String redirectUri = "http://127.0.0.1:12589/callback";
+
+        @SerialEntry
+        public int callbackPort = 12589;
+    }
 }

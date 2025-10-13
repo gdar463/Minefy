@@ -40,26 +40,26 @@ public class SpotifyConfigCategory {
                                 "text.minefy.config.spotify.client.description")
                         .option(StringOptionBuilder.create("text.minefy.config.spotify.client.id.name",
                                         "text.minefy.config.spotify.client.id.description", true)
-                                .binding(config.spotifyClientId, () -> config.spotifyClientId, val -> config.spotifyClientId = val)
+                                .binding(config.spotify.oAuthClient.clientId, () -> config.spotify.oAuthClient.clientId, val -> config.spotify.oAuthClient.clientId = val)
                                 .build())
                         .option(StringOptionBuilder.create("text.minefy.config.spotify.client.redirect.name",
                                         "text.minefy.config.spotify.client.redirect.description")
-                                .binding(config.spotifyRedirectUri, () -> config.spotifyRedirectUri, val -> config.spotifyRedirectUri = val)
+                                .binding(config.spotify.oAuthClient.redirectUri, () -> config.spotify.oAuthClient.redirectUri, val -> config.spotify.oAuthClient.redirectUri = val)
                                 .build())
                         .option(IntegerFieldOptionBuilder.create("text.minefy.config.spotify.client.port.name",
                                         "text.minefy.config.spotify.client.port.description", 1024, 65535)
-                                .binding(config.spotifyCallbackPort, () -> config.spotifyCallbackPort, val -> config.spotifyCallbackPort = val)
+                                .binding(config.spotify.oAuthClient.callbackPort, () -> config.spotify.oAuthClient.callbackPort, val -> config.spotify.oAuthClient.callbackPort = val)
                                 .build())
                         .build())
                 .group(OptionGroupBuilder.create("text.minefy.config.spotify.tokens.name",
                                 "text.minefy.config.spotify.tokens.description")
                         .option(StringOptionBuilder.create("text.minefy.config.spotify.tokens.access.name",
                                         "text.minefy.config.spotify.tokens.access.description", true)
-                                .binding(config.spotifyAccessToken, () -> config.spotifyAccessToken, val -> config.spotifyAccessToken = val)
+                                .binding(config.spotify.accessToken, () -> config.spotify.accessToken, val -> config.spotify.accessToken = val)
                                 .build())
                         .option(StringOptionBuilder.create("text.minefy.config.spotify.tokens.refresh.name",
                                         "text.minefy.config.spotify.tokens.refresh.description", true)
-                                .binding(config.spotifyRefreshToken, () -> config.spotifyRefreshToken, val -> config.spotifyRefreshToken = val)
+                                .binding(config.spotify.refreshToken, () -> config.spotify.refreshToken, val -> config.spotify.refreshToken = val)
                                 .build())
                         .build())
                 .group(OptionGroupBuilder.create("text.minefy.config.spotify.debug.name",
@@ -73,7 +73,7 @@ public class SpotifyConfigCategory {
     }
 
     private static void testSpotifyPlayerAPI(YACLScreen screen, ButtonOption option) {
-        SpotifyAPI.getPlaybackState(ConfigManager.get().spotifyAccessToken)
+        SpotifyAPI.getPlaybackState(ConfigManager.get().spotify.accessToken)
                 .thenApply(s -> new SpotifyPlayer().fromJson(Utils.convertToJsonObject(s)))
                 .thenAccept(player -> MinefyClient.LOGGER.info(player.toString()));
     }

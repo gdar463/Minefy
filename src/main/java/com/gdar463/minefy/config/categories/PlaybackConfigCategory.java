@@ -31,7 +31,7 @@ public class PlaybackConfigCategory {
                                 "text.minefy.config.hud.playback.description", false)
                         .option(BooleanOptionBuilder.create("text.minefy.config.hud.playback.enabled.name",
                                         "text.minefy.config.hud.playback.enabled.description")
-                                .binding(config.playbackHudEnabled, () -> config.playbackHudEnabled, val -> config.playbackHudEnabled = val)
+                                .binding(config.hud.enabled, () -> config.hud.enabled, val -> config.hud.enabled = val)
                                 .build())
                         .build()
                 ).build();

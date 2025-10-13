@@ -92,7 +92,7 @@ public class PlaybackHUD {
     private void render(DrawContext ctx, RenderTickCounter tickCounter) {
         if (CLIENT.getDebugHud().shouldShowDebugHud()) return;
         if (player == null || player.state != SpotifyPlayerState.READY) return;
-        if (!CONFIG.playbackHudEnabled) return;
+        if (!CONFIG.hud.enabled) return;
 
         ctx.fill(x, y, x + width, y + height, bgColor);
         DrawingUtils.drawBorder(ctx, x, y, width, height, accentColor + 0x88000000, borderSize);
@@ -139,8 +139,8 @@ public class PlaybackHUD {
     }
 
     public void getPlayer(boolean firstRun) {
-        if (!firstRun && (CONFIG.spotifyAccessToken == null || CONFIG.spotifyAccessToken.isEmpty())) {
-            if (CONFIG.spotifyRefreshToken == null || CONFIG.spotifyRefreshToken.isEmpty()) {
+        if (!firstRun && (CONFIG.spotify.accessToken.isEmpty())) {
+            if (CONFIG.spotify.refreshToken.isEmpty()) {
                 LOGGER.error("tried to go to api without refresh token");
                 ClientUtils.sendClientSideMessage(Text.of("Please login, before trying to access anything"));
                 return;
@@ -149,7 +149,7 @@ public class PlaybackHUD {
                 Scheduler.schedule(this::getPlayer, 2, TimeUnit.SECONDS);
             return;
         }
-        SpotifyAPI.getPlaybackState(CONFIG.spotifyAccessToken)
+        SpotifyAPI.getPlaybackState(CONFIG.spotify.accessToken)
                 .thenApply(s -> this.player.fromJson(Utils.convertToJsonObject(s)))
                 .thenAccept(player -> {
                     if (player.state == SpotifyPlayerState.PARSING) {

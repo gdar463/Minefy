@@ -15,13 +15,11 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.gdar463.minefy.config;
+package com.gdar463.minefy.config.configs;
 
-import com.gdar463.minefy.config.configs.HudConfig;
-import com.gdar463.minefy.config.configs.SpotifyConfig;
+import dev.isxander.yacl3.config.v2.api.SerialEntry;
 
-public class MinefyConfig {
-    public HudConfig hud = new HudConfig();
-
-    public SpotifyConfig spotify = new SpotifyConfig();
+public class HudConfig {
+    @SerialEntry
+    public boolean enabled = true;
 }

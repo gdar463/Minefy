@@ -1,19 +1,19 @@
 /*
- Copyright (c) gdar463 (Dario) <dev@gdar463.com>
-
- This program is free software: you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation, either version 3 of the License, or
- (at your option) any later version.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License
- along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
+ *  Copyright (c) gdar463 (Dario) <dev@gdar463.com>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
 package com.gdar463.minefy.spotify;
 
@@ -69,9 +69,9 @@ public class SpotifyAuth {
             .build();
 
     static {
-        SPOTIFY_CLIENT_ID = CONFIG.spotifyClientId;
-        SPOTIFY_REDIRECT_URI = CONFIG.spotifyRedirectUri;
-        SPOTIFY_CALLBACK_PORT = CONFIG.spotifyCallbackPort;
+        SPOTIFY_CLIENT_ID = CONFIG.spotify.oAuthClient.clientId;
+        SPOTIFY_REDIRECT_URI = CONFIG.spotify.oAuthClient.redirectUri;
+        SPOTIFY_CALLBACK_PORT = CONFIG.spotify.oAuthClient.callbackPort;
     }
 
     public static void startAuthProcess() {
@@ -104,8 +104,8 @@ public class SpotifyAuth {
     public static boolean refreshTokens() {
         return _refreshTokens().thenApply(v -> true).exceptionallyAsync(error -> {
             if (error.getCause() instanceof RefreshTokenRevokedException) {
-                CONFIG.spotifyAccessToken = "";
-                CONFIG.spotifyRefreshToken = "";
+                CONFIG.spotify.accessToken = "";
+                CONFIG.spotify.refreshToken = "";
                 ConfigManager.save();
                 logError(error.getCause());
                 return false;
@@ -117,8 +117,8 @@ public class SpotifyAuth {
 
     private static void processTokens(String response) {
         JsonObject jsonObject = convertToJsonObject(response);
-        CONFIG.spotifyAccessToken = jsonObject.get("access_token").getAsString();
-        CONFIG.spotifyRefreshToken = jsonObject.get("refresh_token").getAsString();
+        CONFIG.spotify.accessToken = jsonObject.get("access_token").getAsString();
+        CONFIG.spotify.refreshToken = jsonObject.get("refresh_token").getAsString();
         ConfigManager.save();
         if (CLIENT.player != null) PlaybackHUD.INSTANCE.getPlayer();
     }
@@ -128,7 +128,7 @@ public class SpotifyAuth {
                 .uri(URI.create(SPOTIFY_TOKEN_URL))
                 .header("Content-Type", SPOTIFY_CONTENT_TYPE)
                 .POST(HttpRequest.BodyPublishers.ofString("client_id=" + SPOTIFY_CLIENT_ID +
-                        "&refresh_token=" + CONFIG.spotifyRefreshToken +
+                        "&refresh_token=" + CONFIG.spotify.refreshToken +
                         "&grant_type=" + SPOTIFY_REFRESH_GRANT_TYPE))
                 .build();
         LOGGER.debug("Refreshing tokens...");
