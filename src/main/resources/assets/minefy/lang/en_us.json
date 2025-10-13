@@ -23,5 +23,7 @@
   "text.minefy.config.spotify.debug.description": "Debug tests.",
   "text.minefy.config.spotify.debug.player.name": "Test Player",
   "text.minefy.config.spotify.debug.player.description": "Check console for log afterwards.",
-  "text.minefy.config.hud.playback.enabled.description": "Toggle for Playback HUD"
+  "text.minefy.config.hud.playback.enabled.description": "Toggle for Playback HUD",
+  "text.minefy.chat.loggedout.head": "Looks like you still have to login with Spotify.\\nRun",
+  "text.minefy.chat.loggedout.end": "to authrorize Minefy to your Spotify account."
 }

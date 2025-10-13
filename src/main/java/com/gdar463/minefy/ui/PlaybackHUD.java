@@ -36,7 +36,9 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Util;
 import org.joml.Matrix3x2fStack;
 import org.slf4j.Logger;
@@ -66,7 +68,18 @@ public class PlaybackHUD {
 
     public PlaybackHUD() {
         HudRenderEvents.AFTER_MAIN_HUD.register(this::render);
-        Scheduler.schedule(() -> getPlayer(true), 2, TimeUnit.SECONDS);
+        if (!CONFIG.spotify.refreshToken.isEmpty()) {
+            Scheduler.schedule(() -> getPlayer(true), 2, TimeUnit.SECONDS);
+        } else {
+            ClientUtils.sendClientSideMessage(Text.literal("\t===\t")
+                    .append(Text.literal("Minefy").formatted(Formatting.GREEN))
+                    .append(Text.literal("\t===\n"))
+                    .append(Text.translatable("text.minefy.chat.loggedout.head"))
+                    .append(Text.literal("/minefy login")
+                            .formatted(Formatting.RED, Formatting.UNDERLINE)
+                            .styled(style -> style.withClickEvent(new ClickEvent.RunCommand("minify login"))))
+                    .append(Text.translatable("text.minefy.chat.loggedout.end")));
+        }
 
         LOGGER.debug("PlaybackHUD registered");
     }
