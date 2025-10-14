@@ -69,8 +69,7 @@ commit_preprocessors = [
 commit_parsers = [
     { message = "^feat", group = "Features" },
     { message = "^fix", group = "Bug Fixes" },
-    { message = "^docs\\(cliff\\):", skip = true },
-    { message = "^docs\\(changelog\\):", skip = true },
+    { message = "^docs\\(", skip = true },
     { message = "^doc", group = "Documentation" },
     { message = "^perf", group = "Performance" },
     { message = "^refactor", group = "Refactors" },
