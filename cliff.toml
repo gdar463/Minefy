@@ -79,6 +79,7 @@ commit_parsers = [
     { message = "^ci", skip = true },
     { message = "^chore\\(skip\\):", skip = true },
     { message = "^chore\\(version\\):", skip = true },
+    { message = "^chore\\(release\\):", skip = true },
     { message = "^chore", group = "Chores" },
     { body = ".*security", group = "Security" },
 ]
