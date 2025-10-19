@@ -89,6 +89,7 @@ public class PlaybackHUD {
     }
 
     private void render(DrawContext ctx, RenderTickCounter tickCounter) {
+        if (CLIENT.player == null) return;
         if (CLIENT.getDebugHud().shouldShowDebugHud()) return;
         if (player == null || player.state != SpotifyPlayerState.READY) return;
         if (!CONFIG.hud.enabled) return;
@@ -149,6 +150,9 @@ public class PlaybackHUD {
     }
 
     public void getPlayer(boolean firstRun) {
+        if (CLIENT.player == null) {
+            Scheduler.schedule(this::getPlayer, 5, TimeUnit.SECONDS);
+        }
         if (!firstRun && (CONFIG.spotify.accessToken.isEmpty())) {
             if (CONFIG.spotify.refreshToken.isEmpty()) {
                 LOGGER.error("tried to go to api without refresh token");
