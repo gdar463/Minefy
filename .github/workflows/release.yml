@@ -1,0 +1,61 @@
+# Automatically build the project and run any configured tests for every push
+# and submitted pull request. This can help catch issues that only occur on
+# certain platforms or Java versions, and provides a first line of defence
+# against bad commits.
+
+name: Release
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        required: true
+        description: "Release version (i.e. v0.1.2)"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          java-version: "21"
+          distribution: "microsoft"
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v5
+      - name: Cache Loom project cache
+        uses: actions/cache@v4
+        with:
+          key: "loom-${{ runner.os }}-${{ hashFiles('**/*.gradle*', 'gradle/libs.versions.toml') }}"
+          path: ".gradle/loom-cache"
+          restore-keys: "loom-${{ runner.os }}-"
+      - name: Build
+        run: ./gradlew build
+      - name: Generate Changelog
+        uses: orhun/git-cliff-action@v4
+      - name: Commit Changelog
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add CHANGELOG.md
+          git commit -m "chore(release): update changelog for ${{ inputs.version }}" || echo "no changes"
+          git push
+      - name: Create Git Tag
+        run: |
+          git tag ${{ inputs.version }}
+          git push origin ${{ inputs.version }}
+      - name: Generate latest release notes
+        uses: orhun/git-cliff-action@v4
+        id: cliff-latest
+        with:
+          args: --latest
+      - name: Create Github Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ inputs.version }}
+          body: ${{ steps.cliff-latest.outputs.content }}
+          files: build/libs/*.jar
