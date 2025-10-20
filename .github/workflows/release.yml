@@ -36,6 +36,8 @@ jobs:
           key: "loom-${{ runner.os }}-${{ hashFiles('**/*.gradle*', 'gradle/libs.versions.toml') }}"
           path: ".gradle/loom-cache"
           restore-keys: "loom-${{ runner.os }}-"
+      - name: Ensure gradlew is executable
+        run: chmod +x ./gradlew
       - name: Build
         run: ./gradlew build
       - name: Create Git Tag
