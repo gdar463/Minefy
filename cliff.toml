@@ -21,6 +21,9 @@ body = """
 {% else %}\
     ## [unreleased]
 {% endif %}\
+{% if message %}
+{{ message }}
+{% endif %}\
 {% for group, commits in commits | group_by(attribute="group") %}
     ### {{ group | striptags | trim | upper_first }}
     {% for commit in commits
@@ -41,9 +44,6 @@ body = """
 """
 # Remove leading and trailing whitespaces from the changelog's body.
 trim = true
-footer = """
-Initial Starting point with CHANGELOG
-"""
 # postprocessors
 postprocessors = [
     # Replace the placeholder `<REPO>` with a URL.
