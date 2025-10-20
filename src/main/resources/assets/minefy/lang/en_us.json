@@ -91,5 +91,15 @@
   "text.minefy.config.spotify.debug.name": "Debug",
   "text.minefy.config.spotify.debug.description": "Debug tests.",
   "text.minefy.config.spotify.debug.player.name": "Test Player",
-  "text.minefy.config.spotify.debug.player.description": "Check console for log afterwards."
+  "text.minefy.config.spotify.debug.player.description": "Check console for log afterwards.",
+  "text.minefy.config.spotify.debug.user.name": "Test User",
+  "text.minefy.config.spotify.debug.user.description": "Check console for log afterwards.",
+  "text.minefy.config.spotify.debug.resume.name": "Test Resume",
+  "text.minefy.config.spotify.debug.resume.description": "Check console for log afterwards.",
+  "text.minefy.config.spotify.debug.pause.name": "Test Pause",
+  "text.minefy.config.spotify.debug.pause.description": "Check console for log afterwards.",
+  "text.minefy.config.spotify.debug.next.name": "Test Next",
+  "text.minefy.config.spotify.debug.next.description": "Check console for log afterwards.",
+  "text.minefy.config.spotify.debug.prev.name": "Test Prev",
+  "text.minefy.config.spotify.debug.prev.description": "Check console for log afterwards."
 }

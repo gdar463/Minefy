@@ -26,13 +26,17 @@ import com.gdar463.minefy.config.builders.OptionGroupBuilder;
 import com.gdar463.minefy.config.builders.StringOptionBuilder;
 import com.gdar463.minefy.spotify.SpotifyAPI;
 import com.gdar463.minefy.spotify.models.SpotifyPlayer;
+import com.gdar463.minefy.spotify.models.SpotifyUser;
 import com.gdar463.minefy.util.Utils;
 import dev.isxander.yacl3.api.ButtonOption;
 import dev.isxander.yacl3.api.ConfigCategory;
 import dev.isxander.yacl3.gui.YACLScreen;
 import net.minecraft.text.Text;
+import org.slf4j.Logger;
 
 public class SpotifyConfigCategory {
+    private static final Logger LOGGER = MinefyClient.LOGGER;
+
     public static ConfigCategory create(MinefyConfig config) {
         return ConfigCategory.createBuilder()
                 .name(Text.translatable("text.minefy.config.category.spotify"))
@@ -68,6 +72,26 @@ public class SpotifyConfigCategory {
                                         "text.minefy.config.spotify.debug.player.description")
                                 .action(SpotifyConfigCategory::testSpotifyPlayerAPI)
                                 .build())
+                        .option(ButtonOptionBuilder.create("text.minefy.config.spotify.debug.user.name",
+                                        "text.minefy.config.spotify.debug.user.description")
+                                .action(SpotifyConfigCategory::testSpotifyUserAPI)
+                                .build())
+                        .option(ButtonOptionBuilder.create("text.minefy.config.spotify.debug.resume.name",
+                                        "text.minefy.config.spotify.debug.resume.description")
+                                .action(SpotifyConfigCategory::testResumePlaybackAPI)
+                                .build())
+                        .option(ButtonOptionBuilder.create("text.minefy.config.spotify.debug.pause.name",
+                                        "text.minefy.config.spotify.debug.pause.description")
+                                .action(SpotifyConfigCategory::testPausePlaybackAPI)
+                                .build())
+                        .option(ButtonOptionBuilder.create("text.minefy.config.spotify.debug.next.name",
+                                        "text.minefy.config.spotify.debug.next.description")
+                                .action(SpotifyConfigCategory::testSkipNextAPI)
+                                .build())
+                        .option(ButtonOptionBuilder.create("text.minefy.config.spotify.debug.prev.name",
+                                        "text.minefy.config.spotify.debug.prev.description")
+                                .action(SpotifyConfigCategory::testSkipPrevAPI)
+                                .build())
                         .build())
                 .build();
     }
@@ -75,6 +99,32 @@ public class SpotifyConfigCategory {
     private static void testSpotifyPlayerAPI(YACLScreen screen, ButtonOption option) {
         SpotifyAPI.getPlaybackState(ConfigManager.get().spotify.accessToken)
                 .thenApply(s -> new SpotifyPlayer().fromJson(Utils.convertToJsonObject(s)))
-                .thenAccept(player -> MinefyClient.LOGGER.info(player.toString()));
+                .thenAccept(player -> LOGGER.info(player.toString()));
+    }
+
+    private static void testSpotifyUserAPI(YACLScreen screen, ButtonOption option) {
+        SpotifyAPI.getUserProfile(ConfigManager.get().spotify.accessToken)
+                .thenApply(s -> new SpotifyUser().fromJson(Utils.convertToJsonObject(s)))
+                .thenAccept(user -> LOGGER.info(user.toString()));
+    }
+
+    private static void testResumePlaybackAPI(YACLScreen screen, ButtonOption option) {
+        SpotifyAPI.startPlayback(ConfigManager.get().spotify.accessToken)
+                .thenAccept(res -> LOGGER.info(res.toString()));
+    }
+
+    private static void testPausePlaybackAPI(YACLScreen screen, ButtonOption option) {
+        SpotifyAPI.pausePlayback(ConfigManager.get().spotify.accessToken)
+                .thenAccept(res -> LOGGER.info(res.toString()));
+    }
+
+    private static void testSkipNextAPI(YACLScreen screen, ButtonOption option) {
+        SpotifyAPI.skipToNext(ConfigManager.get().spotify.accessToken)
+                .thenAccept(res -> LOGGER.info(res.toString()));
+    }
+
+    private static void testSkipPrevAPI(YACLScreen screen, ButtonOption option) {
+        SpotifyAPI.skipToPrevious(ConfigManager.get().spotify.accessToken)
+                .thenAccept(res -> LOGGER.info(res.toString()));
     }
 }
