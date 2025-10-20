@@ -17,17 +17,27 @@
 
 package com.gdar463.minefy.spotify.models;
 
+import com.gdar463.minefy.config.ConfigManager;
+import com.gdar463.minefy.config.MinefyConfig;
+import com.gdar463.minefy.spotify.SpotifyAPI;
 import com.gdar463.minefy.spotify.models.state.SpotifySubscriptionType;
+import com.gdar463.minefy.util.Utils;
 import com.google.gson.JsonObject;
 
 
 public class SpotifyUser {
     public static final SpotifyUser INSTANCE = new SpotifyUser();
-
+    private static final MinefyConfig CONFIG = ConfigManager.get();
     public String email;
     public SpotifySubscriptionType type;
 
     public SpotifyUser() {
+    }
+
+    public static void init() {
+        if (!CONFIG.spotify.accessToken.isEmpty())
+            SpotifyAPI.getUserProfile(CONFIG.spotify.accessToken)
+                    .thenApply(s -> SpotifyUser.INSTANCE.fromJson(Utils.convertToJsonObject(s)));
     }
 
     public SpotifyUser fromJson(JsonObject json) {

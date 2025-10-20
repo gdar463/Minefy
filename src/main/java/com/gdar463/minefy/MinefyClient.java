@@ -18,6 +18,7 @@
 package com.gdar463.minefy;
 
 import com.gdar463.minefy.config.ConfigManager;
+import com.gdar463.minefy.spotify.models.SpotifyUser;
 import com.gdar463.minefy.ui.PlaybackHUD;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.api.EnvType;
@@ -49,11 +50,12 @@ public class MinefyClient implements ClientModInitializer {
                 }
             }
         });
+        ConfigManager.init();
 
         ClientLifecycleEvents.CLIENT_STARTED.register(client -> PlaybackHUD.init());
 
-        ConfigManager.init();
         MinefyCommand.init();
+        SpotifyUser.init();
         LOGGER.info("MinefyClient initialized");
     }
 }
