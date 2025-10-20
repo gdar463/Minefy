@@ -18,6 +18,10 @@
 package com.gdar463.minefy.spotify;
 
 import com.gdar463.minefy.spotify.http.WrapperHttpClient;
+import com.gdar463.minefy.spotify.models.SpotifyUser;
+import com.gdar463.minefy.spotify.models.state.SpotifyPlayerDisallows;
+import com.gdar463.minefy.spotify.models.state.SpotifySubscriptionType;
+import com.gdar463.minefy.ui.PlaybackHUD;
 
 import java.net.URI;
 import java.net.http.HttpRequest;
@@ -41,6 +45,58 @@ public class SpotifyAPI {
                     if (code == 204) return CompletableFuture.completedFuture("{}");
                     return CompletableFuture.completedStage(res.body());
                 });
+    }
+
+    public static CompletableFuture<Boolean> startPlayback(String spotifyAccessToken) {
+        if (SpotifyUser.INSTANCE.type != SpotifySubscriptionType.PREMIUM ||
+                (PlaybackHUD.INSTANCE.player.disallows & SpotifyPlayerDisallows.RESUMING.mask()) != 0)
+            return CompletableFuture.completedFuture(false);
+        HttpRequest.Builder request = HttpRequest.newBuilder()
+                .uri(URI.create(API_BASE + "/me/player/play"))
+                .header("Content-Type", "application/json")
+                .PUT(HttpRequest.BodyPublishers.noBody());
+
+        return HTTP_CLIENT.sendAsync(request, spotifyAccessToken)
+                .thenApply(s -> true);
+    }
+
+    public static CompletableFuture<Boolean> pausePlayback(String spotifyAccessToken) {
+        if (SpotifyUser.INSTANCE.type != SpotifySubscriptionType.PREMIUM ||
+                (PlaybackHUD.INSTANCE.player.disallows & SpotifyPlayerDisallows.PAUSING.mask()) != 0)
+            return CompletableFuture.completedFuture(false);
+        HttpRequest.Builder request = HttpRequest.newBuilder()
+                .uri(URI.create(API_BASE + "/me/player/pause"))
+                .header("Content-Type", "application/json")
+                .PUT(HttpRequest.BodyPublishers.noBody());
+
+        return HTTP_CLIENT.sendAsync(request, spotifyAccessToken)
+                .thenApply(s -> true);
+    }
+
+    public static CompletableFuture<Boolean> skipToNext(String spotifyAccessToken) {
+        if (SpotifyUser.INSTANCE.type != SpotifySubscriptionType.PREMIUM ||
+                (PlaybackHUD.INSTANCE.player.disallows & SpotifyPlayerDisallows.SKIPPING_NEXT.mask()) != 0)
+            return CompletableFuture.completedFuture(false);
+        HttpRequest.Builder request = HttpRequest.newBuilder()
+                .uri(URI.create(API_BASE + "/me/player/next"))
+                .header("Content-Type", "application/json")
+                .PUT(HttpRequest.BodyPublishers.noBody());
+
+        return HTTP_CLIENT.sendAsync(request, spotifyAccessToken)
+                .thenApply(s -> true);
+    }
+
+    public static CompletableFuture<Boolean> skipToPrevious(String spotifyAccessToken) {
+        if (SpotifyUser.INSTANCE.type != SpotifySubscriptionType.PREMIUM ||
+                (PlaybackHUD.INSTANCE.player.disallows & SpotifyPlayerDisallows.SKIPPING_PREV.mask()) != 0)
+            return CompletableFuture.completedFuture(false);
+        HttpRequest.Builder request = HttpRequest.newBuilder()
+                .uri(URI.create(API_BASE + "/me/player/previous"))
+                .header("Content-Type", "application/json")
+                .PUT(HttpRequest.BodyPublishers.noBody());
+
+        return HTTP_CLIENT.sendAsync(request, spotifyAccessToken)
+                .thenApply(s -> true);
     }
 
     public static CompletableFuture<String> getUserProfile(String spotifyAccessToken) {
