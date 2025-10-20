@@ -38,17 +38,21 @@ jobs:
           restore-keys: "loom-${{ runner.os }}-"
       - name: Build
         run: ./gradlew build
+      - name: Create Git Tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag -a ${{ inputs.version }} -m ${{ inputs.message }}
       - name: Generate Changelog
         uses: orhun/git-cliff-action@v4
       - name: Commit Changelog
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
           git add CHANGELOG.md
           git commit -m "chore(release): update changelog for ${{ inputs.version }}" || echo "no changes"
           git push
-      - name: Create Git Tag
+      - name: Recreate Git Tag and Push
         run: |
+          git tag -d ${{ inputs.version }}
           git tag -a ${{ inputs.version }} -m ${{ inputs.message }}
           git push origin ${{ inputs.version }}
       - name: Generate latest release notes
