@@ -17,10 +17,12 @@
 
 package com.gdar463.minefy.spotify.http;
 
+import com.gdar463.minefy.MinefyClient;
 import com.gdar463.minefy.config.ConfigManager;
 import com.gdar463.minefy.config.MinefyConfig;
 import com.gdar463.minefy.spotify.SpotifyAuth;
 import com.gdar463.minefy.util.Scheduler;
+import org.slf4j.Logger;
 
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -31,11 +33,11 @@ import java.util.concurrent.TimeUnit;
 
 public class WrapperHttpClient {
     public static final MinefyConfig CONFIG = ConfigManager.get();
-
     public static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_1_1)
             .connectTimeout(Duration.ofSeconds(30))
             .build();
+    private static final Logger LOGGER = MinefyClient.LOGGER;
 
     public WrapperHttpClient() {
     }
@@ -53,6 +55,7 @@ public class WrapperHttpClient {
                             yield null;
                         }
                         case 429 -> {
+                            LOGGER.warn("Rate-Limited by Spotify for {} seconds", res.headers().firstValueAsLong("Retry-After").orElse(30));
                             Scheduler.schedule(() -> sendAsync(builder, CONFIG.spotify.accessToken),
                                     res.headers().firstValueAsLong("Retry-After").orElse(30),
                                     TimeUnit.SECONDS);
