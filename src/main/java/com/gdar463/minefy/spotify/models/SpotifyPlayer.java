@@ -17,6 +17,7 @@
 
 package com.gdar463.minefy.spotify.models;
 
+import com.gdar463.minefy.spotify.models.state.SpotifyPlayerDisallows;
 import com.gdar463.minefy.spotify.models.state.SpotifyPlayerState;
 import com.google.gson.JsonObject;
 
@@ -28,6 +29,7 @@ public class SpotifyPlayer {
     public boolean isPlaying;
     public long progressMs;
     public SpotifyPlayerState state = SpotifyPlayerState.NULL;
+    public int disallows = 0;
 
     public SpotifyTrack track = SpotifyTrack.EMPTY;
 
@@ -41,10 +43,43 @@ public class SpotifyPlayer {
         this.isPlaying = json.get("is_playing").getAsBoolean();
         this.progressMs = json.get("progress_ms").getAsLong();
 
+        JsonObject actions = json.get("actions").getAsJsonObject().get("disallows").getAsJsonObject();
+        actions.asMap().forEach((key, val) -> {
+            boolean valBool = val.getAsBoolean();
+            switch (key) {
+                case "interrupting_playback" ->
+                        updateDisallowsWithBool(valBool, SpotifyPlayerDisallows.INTERRUPTING_PLAYBACK);
+                case "pausing" -> updateDisallowsWithBool(valBool, SpotifyPlayerDisallows.PAUSING);
+                case "resuming" ->
+                        updateDisallowsWithBool(valBool, SpotifyPlayerDisallows.RESUMING);
+                case "seeking" -> updateDisallowsWithBool(valBool, SpotifyPlayerDisallows.SEEKING);
+                case "skipping_next" ->
+                        updateDisallowsWithBool(valBool, SpotifyPlayerDisallows.SKIPPING_NEXT);
+                case "skipping_prev" ->
+                        updateDisallowsWithBool(valBool, SpotifyPlayerDisallows.SKIPPING_PREV);
+                case "toggling_repeat_context" ->
+                        updateDisallowsWithBool(valBool, SpotifyPlayerDisallows.TOGGLING_REPEAT_CONTEXT);
+                case "toggling_shuffle" ->
+                        updateDisallowsWithBool(valBool, SpotifyPlayerDisallows.TOGGLING_SHUFFLE);
+                case "toggling_repeat_track" ->
+                        updateDisallowsWithBool(valBool, SpotifyPlayerDisallows.TOGGLING_REPEAT_TRACK);
+                case "transferring_playback" ->
+                        updateDisallowsWithBool(valBool, SpotifyPlayerDisallows.TRASFERRING_PLAYBACK);
+            }
+        });
+
         String trackUri = json.get("item").getAsJsonObject().get("uri").getAsString();
         if (!Objects.equals(trackUri, this.track.id))
             this.track.fromJson(json.get("item").getAsJsonObject());
         return this;
+    }
+
+    private void updateDisallowsWithBool(boolean bool, SpotifyPlayerDisallows perm) {
+        if (bool) {
+            this.disallows |= perm.mask();
+        } else {
+            this.disallows &= ~perm.mask();
+        }
     }
 
     @Override
