@@ -44,6 +44,7 @@ public class SpotifyPlayer {
         this.progressMs = json.get("progress_ms").getAsLong();
 
         JsonObject actions = json.get("actions").getAsJsonObject().get("disallows").getAsJsonObject();
+        this.disallows = 0;
         actions.asMap().forEach((key, val) -> {
             boolean valBool = val.getAsBoolean();
             switch (key) {
