@@ -22,9 +22,11 @@ import com.gdar463.minefy.config.ConfigManager;
 import com.gdar463.minefy.config.MinefyConfig;
 import com.gdar463.minefy.spotify.exceptions.NoTokenSuppliedException;
 import com.gdar463.minefy.spotify.exceptions.RefreshTokenRevokedException;
+import com.gdar463.minefy.spotify.models.SpotifyUser;
 import com.gdar463.minefy.spotify.server.LoginServer;
 import com.gdar463.minefy.ui.PlaybackHUD;
 import com.gdar463.minefy.util.DesktopUtils;
+import com.gdar463.minefy.util.Utils;
 import com.google.gson.JsonObject;
 import net.minecraft.client.MinecraftClient;
 import org.slf4j.Logger;
@@ -120,6 +122,8 @@ public class SpotifyAuth {
         CONFIG.spotify.accessToken = jsonObject.get("access_token").getAsString();
         CONFIG.spotify.refreshToken = jsonObject.get("refresh_token").getAsString();
         ConfigManager.save();
+        SpotifyAPI.getUserProfile(CONFIG.spotify.accessToken)
+                .thenApply(s -> SpotifyUser.INSTANCE.fromJson(Utils.convertToJsonObject(s)));
         if (CLIENT.player != null) PlaybackHUD.INSTANCE.getPlayer();
     }
 

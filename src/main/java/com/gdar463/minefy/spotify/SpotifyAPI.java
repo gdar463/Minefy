@@ -21,6 +21,7 @@ import com.gdar463.minefy.spotify.http.WrapperHttpClient;
 
 import java.net.URI;
 import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.concurrent.CompletableFuture;
 
 public class SpotifyAPI {
@@ -40,5 +41,14 @@ public class SpotifyAPI {
                     if (code == 204) return CompletableFuture.completedFuture("{}");
                     return CompletableFuture.completedStage(res.body());
                 });
+    }
+
+    public static CompletableFuture<String> getUserProfile(String spotifyAccessToken) {
+        HttpRequest.Builder request = HttpRequest.newBuilder()
+                .uri(URI.create(API_BASE + "/me"))
+                .header("Content-Type", "application/json")
+                .GET();
+
+        return HTTP_CLIENT.sendAsync(request, spotifyAccessToken).thenApply(HttpResponse::body);
     }
 }
