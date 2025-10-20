@@ -10,6 +10,9 @@ on:
       version:
         required: true
         description: "Release version (i.e. v0.1.2)"
+      message:
+        required: true
+        description: "Release description (i.e. Magical update)"
 
 jobs:
   build:
@@ -46,16 +49,18 @@ jobs:
           git push
       - name: Create Git Tag
         run: |
-          git tag ${{ inputs.version }}
+          git tag -a ${{ inputs.version }} -m ${{ inputs.message }}
           git push origin ${{ inputs.version }}
       - name: Generate latest release notes
         uses: orhun/git-cliff-action@v4
         id: cliff-latest
         with:
           args: --latest
+          config: "cliff-release.toml"
       - name: Create Github Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ inputs.version }}
+          name: "Release ${{ inputs.version }}"
           body: ${{ steps.cliff-latest.outputs.content }}
           files: build/libs/*.jar
