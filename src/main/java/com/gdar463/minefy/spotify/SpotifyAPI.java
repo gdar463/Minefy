@@ -80,7 +80,7 @@ public class SpotifyAPI {
         HttpRequest.Builder request = HttpRequest.newBuilder()
                 .uri(URI.create(API_BASE + "/me/player/next"))
                 .header("Content-Type", "application/json")
-                .PUT(HttpRequest.BodyPublishers.noBody());
+                .POST(HttpRequest.BodyPublishers.noBody());
 
         return HTTP_CLIENT.sendAsync(request, spotifyAccessToken)
                 .thenApply(s -> true);
@@ -93,7 +93,7 @@ public class SpotifyAPI {
         HttpRequest.Builder request = HttpRequest.newBuilder()
                 .uri(URI.create(API_BASE + "/me/player/previous"))
                 .header("Content-Type", "application/json")
-                .PUT(HttpRequest.BodyPublishers.noBody());
+                .POST(HttpRequest.BodyPublishers.noBody());
 
         return HTTP_CLIENT.sendAsync(request, spotifyAccessToken)
                 .thenApply(s -> true);
