@@ -53,6 +53,8 @@ jobs:
           git tag -a ${{ inputs.version }} -m "${{ inputs.message }}"
       - name: Generate Changelog
         uses: orhun/git-cliff-action@v4
+        with:
+          args: --output CHANGELOG.md
       - name: Commit Changelog
         run: |
           git add CHANGELOG.md
