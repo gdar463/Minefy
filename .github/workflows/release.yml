@@ -17,7 +17,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    permissions: write-all
     steps:
       - name: Checkout Repo
         uses: actions/checkout@v4
@@ -35,11 +34,16 @@ jobs:
         with:
           key: "loom-${{ runner.os }}-${{ hashFiles('**/*.gradle*', 'gradle/libs.versions.toml') }}"
           path: ".gradle/loom-cache"
-          restore-keys: "loom-${{ runner.os }}-"
       - name: Ensure gradlew is executable
         run: chmod +x ./gradlew
       - name: Build
         run: ./gradlew build
+
+  release:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    needs: build
+    steps:
       - name: Create Git Tag
         run: |
           git config user.name "github-actions[bot]"
