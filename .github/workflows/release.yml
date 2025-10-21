@@ -55,7 +55,7 @@ jobs:
       - name: Recreate Git Tag and Push
         run: |
           git tag -d ${{ inputs.version }}
-          git tag -a ${{ inputs.version }} -m ${{ inputs.message }}
+          git tag -a ${{ inputs.version }} -m "${{ inputs.message }}"
           git push origin ${{ inputs.version }}
       - name: Generate latest release notes
         uses: orhun/git-cliff-action@v4
