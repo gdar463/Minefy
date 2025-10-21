@@ -29,7 +29,7 @@ body = """
     {% if previous.version %}\
         **Full changelog:** [`{{ previous.version }}...{{ version }}`]($REPO/compare/{{ previous.version }}..{{ version }})\
     {% endif %}\
-{% endif %}\
+{% endif %}\n
 """
 # Remove leading and trailing whitespaces from the changelog's body.
 trim = true
