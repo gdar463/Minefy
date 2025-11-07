@@ -17,7 +17,7 @@ This project uses code from the following projects:
 - [Skyblocker](https://github.com/SkyblockerMod/Skyblocker), licensed under [LGPLv3.0](https://github.com/SkyblockerMod/Skyblocker/blob/fa9e6b7663c6f81e08e6e3cc1cf25907522ae82a/LICENSE)
   - Copied code found in the following files:
     - [HudRenderEvents](src/main/java/com/gdar463/minefy/events/HudRenderEvents.java)
-    - [InGameHudMIxin](src/main/java/com/gdar463/minefy/mixin/InGameHudMixin.java)
+    - [InGameHudMixin](src/main/java/com/gdar463/minefy/mixin/InGameHudMixin.java)
 
 This project uses the following third-party libraries:
 
