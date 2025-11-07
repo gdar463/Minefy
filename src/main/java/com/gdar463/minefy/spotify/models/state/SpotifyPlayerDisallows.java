@@ -19,8 +19,8 @@ package com.gdar463.minefy.spotify.models.state;
 
 public enum SpotifyPlayerDisallows {
     INTERRUPTING_PLAYBACK,
-    PAUSING,
     RESUMING,
+    PAUSING,
     SEEKING,
     SKIPPING_NEXT,
     SKIPPING_PREV,
