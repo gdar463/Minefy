@@ -1,6 +1,6 @@
 {
-  "text.minefy.chat.loggedout.head": "Looks like you still have to login with Spotify.\\nRun",
-  "text.minefy.chat.loggedout.end": "to authrorize Minefy to your Spotify account.",
+  "text.minefy.chat.loggedout.head": "Looks like you still have to login with Spotify.\nRun ",
+  "text.minefy.chat.loggedout.end": " to link Minefy to your Spotify account.",
   "text.minefy.config.title": "Minefy Config",
   "text.minefy.config.category.hud": "Hud",
   "text.minefy.config.hud.playback.name": "Playback",

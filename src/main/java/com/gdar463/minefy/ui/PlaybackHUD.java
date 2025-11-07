@@ -71,14 +71,17 @@ public class PlaybackHUD {
         if (!CONFIG.spotify.refreshToken.isEmpty()) {
             Scheduler.schedule(() -> getPlayer(true), 2, TimeUnit.SECONDS);
         } else {
-            ClientUtils.sendClientSideMessage(Text.literal("\t===\t")
+            ClientUtils.sendClientSideMessage(Text.empty()
+                    .append(Text.literal("[").formatted(Formatting.DARK_GREEN))
                     .append(Text.literal("Minefy").formatted(Formatting.GREEN))
-                    .append(Text.literal("\t===\n"))
-                    .append(Text.translatable("text.minefy.chat.loggedout.head"))
+                    .append(Text.literal("] ").formatted(Formatting.DARK_GREEN))
+                    .append(Text.translatable("text.minefy.chat.loggedout.head")
+                            .formatted(Formatting.GOLD))
                     .append(Text.literal("/minefy login")
                             .formatted(Formatting.RED, Formatting.UNDERLINE)
-                            .styled(style -> style.withClickEvent(new ClickEvent.RunCommand("minify login"))))
-                    .append(Text.translatable("text.minefy.chat.loggedout.end")));
+                            .styled(style -> style.withClickEvent(new ClickEvent.RunCommand("minefy login"))))
+                    .append(Text.translatable("text.minefy.chat.loggedout.end")
+                            .formatted(Formatting.GOLD)));
         }
 
         LOGGER.debug("PlaybackHUD registered");
