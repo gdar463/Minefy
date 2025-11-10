@@ -19,18 +19,31 @@ package com.gdar463.minefy.config.categories;
 
 import com.gdar463.minefy.config.MinefyConfig;
 import com.gdar463.minefy.config.builders.*;
+import com.gdar463.minefy.config.presets.CoordsPresetsEnum;
 import dev.isxander.yacl3.api.ConfigCategory;
 import net.minecraft.text.Text;
+import net.minecraft.util.Formatting;
 
 public class HudConfigCategory {
     public static ConfigCategory create(MinefyConfig config) {
         return ConfigCategory.createBuilder()
                 .name(Text.translatable("text.minefy.config.category.hud"))
-                .group(OptionGroupBuilder.create("text.minefy.config.hud.playback.name",
-                                "text.minefy.config.hud.playback.description", false)
-                        .option(BooleanOptionBuilder.create("text.minefy.config.hud.playback.enabled.name",
-                                        "text.minefy.config.hud.playback.enabled.description")
+                .group(OptionGroupBuilder.create("text.minefy.config.hud.general.name",
+                                "text.minefy.config.hud.general.description", false)
+                        .option(BooleanOptionBuilder.create("text.minefy.config.hud.general.enabled.name",
+                                        "text.minefy.config.hud.general.enabled.description")
                                 .binding(config.hud.enabled, () -> config.hud.enabled, val -> config.hud.enabled = val)
+                                .build())
+                        .option(EnumOptionBuilder.create("text.minefy.config.hud.general.coords_preset.name",
+                                        "text.minefy.config.hud.general.coords_preset.description",
+                                        v -> Text.translatable("text.minefy.config.hud.general.coords_preset." + v.name().toLowerCase())
+                                                .append(config.hud.theme.coords_preset_modified ? Text.literal("*").formatted(Formatting.BOLD, Formatting.GREEN) : Text.of("")),
+                                        CoordsPresetsEnum.class)
+                                .binding(config.hud.theme.coords_preset, () -> config.hud.theme.coords_preset, val -> {
+                                    config.hud.theme.coords_preset = val;
+                                    config.hud.theme.coords_preset_modified = false;
+                                    val.preset.apply(config.hud);
+                                })
                                 .build())
                         .build())
                 .group(OptionGroupBuilder.create("text.minefy.config.hud.colors.name",
@@ -64,11 +77,17 @@ public class HudConfigCategory {
                                 "text.minefy.config.hud.sizes.description")
                         .option(IntegerFieldOptionBuilder.create("text.minefy.config.hud.sizes.x.name",
                                         "text.minefy.config.hud.sizes.x.description", 0, 350)
-                                .binding(config.hud.theme.sizes.x, () -> config.hud.theme.sizes.x, val -> config.hud.theme.sizes.x = val)
+                                .binding(config.hud.theme.sizes.x, () -> config.hud.theme.sizes.x, val -> {
+                                    config.hud.theme.sizes.x = val;
+                                    config.hud.theme.coords_preset_modified = true;
+                                })
                                 .build())
                         .option(IntegerFieldOptionBuilder.create("text.minefy.config.hud.sizes.y.name",
                                         "text.minefy.config.hud.sizes.y.description", 0, 250)
-                                .binding(config.hud.theme.sizes.y, () -> config.hud.theme.sizes.y, val -> config.hud.theme.sizes.y = val)
+                                .binding(config.hud.theme.sizes.y, () -> config.hud.theme.sizes.y, val -> {
+                                    config.hud.theme.sizes.y = val;
+                                    config.hud.theme.coords_preset_modified = true;
+                                })
                                 .build())
                         .option(IntegerFieldOptionBuilder.create("text.minefy.config.hud.sizes.width.name",
                                         "text.minefy.config.hud.sizes.width.description", 100, 400)
@@ -84,11 +103,17 @@ public class HudConfigCategory {
                                 .build())
                         .option(IntegerFieldOptionBuilder.create("text.minefy.config.hud.sizes.columnX.name",
                                         "text.minefy.config.hud.sizes.columnX.description", 30, 200)
-                                .binding(config.hud.theme.sizes.columnX, () -> config.hud.theme.sizes.columnX, val -> config.hud.theme.sizes.columnX = val)
+                                .binding(config.hud.theme.sizes.columnX, () -> config.hud.theme.sizes.columnX, val -> {
+                                    config.hud.theme.sizes.columnX = val;
+                                    config.hud.theme.coords_preset_modified = true;
+                                })
                                 .build())
                         .option(IntegerFieldOptionBuilder.create("text.minefy.config.hud.sizes.columnY.name",
                                         "text.minefy.config.hud.sizes.columnY.description", 0, 100)
-                                .binding(config.hud.theme.sizes.columnY, () -> config.hud.theme.sizes.columnY, val -> config.hud.theme.sizes.columnY = val)
+                                .binding(config.hud.theme.sizes.columnY, () -> config.hud.theme.sizes.columnY, val -> {
+                                    config.hud.theme.sizes.columnY = val;
+                                    config.hud.theme.coords_preset_modified = true;
+                                })
                                 .build())
                         .option(IntegerFieldOptionBuilder.create("text.minefy.config.hud.sizes.borderSize.name",
                                         "text.minefy.config.hud.sizes.borderSize.description", 0, 10)
@@ -107,7 +132,10 @@ public class HudConfigCategory {
                                 .build())
                         .option(IntegerFieldOptionBuilder.create("text.minefy.config.hud.bar.y.name",
                                         "text.minefy.config.hud.bar.y.description", 20, 80)
-                                .binding(config.hud.theme.bar.y, () -> config.hud.theme.bar.y, val -> config.hud.theme.bar.y = val)
+                                .binding(config.hud.theme.bar.y, () -> config.hud.theme.bar.y, val -> {
+                                    config.hud.theme.bar.y = val;
+                                    config.hud.theme.coords_preset_modified = true;
+                                })
                                 .build())
                         .option(IntegerFieldOptionBuilder.create("text.minefy.config.hud.bar.progressY.name",
                                         "text.minefy.config.hud.bar.progressY.description", 0, 20)
@@ -122,11 +150,17 @@ public class HudConfigCategory {
                                 "text.minefy.config.hud.buttons.description")
                         .option(IntegerFieldOptionBuilder.create("text.minefy.config.hud.buttons.x.name",
                                         "text.minefy.config.hud.buttons.x.description", 0, 350)
-                                .binding(config.hud.theme.buttons.x, () -> config.hud.theme.buttons.x, val -> config.hud.theme.buttons.x = val)
+                                .binding(config.hud.theme.buttons.x, () -> config.hud.theme.buttons.x, val -> {
+                                    config.hud.theme.buttons.x = val;
+                                    config.hud.theme.coords_preset_modified = true;
+                                })
                                 .build())
                         .option(IntegerFieldOptionBuilder.create("text.minefy.config.hud.buttons.y.name",
                                         "text.minefy.config.hud.buttons.y.description", 0, 250)
-                                .binding(config.hud.theme.buttons.y, () -> config.hud.theme.buttons.y, val -> config.hud.theme.buttons.y = val)
+                                .binding(config.hud.theme.buttons.y, () -> config.hud.theme.buttons.y, val -> {
+                                    config.hud.theme.buttons.y = val;
+                                    config.hud.theme.coords_preset_modified = true;
+                                })
                                 .build())
                         .option(IntegerFieldOptionBuilder.create("text.minefy.config.hud.buttons.size.name",
                                         "text.minefy.config.hud.buttons.size.description", 6, 30)
@@ -141,11 +175,17 @@ public class HudConfigCategory {
                                 "text.minefy.config.hud.cover.description")
                         .option(IntegerFieldOptionBuilder.create("text.minefy.config.hud.cover.x.name",
                                         "text.minefy.config.hud.cover.x.description", 0, 40)
-                                .binding(config.hud.theme.cover.x, () -> config.hud.theme.cover.x, val -> config.hud.theme.cover.x = val)
+                                .binding(config.hud.theme.cover.x, () -> config.hud.theme.cover.x, val -> {
+                                    config.hud.theme.cover.x = val;
+                                    config.hud.theme.coords_preset_modified = true;
+                                })
                                 .build())
                         .option(IntegerFieldOptionBuilder.create("text.minefy.config.hud.cover.y.name",
                                         "text.minefy.config.hud.cover.y.description", 0, 30)
-                                .binding(config.hud.theme.cover.y, () -> config.hud.theme.cover.y, val -> config.hud.theme.cover.y = val)
+                                .binding(config.hud.theme.cover.y, () -> config.hud.theme.cover.y, val -> {
+                                    config.hud.theme.cover.y = val;
+                                    config.hud.theme.coords_preset_modified = true;
+                                })
                                 .build())
                         .option(IntegerFieldOptionBuilder.create("text.minefy.config.hud.cover.size.name",
                                         "text.minefy.config.hud.cover.size.description", 20, 100)

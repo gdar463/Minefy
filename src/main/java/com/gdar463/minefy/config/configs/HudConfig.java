@@ -17,6 +17,7 @@
 
 package com.gdar463.minefy.config.configs;
 
+import com.gdar463.minefy.config.presets.CoordsPresetsEnum;
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
 
 import java.awt.*;
@@ -29,6 +30,10 @@ public class HudConfig {
     public HudThemeConfig theme = new HudThemeConfig();
 
     public static class HudThemeConfig {
+        @SerialEntry
+        public CoordsPresetsEnum coords_preset = CoordsPresetsEnum.TOP_LEFT;
+        @SerialEntry
+        public boolean coords_preset_modified = false;
         @SerialEntry
         public HudThemeColorsConfig colors = new HudThemeColorsConfig();
         @SerialEntry
