@@ -118,6 +118,25 @@ public class HudConfigCategory {
                                 .binding(config.hud.theme.bar.textScale, () -> config.hud.theme.bar.textScale, val -> config.hud.theme.bar.textScale = val)
                                 .build())
                         .build())
+                .group(OptionGroupBuilder.create("text.minefy.config.hud.buttons.name",
+                                "text.minefy.config.hud.buttons.description", false)
+                        .option(IntegerFieldOptionBuilder.create("text.minefy.config.hud.buttons.x.name",
+                                        "text.minefy.config.hud.buttons.x.description", 0, 350)
+                                .binding(config.hud.theme.buttons.x, () -> config.hud.theme.buttons.x, val -> config.hud.theme.buttons.x = val)
+                                .build())
+                        .option(IntegerFieldOptionBuilder.create("text.minefy.config.hud.buttons.y.name",
+                                        "text.minefy.config.hud.buttons.y.description", 0, 250)
+                                .binding(config.hud.theme.buttons.y, () -> config.hud.theme.buttons.y, val -> config.hud.theme.buttons.y = val)
+                                .build())
+                        .option(IntegerFieldOptionBuilder.create("text.minefy.config.hud.buttons.size.name",
+                                        "text.minefy.config.hud.buttons.size.description", 6, 30)
+                                .binding(config.hud.theme.buttons.size, () -> config.hud.theme.buttons.size, val -> config.hud.theme.buttons.size = val)
+                                .build())
+                        .option(IntegerFieldOptionBuilder.create("text.minefy.config.hud.buttons.offset.name",
+                                        "text.minefy.config.hud.buttons.size.description", 0, 10)
+                                .binding(config.hud.theme.buttons.offset, () -> config.hud.theme.buttons.offset, val -> config.hud.theme.buttons.offset = val)
+                                .build())
+                        .build())
                 .group(OptionGroupBuilder.create("text.minefy.config.hud.cover.name",
                                 "text.minefy.config.hud.cover.description", false)
                         .option(IntegerFieldOptionBuilder.create("text.minefy.config.hud.cover.x.name",

@@ -172,18 +172,9 @@ public class PlaybackHUD {
         stack.popMatrix();
 
         if (hovered) {
-            ctx.drawTexture(RenderPipelines.GUI_TEXTURED, PLAYER_ICONS, 85, 56,
-                    player.isPlaying ? 0 : 16, 0,
-                    8, 8, 16, 16, 64, 64);
-            ctx.drawBorder(84, 55, 10, 10, HUD_THEME.colors.activeBorderColor.getRGB());
-            ctx.drawTexture(RenderPipelines.GUI_TEXTURED, PLAYER_ICONS, 97, 56,
-                    32, 0,
-                    8, 8, 16, 16, 64, 64);
-            ctx.drawBorder(96, 55, 10, 10, HUD_THEME.colors.activeBorderColor.getRGB());
-            ctx.drawTexture(RenderPipelines.GUI_TEXTURED, PLAYER_ICONS, 73, 56,
-                    48, 0,
-                    8, 8, 16, 16, 64, 64);
-            ctx.drawBorder(72, 55, 10, 10, HUD_THEME.colors.activeBorderColor.getRGB());
+            drawButton(ctx, 1, player.isPlaying ? 0 : 16);
+            drawButton(ctx, 0, 48);
+            drawButton(ctx, 2, 32);
         }
     }
 
@@ -250,5 +241,13 @@ public class PlaybackHUD {
                     }
                     PlayerScheduler.schedule(this::getPlayer, CONFIG.spotify.updateInterval, TimeUnit.MILLISECONDS);
                 });
+    }
+
+    private void drawButton(DrawContext ctx, int ordinal, int u) {
+        ctx.drawTexture(RenderPipelines.GUI_TEXTURED, PLAYER_ICONS, HUD_THEME.buttons.x + ordinal * (HUD_THEME.buttons.size + HUD_THEME.buttons.offset) + 1,
+                HUD_THEME.buttons.y + 1, u, 0,
+                HUD_THEME.buttons.size - 2, HUD_THEME.buttons.size - 2, 16, 16, 64, 64);
+        ctx.drawBorder(HUD_THEME.buttons.x + ordinal * (HUD_THEME.buttons.size + HUD_THEME.buttons.offset), HUD_THEME.buttons.y,
+                HUD_THEME.buttons.size, HUD_THEME.buttons.size, HUD_THEME.colors.activeBorderColor.getRGB());
     }
 }

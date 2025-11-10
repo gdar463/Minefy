@@ -36,6 +36,8 @@ public class HudConfig {
         @SerialEntry
         public HudThemeBarConfig bar = new HudThemeBarConfig();
         @SerialEntry
+        public HudThemeButtonsConfig buttons = new HudThemeButtonsConfig();
+        @SerialEntry
         public HudThemeCoverConfig cover = new HudThemeCoverConfig();
         @SerialEntry
         public HudThemeTextConfig text = new HudThemeTextConfig();
@@ -75,6 +77,15 @@ public class HudConfig {
             public int y = 42, progressY = 6;
             @SerialEntry
             public float textScale = 0.5F;
+        }
+
+        public static class HudThemeButtonsConfig {
+            @SerialEntry
+            public int x = 72, y = 55;
+            @SerialEntry
+            public int size = 10;
+            @SerialEntry
+            public int offset = 2;
         }
 
         public static class HudThemeCoverConfig {
