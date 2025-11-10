@@ -110,8 +110,8 @@ public class PlaybackHUD {
                 HUD_THEME.sizes.x + HUD_THEME.sizes.width,
                 HUD_THEME.sizes.y + height,
                 HUD_THEME.colors.bgColor.getRGB());
-        double mouseX = WINDOW != null ? CLIENT.mouse.getScaledX(WINDOW) : 0;
-        double mouseY = WINDOW != null ? CLIENT.mouse.getScaledY(WINDOW) : 0;
+        double mouseX = WINDOW != null ? CLIENT.mouse.getScaledX(WINDOW) : -1;
+        double mouseY = WINDOW != null ? CLIENT.mouse.getScaledY(WINDOW) : -1;
         boolean hovered = mouseX >= HUD_THEME.sizes.x && mouseX <= (HUD_THEME.sizes.x + HUD_THEME.sizes.width)
                 && mouseY >= HUD_THEME.sizes.y && mouseY <= (HUD_THEME.sizes.y + height);
         if (hovered) {
