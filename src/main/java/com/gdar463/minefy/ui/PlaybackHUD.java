@@ -30,7 +30,7 @@ import com.gdar463.minefy.spotify.models.state.TextureState;
 import com.gdar463.minefy.ui.state.DurationSource;
 import com.gdar463.minefy.util.ClientUtils;
 import com.gdar463.minefy.util.DrawingUtils;
-import com.gdar463.minefy.util.Scheduler;
+import com.gdar463.minefy.util.PlayerScheduler;
 import com.gdar463.minefy.util.Utils;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.RenderPipelines;
@@ -154,7 +154,8 @@ public class PlaybackHUD {
 
     public void getPlayer(boolean firstRun) {
         if (CLIENT.player == null) {
-            Scheduler.schedule(this::getPlayer, 5, TimeUnit.SECONDS);
+            PlayerScheduler.schedule(this::getPlayer, 5, TimeUnit.SECONDS);
+            return;
         }
         if (!firstRun && (CONFIG.spotify.accessToken.isEmpty())) {
             if (CONFIG.spotify.refreshToken.isEmpty()) {
@@ -163,7 +164,7 @@ public class PlaybackHUD {
                 return;
             }
             if (SpotifyAuth.refreshTokens())
-                Scheduler.schedule(this::getPlayer, 2, TimeUnit.SECONDS);
+                PlayerScheduler.schedule(this::getPlayer, 2, TimeUnit.SECONDS);
             return;
         }
         SpotifyAPI.getPlaybackState(CONFIG.spotify.accessToken)
@@ -186,7 +187,7 @@ public class PlaybackHUD {
                         }
                         this.player.state = SpotifyPlayerState.READY;
                     }
-                    Scheduler.schedule(this::getPlayer, 2, TimeUnit.SECONDS);
+                    PlayerScheduler.schedule(this::getPlayer, 2, TimeUnit.SECONDS);
                 });
     }
 }

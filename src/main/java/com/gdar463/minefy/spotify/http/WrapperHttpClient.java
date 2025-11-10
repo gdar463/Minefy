@@ -20,7 +20,9 @@ package com.gdar463.minefy.spotify.http;
 import com.gdar463.minefy.MinefyClient;
 import com.gdar463.minefy.config.ConfigManager;
 import com.gdar463.minefy.config.MinefyConfig;
+import com.gdar463.minefy.spotify.SpotifyAPI;
 import com.gdar463.minefy.spotify.SpotifyAuth;
+import com.gdar463.minefy.util.PlayerScheduler;
 import com.gdar463.minefy.util.Scheduler;
 import org.slf4j.Logger;
 
@@ -28,6 +30,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -52,14 +55,20 @@ public class WrapperHttpClient {
                         case 400, 401 -> {
                             if (SpotifyAuth.refreshTokens())
                                 sendAsync(builder, CONFIG.spotify.accessToken);
-                            yield null;
+                            yield CompletableFuture.completedFuture(null);
                         }
                         case 429 -> {
-                            LOGGER.warn("Rate-Limited by Spotify for {} seconds", res.headers().firstValueAsLong("Retry-After").orElse(30));
-                            Scheduler.schedule(() -> sendAsync(builder, CONFIG.spotify.accessToken),
-                                    res.headers().firstValueAsLong("Retry-After").orElse(30),
-                                    TimeUnit.SECONDS);
-                            yield null;
+                            LOGGER.warn("Rate-Limited by Spotify for {} seconds", res.headers().firstValueAsLong("Retry-After").orElse(30) + 2);
+                            if (Objects.equals(res.uri().toString(), SpotifyAPI.API_BASE + "/me/player")) {
+                                PlayerScheduler.schedule(() -> sendAsync(builder, CONFIG.spotify.accessToken),
+                                        res.headers().firstValueAsLong("Retry-After").orElse(30) + 2,
+                                        TimeUnit.SECONDS);
+                            } else {
+                                Scheduler.schedule(() -> sendAsync(builder, CONFIG.spotify.accessToken),
+                                        res.headers().firstValueAsLong("Retry-After").orElse(30) + 2,
+                                        TimeUnit.SECONDS);
+                            }
+                            yield CompletableFuture.completedFuture(null);
                         }
                         default -> CompletableFuture.completedStage(res);
                     };

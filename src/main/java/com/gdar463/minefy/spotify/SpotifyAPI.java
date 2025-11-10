@@ -41,6 +41,7 @@ public class SpotifyAPI {
 
         return HTTP_CLIENT.sendAsync(request, spotifyAccessToken)
                 .thenCompose(res -> {
+                    if (res == null) return CompletableFuture.completedFuture(null);
                     int code = res.statusCode();
                     if (code == 204) return CompletableFuture.completedFuture("{}");
                     return CompletableFuture.completedStage(res.body());
