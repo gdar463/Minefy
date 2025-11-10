@@ -71,6 +71,7 @@ public class PlaybackHUD {
     private TextMarquee artistsMarquee;
 
     private int height;
+    private boolean hovered;
 
     public PlaybackHUD() {
         HudRenderEvents.AFTER_MAIN_HUD.register(this::render);
@@ -112,8 +113,9 @@ public class PlaybackHUD {
                 HUD_THEME.colors.bgColor.getRGB());
         double mouseX = WINDOW != null ? CLIENT.mouse.getScaledX(WINDOW) : -1;
         double mouseY = WINDOW != null ? CLIENT.mouse.getScaledY(WINDOW) : -1;
-        boolean hovered = mouseX >= HUD_THEME.sizes.x && mouseX <= (HUD_THEME.sizes.x + HUD_THEME.sizes.width)
-                && mouseY >= HUD_THEME.sizes.y && mouseY <= (HUD_THEME.sizes.y + height);
+        hovered = !CLIENT.mouse.isCursorLocked() && Utils.pointInBounds(mouseX, mouseY,
+                HUD_THEME.sizes.x, HUD_THEME.sizes.y,
+                HUD_THEME.sizes.width, height);
         if (hovered) {
             height = HUD_THEME.sizes.activeHeight;
             DrawingUtils.drawBorder(ctx, HUD_THEME.sizes.x, HUD_THEME.sizes.y,
@@ -183,6 +185,28 @@ public class PlaybackHUD {
                     8, 8, 16, 16, 64, 64);
             ctx.drawBorder(72, 55, 10, 10, HUD_THEME.colors.activeBorderColor.getRGB());
         }
+    }
+
+    public boolean onMouseClicked(double x, double y) {
+        if (hovered && Utils.pointInBounds(x, y, 72, 55, 82, 65)) {
+            if (progress.toMillis() <= 4000)
+                SpotifyAPI.skipToPrevious(CONFIG.spotify.accessToken);
+            else
+                SpotifyAPI.seekToPosition(0, CONFIG.spotify.accessToken);
+            return true;
+        }
+        if (hovered && Utils.pointInBounds(x, y, 84, 55, 94, 65)) {
+            if (player.isPlaying)
+                SpotifyAPI.pausePlayback(CONFIG.spotify.accessToken);
+            else
+                SpotifyAPI.startPlayback(CONFIG.spotify.accessToken);
+            return true;
+        }
+        if (hovered && Utils.pointInBounds(x, y, 96, 55, 106, 65)) {
+            SpotifyAPI.skipToNext(CONFIG.spotify.accessToken);
+            return true;
+        }
+        return false;
     }
 
     public void getPlayer() {

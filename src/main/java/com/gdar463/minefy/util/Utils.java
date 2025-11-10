@@ -31,4 +31,8 @@ public class Utils {
         return (int) (dur.getSeconds() / 60) + ":" +
                 String.format("%02d", dur.getSeconds() % 60);
     }
+
+    public static boolean pointInBounds(double x, double y, double x1, double y1, double x2, double y2) {
+        return x >= x1 && x <= x2 && y >= y1 && y <= y2;
+    }
 }
