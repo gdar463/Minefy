@@ -76,7 +76,7 @@ public class PlaybackHUD {
     public PlaybackHUD() {
         HudRenderEvents.AFTER_MAIN_HUD.register(this::render);
         if (!CONFIG.spotify.refreshToken.isEmpty()) {
-            PlayerScheduler.schedule(() -> getPlayer(true), 2, TimeUnit.SECONDS);
+            PlayerScheduler.schedule(() -> getPlayer(true), CONFIG.spotify.updateInterval, TimeUnit.MILLISECONDS);
         } else {
             ClientUtils.sendClientSideMessage(Text.empty()
                     .append(Text.literal("[").formatted(Formatting.DARK_GREEN))
@@ -225,7 +225,7 @@ public class PlaybackHUD {
                 return;
             }
             if (SpotifyAuth.refreshTokens())
-                PlayerScheduler.schedule(this::getPlayer, 2, TimeUnit.SECONDS);
+                PlayerScheduler.schedule(this::getPlayer, CONFIG.spotify.updateInterval, TimeUnit.MILLISECONDS);
             return;
         }
         SpotifyAPI.getPlaybackState(CONFIG.spotify.accessToken)
@@ -248,7 +248,7 @@ public class PlaybackHUD {
                         }
                         this.player.state = SpotifyPlayerState.READY;
                     }
-                    PlayerScheduler.schedule(this::getPlayer, 2, TimeUnit.SECONDS);
+                    PlayerScheduler.schedule(this::getPlayer, CONFIG.spotify.updateInterval, TimeUnit.MILLISECONDS);
                 });
     }
 }

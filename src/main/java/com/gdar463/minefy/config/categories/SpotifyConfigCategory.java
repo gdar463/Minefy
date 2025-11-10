@@ -40,6 +40,13 @@ public class SpotifyConfigCategory {
     public static ConfigCategory create(MinefyConfig config) {
         return ConfigCategory.createBuilder()
                 .name(Text.translatable("text.minefy.config.category.spotify"))
+                .group(OptionGroupBuilder.create("text.minefy.config.spotify.general.name",
+                                "text.minefy.config.spotify.general.description", false)
+                        .option(IntegerFieldOptionBuilder.create("text.minefy.config.spotify.general.interval.name",
+                                        "text.minefy.config.spotify.general.interval.description", 500, 5000)
+                                .binding(config.spotify.updateInterval, () -> config.spotify.updateInterval, val -> config.spotify.updateInterval = val)
+                                .build())
+                        .build())
                 .group(OptionGroupBuilder.create("text.minefy.config.spotify.client.name",
                                 "text.minefy.config.spotify.client.description")
                         .option(StringOptionBuilder.create("text.minefy.config.spotify.client.id.name",

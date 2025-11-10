@@ -24,6 +24,9 @@ public class SpotifyConfig {
     public OAuthClient oAuthClient = new OAuthClient();
 
     @SerialEntry
+    public int updateInterval = 1500;
+
+    @SerialEntry
     public String accessToken = "";
 
     @SerialEntry
