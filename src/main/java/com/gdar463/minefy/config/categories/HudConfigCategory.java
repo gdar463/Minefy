@@ -78,6 +78,10 @@ public class HudConfigCategory {
                                         "text.minefy.config.hud.sizes.height.description", 40, 150)
                                 .binding(config.hud.theme.sizes.height, () -> config.hud.theme.sizes.height, val -> config.hud.theme.sizes.height = val)
                                 .build())
+                        .option(IntegerFieldOptionBuilder.create("text.minefy.config.hud.sizes.activeHeight.name",
+                                        "text.minefy.config.hud.sizes.activeHeight.description", 40, 160)
+                                .binding(config.hud.theme.sizes.activeHeight, () -> config.hud.theme.sizes.activeHeight, val -> config.hud.theme.sizes.activeHeight = val)
+                                .build())
                         .option(IntegerFieldOptionBuilder.create("text.minefy.config.hud.sizes.columnX.name",
                                         "text.minefy.config.hud.sizes.columnX.description", 30, 200)
                                 .binding(config.hud.theme.sizes.columnX, () -> config.hud.theme.sizes.columnX, val -> config.hud.theme.sizes.columnX = val)

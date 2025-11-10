@@ -68,6 +68,8 @@ public class PlaybackHUD {
     private TextMarquee titleMarquee;
     private TextMarquee artistsMarquee;
 
+    private int height;
+
     public PlaybackHUD() {
         HudRenderEvents.AFTER_MAIN_HUD.register(this::render);
         if (!CONFIG.spotify.refreshToken.isEmpty()) {
@@ -86,6 +88,7 @@ public class PlaybackHUD {
                             .formatted(Formatting.GOLD)));
         }
 
+        height = HUD_THEME.sizes.height;
         LOGGER.debug("PlaybackHUD registered");
     }
 
@@ -103,19 +106,22 @@ public class PlaybackHUD {
 
         ctx.fill(HUD_THEME.sizes.x, HUD_THEME.sizes.y,
                 HUD_THEME.sizes.x + HUD_THEME.sizes.width,
-                HUD_THEME.sizes.y + HUD_THEME.sizes.height,
+                HUD_THEME.sizes.y + height,
                 HUD_THEME.colors.bgColor.getRGB());
         double mouseX = WINDOW != null ? CLIENT.mouse.getScaledX(WINDOW) : 0;
         double mouseY = WINDOW != null ? CLIENT.mouse.getScaledY(WINDOW) : 0;
-        if (mouseX >= HUD_THEME.sizes.x && mouseX <= (HUD_THEME.sizes.x + HUD_THEME.sizes.width)
-                && mouseY >= HUD_THEME.sizes.y && mouseY <= (HUD_THEME.sizes.y + HUD_THEME.sizes.height)) {
+        boolean hovered = mouseX >= HUD_THEME.sizes.x && mouseX <= (HUD_THEME.sizes.x + HUD_THEME.sizes.width)
+                && mouseY >= HUD_THEME.sizes.y && mouseY <= (HUD_THEME.sizes.y + height);
+        if (hovered) {
+            height = HUD_THEME.sizes.activeHeight;
             DrawingUtils.drawBorder(ctx, HUD_THEME.sizes.x, HUD_THEME.sizes.y,
-                    HUD_THEME.sizes.width, HUD_THEME.sizes.height,
+                    HUD_THEME.sizes.width, height,
                     HUD_THEME.colors.activeBorderColor.getRGB(),
                     HUD_THEME.sizes.borderSize);
         } else {
+            height = HUD_THEME.sizes.height;
             DrawingUtils.drawBorder(ctx, HUD_THEME.sizes.x, HUD_THEME.sizes.y,
-                    HUD_THEME.sizes.width, HUD_THEME.sizes.height,
+                    HUD_THEME.sizes.width, height,
                     HUD_THEME.colors.borderColor.getRGB(),
                     HUD_THEME.sizes.borderSize);
         }

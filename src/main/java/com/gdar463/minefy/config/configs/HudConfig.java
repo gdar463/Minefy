@@ -61,6 +61,8 @@ public class HudConfig {
             @SerialEntry
             public int width = 178, height = 60;
             @SerialEntry
+            public int activeHeight = 70;
+            @SerialEntry
             public int columnX = 61, columnY = 10;
             @SerialEntry
             public int borderSize = 2;

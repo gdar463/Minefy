@@ -31,6 +31,8 @@
   "text.minefy.config.hud.sizes.width.description": "Width of the HUD. By default 178.",
   "text.minefy.config.hud.sizes.height.name": "Height",
   "text.minefy.config.hud.sizes.height.description": "Height of the HUD. By default 60.",
+  "text.minefy.config.hud.sizes.activeHeight.name": "Active Height",
+  "text.minefy.config.hud.sizes.activeHeight.description": "Active Height of the HUD when hovered. By default 70.",
   "text.minefy.config.hud.sizes.columnX.name": "Content X",
   "text.minefy.config.hud.sizes.columnX.description": "X of the top left corner from which title, artists, ... start. By default 61.",
   "text.minefy.config.hud.sizes.columnY.name": "Content Y",
