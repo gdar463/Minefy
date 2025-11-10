@@ -40,6 +40,7 @@ import net.minecraft.client.util.Window;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Util;
 import org.joml.Matrix3x2fStack;
 import org.slf4j.Logger;
@@ -54,6 +55,7 @@ public class PlaybackHUD {
     private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
     private static final MinefyConfig CONFIG = ConfigManager.get();
     private static final HudConfig.HudThemeConfig HUD_THEME = CONFIG.hud.theme;
+    private static final Identifier PLAYER_ICONS = Identifier.of(MinefyClient.MOD_ID, "textures/gui/player.png");
 
     public static PlaybackHUD INSTANCE;
     private static Window WINDOW = CLIENT.getWindow();
@@ -166,6 +168,21 @@ public class PlaybackHUD {
         stack.scale(HUD_THEME.text.artistsScale, HUD_THEME.text.artistsScale);
         this.artistsMarquee.render(ctx, HUD_THEME.colors.textColor.getRGB(), false, 0, CLIENT.textRenderer.fontHeight + HUD_THEME.text.artistsOffsetY);
         stack.popMatrix();
+
+        if (hovered) {
+            ctx.drawTexture(RenderPipelines.GUI_TEXTURED, PLAYER_ICONS, 85, 56,
+                    player.isPlaying ? 0 : 16, 0,
+                    8, 8, 16, 16, 64, 64);
+            ctx.drawBorder(84, 55, 10, 10, HUD_THEME.colors.activeBorderColor.getRGB());
+            ctx.drawTexture(RenderPipelines.GUI_TEXTURED, PLAYER_ICONS, 97, 56,
+                    32, 0,
+                    8, 8, 16, 16, 64, 64);
+            ctx.drawBorder(96, 55, 10, 10, HUD_THEME.colors.activeBorderColor.getRGB());
+            ctx.drawTexture(RenderPipelines.GUI_TEXTURED, PLAYER_ICONS, 73, 56,
+                    48, 0,
+                    8, 8, 16, 16, 64, 64);
+            ctx.drawBorder(72, 55, 10, 10, HUD_THEME.colors.activeBorderColor.getRGB());
+        }
     }
 
     public void getPlayer() {
