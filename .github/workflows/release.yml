@@ -48,7 +48,7 @@ jobs:
           fetch-depth: 0
       - name: Setup GPG key
         run: |
-          echo "$GPG_PRIVATE_KEY" | gpg --batch --import
+          echo $GPG_PRIVATE_KEY | base64 --decode | gpg --batch --import
           echo "allow-loopback-pinentry" >> ~/.gnupg/gpg-agent.conf
           echo "use-agent" >> ~/.gnupg/gpg.conf
           echo '#!/bin/bash' >> /tmp/gpg.sh
