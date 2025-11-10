@@ -34,7 +34,7 @@ public class HudConfigCategory {
                                 .build())
                         .build())
                 .group(OptionGroupBuilder.create("text.minefy.config.hud.colors.name",
-                                "text.minefy.config.hud.colors.description", false)
+                                "text.minefy.config.hud.colors.description")
                         .option(ColorOptionBuilder.create("text.minefy.config.hud.colors.accent.name",
                                         "text.minefy.config.hud.colors.accent.description")
                                 .binding(config.hud.theme.colors.accentColor, () -> config.hud.theme.colors.accentColor, val -> config.hud.theme.colors.accentColor = val)
@@ -61,7 +61,7 @@ public class HudConfigCategory {
                                 .build())
                         .build())
                 .group(OptionGroupBuilder.create("text.minefy.config.hud.sizes.name",
-                                "text.minefy.config.hud.sizes.description", false)
+                                "text.minefy.config.hud.sizes.description")
                         .option(IntegerFieldOptionBuilder.create("text.minefy.config.hud.sizes.x.name",
                                         "text.minefy.config.hud.sizes.x.description", 0, 350)
                                 .binding(config.hud.theme.sizes.x, () -> config.hud.theme.sizes.x, val -> config.hud.theme.sizes.x = val)
@@ -96,7 +96,7 @@ public class HudConfigCategory {
                                 .build())
                         .build())
                 .group(OptionGroupBuilder.create("text.minefy.config.hud.bar.name",
-                                "text.minefy.config.hud.bar.description", false)
+                                "text.minefy.config.hud.bar.description")
                         .option(IntegerFieldOptionBuilder.create("text.minefy.config.hud.bar.sizeX.name",
                                         "text.minefy.config.hud.bar.sizeX.description", 30, 250)
                                 .binding(config.hud.theme.bar.sizeX, () -> config.hud.theme.bar.sizeX, val -> config.hud.theme.bar.sizeX = val)
@@ -119,7 +119,7 @@ public class HudConfigCategory {
                                 .build())
                         .build())
                 .group(OptionGroupBuilder.create("text.minefy.config.hud.buttons.name",
-                                "text.minefy.config.hud.buttons.description", false)
+                                "text.minefy.config.hud.buttons.description")
                         .option(IntegerFieldOptionBuilder.create("text.minefy.config.hud.buttons.x.name",
                                         "text.minefy.config.hud.buttons.x.description", 0, 350)
                                 .binding(config.hud.theme.buttons.x, () -> config.hud.theme.buttons.x, val -> config.hud.theme.buttons.x = val)
@@ -138,7 +138,7 @@ public class HudConfigCategory {
                                 .build())
                         .build())
                 .group(OptionGroupBuilder.create("text.minefy.config.hud.cover.name",
-                                "text.minefy.config.hud.cover.description", false)
+                                "text.minefy.config.hud.cover.description")
                         .option(IntegerFieldOptionBuilder.create("text.minefy.config.hud.cover.x.name",
                                         "text.minefy.config.hud.cover.x.description", 0, 40)
                                 .binding(config.hud.theme.cover.x, () -> config.hud.theme.cover.x, val -> config.hud.theme.cover.x = val)
@@ -153,7 +153,7 @@ public class HudConfigCategory {
                                 .build())
                         .build())
                 .group(OptionGroupBuilder.create("text.minefy.config.hud.text.name",
-                                "text.minefy.config.hud.text.description", false)
+                                "text.minefy.config.hud.text.description")
                         .option(IntegerFieldOptionBuilder.create("text.minefy.config.hud.text.artistsOffsetY.name",
                                         "text.minefy.config.hud.text.artistsOffsetY.description", 0, 40)
                                 .binding(config.hud.theme.text.artistsOffsetY, () -> config.hud.theme.text.artistsOffsetY, val -> config.hud.theme.text.artistsOffsetY = val)
