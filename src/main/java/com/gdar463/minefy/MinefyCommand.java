@@ -17,13 +17,17 @@
 
 package com.gdar463.minefy;
 
+import com.gdar463.minefy.config.ConfigManager;
 import com.gdar463.minefy.config.ConfigScreen;
+import com.gdar463.minefy.spotify.SpotifyAPI;
 import com.gdar463.minefy.spotify.SpotifyAuth;
 import com.gdar463.minefy.ui.PlaybackHUD;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
+import net.minecraft.text.Text;
 
 public class MinefyCommand {
     public static void init() {
@@ -35,7 +39,11 @@ public class MinefyCommand {
                         .then(ClientCommandManager.literal("config")
                                 .executes(MinefyCommand::openConfigScreen))
                         .then(ClientCommandManager.literal("reload_player")
-                                .executes(MinefyCommand::reloadPlayer))));
+                                .executes(MinefyCommand::reloadPlayer))
+                        .then(ClientCommandManager.literal("debug")
+                                .then(ClientCommandManager.literal("seek")
+                                        .then(ClientCommandManager.argument("positionMs", IntegerArgumentType.integer())
+                                                .executes(MinefyCommand::seekToPosition))))));
         MinefyClient.LOGGER.debug("ConfigCommand registered");
     }
 
@@ -51,6 +59,13 @@ public class MinefyCommand {
 
     private static int reloadPlayer(CommandContext<FabricClientCommandSource> ctx) {
         PlaybackHUD.INSTANCE.getPlayer();
+        return 0;
+    }
+
+    private static int seekToPosition(CommandContext<FabricClientCommandSource> ctx) {
+        SpotifyAPI.seekToPosition(IntegerArgumentType.getInteger(ctx, "positionMs"),
+                        ConfigManager.get().spotify.accessToken)
+                .thenAccept(res -> ctx.getSource().sendFeedback(Text.of(res ? "Seeked to position" : "Failed to seek")));
         return 0;
     }
 }

@@ -100,6 +100,19 @@ public class SpotifyAPI {
                 .thenApply(s -> true);
     }
 
+    public static CompletableFuture<Boolean> seekToPosition(int positionMs, String spotifyAccessToken) {
+        if (SpotifyUser.INSTANCE.type != SpotifySubscriptionType.PREMIUM ||
+                (PlaybackHUD.INSTANCE.player.disallows & SpotifyPlayerDisallows.SEEKING.mask()) != 0)
+            return CompletableFuture.completedFuture(false);
+        HttpRequest.Builder request = HttpRequest.newBuilder()
+                .uri(URI.create(API_BASE + "/me/player/seek?position_ms=" + positionMs))
+                .header("Content-Type", "application/json")
+                .PUT(HttpRequest.BodyPublishers.noBody());
+
+        return HTTP_CLIENT.sendAsync(request, spotifyAccessToken)
+                .thenApply(s -> true);
+    }
+
     public static CompletableFuture<String> getUserProfile(String spotifyAccessToken) {
         HttpRequest.Builder request = HttpRequest.newBuilder()
                 .uri(URI.create(API_BASE + "/me"))
