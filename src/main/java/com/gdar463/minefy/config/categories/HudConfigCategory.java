@@ -51,6 +51,10 @@ public class HudConfigCategory {
                                         "text.minefy.config.hud.colors.border.description")
                                 .binding(config.hud.theme.colors.borderColor, () -> config.hud.theme.colors.borderColor, val -> config.hud.theme.colors.borderColor = val)
                                 .build())
+                        .option(ColorOptionBuilder.create("text.minefy.config.hud.colors.activeBorder.name",
+                                        "text.minefy.config.hud.colors.activeBorder.description")
+                                .binding(config.hud.theme.colors.activeBorderColor, () -> config.hud.theme.colors.activeBorderColor, val -> config.hud.theme.colors.activeBorderColor = val)
+                                .build())
                         .option(ColorOptionBuilder.create("text.minefy.config.hud.colors.emptyBar.name",
                                         "text.minefy.config.hud.colors.emptyBar.description")
                                 .binding(config.hud.theme.colors.emptyBarColor, () -> config.hud.theme.colors.emptyBarColor, val -> config.hud.theme.colors.emptyBarColor = val)

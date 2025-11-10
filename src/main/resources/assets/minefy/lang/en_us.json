@@ -17,6 +17,8 @@
   "text.minefy.config.hud.colors.bg.description": "Used for background. By default 0x12121250.",
   "text.minefy.config.hud.colors.border.name": "Border Color",
   "text.minefy.config.hud.colors.border.description": "Used for border. By default Spotify green with lower alpha (0x1ED76088).",
+  "text.minefy.config.hud.colors.activeBorder.name": "Active Border Color",
+  "text.minefy.config.hud.colors.activeBorder.description": "Used for border when hovered. By default Spotify green with lower alpha (0x1ED760DD).",
   "text.minefy.config.hud.colors.emptyBar.name": "Empty Bar Color",
   "text.minefy.config.hud.colors.emptyBar.description": "Used for empty bar. By default 0x242424FF.",
   "text.minefy.config.hud.sizes.name": "HUD Dimensions",

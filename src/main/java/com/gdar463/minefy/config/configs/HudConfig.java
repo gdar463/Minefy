@@ -50,6 +50,8 @@ public class HudConfig {
             @SerialEntry
             public Color borderColor = new Color(0x881ED760, true);
             @SerialEntry
+            public Color activeBorderColor = new Color(0xDD1ED760, true);
+            @SerialEntry
             public Color emptyBarColor = new Color(0xFF242424, true);
         }
 

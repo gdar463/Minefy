@@ -36,6 +36,7 @@ import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gl.RenderPipelines;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.client.util.Window;
 import net.minecraft.text.ClickEvent;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
@@ -55,6 +56,7 @@ public class PlaybackHUD {
     private static final HudConfig.HudThemeConfig HUD_THEME = CONFIG.hud.theme;
 
     public static PlaybackHUD INSTANCE;
+    private static Window WINDOW = CLIENT.getWindow();
     public SpotifyPlayer player = SpotifyPlayer.EMPTY;
 
     private DurationSource durationSource;
@@ -69,7 +71,7 @@ public class PlaybackHUD {
     public PlaybackHUD() {
         HudRenderEvents.AFTER_MAIN_HUD.register(this::render);
         if (!CONFIG.spotify.refreshToken.isEmpty()) {
-            Scheduler.schedule(() -> getPlayer(true), 2, TimeUnit.SECONDS);
+            PlayerScheduler.schedule(() -> getPlayer(true), 2, TimeUnit.SECONDS);
         } else {
             ClientUtils.sendClientSideMessage(Text.empty()
                     .append(Text.literal("[").formatted(Formatting.DARK_GREEN))
@@ -96,15 +98,27 @@ public class PlaybackHUD {
         if (CLIENT.getDebugHud().shouldShowDebugHud()) return;
         if (player == null || player.state != SpotifyPlayerState.READY) return;
         if (!CONFIG.hud.enabled) return;
+        if (WINDOW == null)
+            WINDOW = CLIENT.getWindow();
 
         ctx.fill(HUD_THEME.sizes.x, HUD_THEME.sizes.y,
                 HUD_THEME.sizes.x + HUD_THEME.sizes.width,
                 HUD_THEME.sizes.y + HUD_THEME.sizes.height,
                 HUD_THEME.colors.bgColor.getRGB());
-        DrawingUtils.drawBorder(ctx, HUD_THEME.sizes.x, HUD_THEME.sizes.y,
-                HUD_THEME.sizes.width, HUD_THEME.sizes.height,
-                HUD_THEME.colors.borderColor.getRGB(),
-                HUD_THEME.sizes.borderSize);
+        double mouseX = WINDOW != null ? CLIENT.mouse.getScaledX(WINDOW) : 0;
+        double mouseY = WINDOW != null ? CLIENT.mouse.getScaledY(WINDOW) : 0;
+        if (mouseX >= HUD_THEME.sizes.x && mouseX <= (HUD_THEME.sizes.x + HUD_THEME.sizes.width)
+                && mouseY >= HUD_THEME.sizes.y && mouseY <= (HUD_THEME.sizes.y + HUD_THEME.sizes.height)) {
+            DrawingUtils.drawBorder(ctx, HUD_THEME.sizes.x, HUD_THEME.sizes.y,
+                    HUD_THEME.sizes.width, HUD_THEME.sizes.height,
+                    HUD_THEME.colors.activeBorderColor.getRGB(),
+                    HUD_THEME.sizes.borderSize);
+        } else {
+            DrawingUtils.drawBorder(ctx, HUD_THEME.sizes.x, HUD_THEME.sizes.y,
+                    HUD_THEME.sizes.width, HUD_THEME.sizes.height,
+                    HUD_THEME.colors.borderColor.getRGB(),
+                    HUD_THEME.sizes.borderSize);
+        }
 
         if (player.track.albumCover.textureState == TextureState.READY) {
             ctx.drawTexture(RenderPipelines.GUI_TEXTURED,
