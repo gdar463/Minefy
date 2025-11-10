@@ -55,7 +55,7 @@ jobs:
           echo 'gpg --batch --pinentry-mode=loopback --passphrase $GPG_PASSPHRASE $@' >> /tmp/gpg.sh
           chmod +x /tmp/gpg.sh
         env:
-          GPG_PRIVATE_KEY: ${{ secrets.PRIVATE_GPG_KEY }}
+          GPG_PRIVATE_KEY: ${{ secrets.GPG_PRIVATE_KEY }}
       - name: Create Git Tag
         run: |
           git config user.name "github-actions[bot]"
