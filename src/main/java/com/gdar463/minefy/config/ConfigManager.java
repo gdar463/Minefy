@@ -20,15 +20,16 @@ package com.gdar463.minefy.config;
 import com.gdar463.minefy.MinefyClient;
 import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import dev.isxander.yacl3.config.v2.api.serializer.GsonConfigSerializerBuilder;
-import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.util.Identifier;
+import dev.isxander.yacl3.platform.YACLPlatform;
+import net.minecraft.resources.ResourceLocation;
 
 import java.nio.file.Path;
 
 public class ConfigManager {
-    private static final Path CONFIG_FILE = FabricLoader.getInstance().getConfigDir().resolve("minefy.json");
+    private static final Path CONFIG_FILE = YACLPlatform.getConfigDir().resolve("minefy.json");
+
     public static ConfigClassHandler<MinefyConfig> HANDLER = ConfigClassHandler.createBuilder(MinefyConfig.class)
-            .id(Identifier.of(MinefyClient.MOD_ID, "config"))
+            .id(ResourceLocation.fromNamespaceAndPath(MinefyClient.MOD_ID, "config"))
             .serializer(config -> GsonConfigSerializerBuilder.create(config)
                     .setPath(CONFIG_FILE)
                     .setJson5(true)

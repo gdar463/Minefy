@@ -18,15 +18,14 @@
 package com.gdar463.minefy.spotify.models;
 
 import com.gdar463.minefy.MinefyClient;
-import com.gdar463.minefy.mixin.TextureManagerMixin;
 import com.gdar463.minefy.spotify.models.state.TextureState;
 import com.gdar463.minefy.util.ClientUtils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.texture.NativeImage;
-import net.minecraft.client.texture.NativeImageBackedTexture;
-import net.minecraft.util.Identifier;
+import com.mojang.blaze3d.platform.NativeImage;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.DynamicTexture;
 import org.slf4j.Logger;
 
 import javax.imageio.ImageIO;
@@ -48,12 +47,13 @@ public class SpotifyAlbumCover {
             .version(HttpClient.Version.HTTP_1_1)
             .connectTimeout(Duration.ofSeconds(30))
             .build();
-    private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
+    private static final Minecraft CLIENT = Minecraft.getInstance();
 
     public String url;
     public String trackId;
-    public Identifier id;
-    public TextureState textureState = TextureState.NOT_READY;
+    public String id;
+    public ResourceLocation textureId;
+    public TextureState textureState = TextureState.NULL;
     public int height;
     public int width;
 
@@ -72,13 +72,7 @@ public class SpotifyAlbumCover {
 
     public void texturize() {
         this.textureState = TextureState.TEXTURIZING;
-        Identifier prev = this.id;
-        this.id = Identifier.of(MinefyClient.MOD_ID, this.trackId);
-        if (((TextureManagerMixin) CLIENT.getTextureManager()).getTextures().get(id) != null) {
-            this.textureState = TextureState.READY;
-            return;
-        }
-        CLIENT.getTextureManager().destroyTexture(prev);
+        this.id = MinefyClient.MOD_ID + "/" + this.trackId;
 
         LOGGER.debug("texturizing");
         HTTP_CLIENT.sendAsync(HttpRequest.newBuilder()
@@ -92,12 +86,25 @@ public class SpotifyAlbumCover {
                         ByteArrayOutputStream pngBytes = new ByteArrayOutputStream();
                         ImageIO.write(jpeg, "PNG", pngBytes);
                         NativeImage image = NativeImage.read(new ByteArrayInputStream(pngBytes.toByteArray()));
-                        CLIENT.getTextureManager().registerTexture(id, new NativeImageBackedTexture(() -> this.id.toString(), image));
                         this.width = image.getWidth();
                         this.height = image.getHeight();
+                        //? if 1.21.1 {
+                        /*DynamicTexture texture = new DynamicTexture(image);
+                        if (this.textureId != null)
+                            CLIENT.getTextureManager().release(this.textureId);
+                        this.textureId = CLIENT.getTextureManager().register(this.id, texture);
+                        texture.upload();
+                        *///?} else {
+                        ResourceLocation texId = ResourceLocation.fromNamespaceAndPath(MinefyClient.MOD_ID, this.id);
+                        DynamicTexture texture = new DynamicTexture(texId::toString, image);
+                        if (this.textureId != null)
+                            CLIENT.getTextureManager().release(this.textureId);
+                        CLIENT.getTextureManager().register(texId, texture);
+                        this.textureId = texId;
+                        //?}
                         this.textureState = TextureState.READY;
                     } catch (IOException e) {
-                        this.textureState = TextureState.NOT_READY;
+                        this.textureState = TextureState.ERROR;
                         ClientUtils.logError(e);
                     }
                 }));

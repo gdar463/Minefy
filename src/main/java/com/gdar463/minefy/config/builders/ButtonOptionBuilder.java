@@ -20,13 +20,13 @@ package com.gdar463.minefy.config.builders;
 import com.demonwav.mcdev.annotations.Translatable;
 import dev.isxander.yacl3.api.ButtonOption;
 import dev.isxander.yacl3.api.OptionDescription;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 public class ButtonOptionBuilder {
     public static ButtonOption.Builder create(@Translatable String nameKey,
                                               @Translatable String descriptionKey) {
         return ButtonOption.createBuilder()
-                .name(Text.translatable(nameKey))
-                .description(OptionDescription.of(Text.translatable(descriptionKey)));
+                .name(Component.translatable(nameKey))
+                .description(OptionDescription.of(Component.translatable(descriptionKey)));
     }
 }

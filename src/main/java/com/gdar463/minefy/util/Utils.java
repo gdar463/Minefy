@@ -19,6 +19,7 @@ package com.gdar463.minefy.util;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.mojang.blaze3d.platform.Window;
 
 import java.time.Duration;
 
@@ -34,5 +35,13 @@ public class Utils {
 
     public static boolean pointInBounds(double x, double y, double x1, double y1, double x2, double y2) {
         return x >= x1 && x <= x2 && y >= y1 && y <= y2;
+    }
+
+    public static double getScaledX(Window window, double x) {
+        return x * (double) window.getGuiScaledWidth() / (double) window.getWidth();
+    }
+
+    public static double getScaledY(Window window, double y) {
+        return y * (double) window.getGuiScaledHeight() / (double) window.getHeight();
     }
 }

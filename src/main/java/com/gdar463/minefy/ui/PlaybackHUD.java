@@ -32,18 +32,23 @@ import com.gdar463.minefy.util.ClientUtils;
 import com.gdar463.minefy.util.DrawingUtils;
 import com.gdar463.minefy.util.PlayerScheduler;
 import com.gdar463.minefy.util.Utils;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.RenderPipelines;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderTickCounter;
-import net.minecraft.client.util.Window;
-import net.minecraft.text.ClickEvent;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Util;
-import org.joml.Matrix3x2fStack;
+import net.minecraft.Util;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import com.mojang.blaze3d.platform.Window;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
+import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
+//? if 1.21.1 {
+/*import com.mojang.blaze3d.vertex.PoseStack;
+ *///?} else {
+import net.minecraft.client.renderer.RenderPipelines;
+import org.joml.Matrix3x2f;
+import com.gdar463.minefy.mixin.GuiGraphicsMixin;
+//?}
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
@@ -52,10 +57,10 @@ import java.util.concurrent.TimeUnit;
 
 public class PlaybackHUD {
     private static final Logger LOGGER = MinefyClient.LOGGER;
-    private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
+    private static final Minecraft CLIENT = Minecraft.getInstance();
     private static final MinefyConfig CONFIG = ConfigManager.get();
     private static final HudConfig.HudThemeConfig HUD_THEME = CONFIG.hud.theme;
-    private static final Identifier PLAYER_ICONS = Identifier.of(MinefyClient.MOD_ID, "textures/gui/player.png");
+    private static final ResourceLocation PLAYER_ICONS = ResourceLocation.fromNamespaceAndPath(MinefyClient.MOD_ID, "textures/gui/player.png");
 
     public static PlaybackHUD INSTANCE;
     private static Window WINDOW = CLIENT.getWindow();
@@ -74,21 +79,25 @@ public class PlaybackHUD {
     private boolean hovered;
 
     public PlaybackHUD() {
-        HudRenderEvents.AFTER_MAIN_HUD.register(this::render);
+        HudRenderEvents.afterMainHudToRun = this::render;
         if (!CONFIG.spotify.refreshToken.isEmpty()) {
             PlayerScheduler.schedule(() -> getPlayer(true), CONFIG.spotify.updateInterval, TimeUnit.MILLISECONDS);
         } else {
-            ClientUtils.sendClientSideMessage(Text.empty()
-                    .append(Text.literal("[").formatted(Formatting.DARK_GREEN))
-                    .append(Text.literal("Minefy").formatted(Formatting.GREEN))
-                    .append(Text.literal("] ").formatted(Formatting.DARK_GREEN))
-                    .append(Text.translatable("text.minefy.chat.loggedout.head")
-                            .formatted(Formatting.GOLD))
-                    .append(Text.literal("/minefy login")
-                            .formatted(Formatting.RED, Formatting.UNDERLINE)
-                            .styled(style -> style.withClickEvent(new ClickEvent.RunCommand("minefy login"))))
-                    .append(Text.translatable("text.minefy.chat.loggedout.end")
-                            .formatted(Formatting.GOLD)));
+            ClientUtils.sendClientSideMessage(Component.empty()
+                    .append(Component.literal("[").withStyle(ChatFormatting.DARK_GREEN))
+                    .append(Component.literal("Minefy").withStyle(ChatFormatting.GREEN))
+                    .append(Component.literal("] ").withStyle(ChatFormatting.DARK_GREEN))
+                    .append(Component.translatable("text.minefy.chat.loggedout.head")
+                            .withStyle(ChatFormatting.GOLD))
+                    .append(Component.literal("/minefy login")
+                            .withStyle(ChatFormatting.RED, ChatFormatting.UNDERLINE)
+                            //? if 1.21.1 {
+                            /*.withStyle(style -> style.withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "minefy login"))))
+                             *///?} else {
+                            .withStyle(style -> style.withClickEvent(new ClickEvent.RunCommand("minefy login"))))
+                    //?}
+                    .append(Component.translatable("text.minefy.chat.loggedout.end")
+                            .withStyle(ChatFormatting.GOLD)));
         }
 
         height = HUD_THEME.sizes.height;
@@ -99,9 +108,9 @@ public class PlaybackHUD {
         INSTANCE = new PlaybackHUD();
     }
 
-    private void render(DrawContext ctx, RenderTickCounter tickCounter) {
+    private void render(GuiGraphics ctx, DeltaTracker tickCounter) {
         if (CLIENT.player == null) return;
-        if (CLIENT.getDebugHud().shouldShowDebugHud()) return;
+        if (CLIENT.getDebugOverlay().showDebugScreen()) return;
         if (player == null || player.state != SpotifyPlayerState.READY) return;
         if (!CONFIG.hud.enabled) return;
         if (WINDOW == null)
@@ -111,9 +120,9 @@ public class PlaybackHUD {
                 HUD_THEME.sizes.x + HUD_THEME.sizes.width,
                 HUD_THEME.sizes.y + height,
                 HUD_THEME.colors.bgColor.getRGB());
-        double mouseX = WINDOW != null ? CLIENT.mouse.getScaledX(WINDOW) : -1;
-        double mouseY = WINDOW != null ? CLIENT.mouse.getScaledY(WINDOW) : -1;
-        hovered = !CLIENT.mouse.isCursorLocked() && Utils.pointInBounds(mouseX, mouseY,
+        double mouseX = WINDOW != null ? Utils.getScaledX(CLIENT.getWindow(), CLIENT.mouseHandler.xpos()) : -1;
+        double mouseY = WINDOW != null ? Utils.getScaledY(CLIENT.getWindow(), CLIENT.mouseHandler.ypos()) : -1;
+        hovered = !CLIENT.mouseHandler.isMouseGrabbed() && Utils.pointInBounds(mouseX, mouseY,
                 HUD_THEME.sizes.x, HUD_THEME.sizes.y,
                 HUD_THEME.sizes.width, height);
         if (hovered) {
@@ -130,54 +139,112 @@ public class PlaybackHUD {
                     HUD_THEME.sizes.borderSize);
         }
 
-        if (player.track.albumCover.textureState == TextureState.READY) {
-            ctx.drawTexture(RenderPipelines.GUI_TEXTURED,
-                    player.track.albumCover.id,
-                    HUD_THEME.cover.x, HUD_THEME.cover.y, 0, 0,
-                    HUD_THEME.cover.size, HUD_THEME.cover.size,
-                    player.track.albumCover.width, player.track.albumCover.height,
-                    player.track.albumCover.width, player.track.albumCover.height);
-        } else if (player.track.albumCover.textureState == TextureState.NOT_READY) {
-            player.track.albumCover.textureState = TextureState.TEXTURIZING;
-            player.track.albumCover.texturize();
+        switch (player.track.albumCover.textureState) {
+            case TextureState.READY:
+                //? if 1.21.1 {
+                /*ctx.blit(player.track.albumCover.textureId,
+                        HUD_THEME.cover.x, HUD_THEME.cover.y,
+                        HUD_THEME.cover.size, HUD_THEME.cover.size,
+                        0, 0,
+                        player.track.albumCover.width, player.track.albumCover.height,
+                        player.track.albumCover.width, player.track.albumCover.height);
+                *///?} else {
+                ctx.blit(RenderPipelines.GUI_TEXTURED, player.track.albumCover.textureId,
+                        HUD_THEME.cover.x, HUD_THEME.cover.y,
+                        0, 0,
+                        HUD_THEME.cover.size, HUD_THEME.cover.size,
+                        player.track.albumCover.width, player.track.albumCover.height,
+                        player.track.albumCover.width, player.track.albumCover.height);
+                //?}
+                break;
+            case TextureState.NOT_READY:
+                player.track.albumCover.texturize();
+                break;
+            case TextureState.ERROR:
+                ctx.fill(HUD_THEME.cover.x, HUD_THEME.cover.y,
+                        HUD_THEME.cover.x + HUD_THEME.cover.size, HUD_THEME.cover.y + HUD_THEME.cover.size,
+                        0xFFFF0000);
+                break;
         }
 
         if (durationSource == DurationSource.DELTA_TIME &&
                 this.progress.getSeconds() < this.duration.getSeconds() &&
                 this.player.isPlaying) {
-            long measure = Util.getMeasuringTimeMs();
+            long measure = Util.getMillis();
             this.progress = this.progress.plusMillis(measure - lastMeasure);
             lastMeasure = measure;
         } else {
-            lastMeasure = Util.getMeasuringTimeMs();
+            lastMeasure = Util.getMillis();
             durationSource = DurationSource.DELTA_TIME;
         }
 
         int lerpedAmount = Math.toIntExact(progress.toMillis() * HUD_THEME.bar.sizeX / this.duration.toMillis());
 
-        Matrix3x2fStack barStack = ctx.getMatrices().pushMatrix();
-        barStack.translate(HUD_THEME.sizes.columnX, HUD_THEME.bar.y);
+        //? if 1.21.1 {
+        /*PoseStack barStack = ctx.pose();
+        barStack.pushPose();
+        *///?} else {
+        Matrix3x2f barStack = ctx.pose();
+        GuiGraphicsMixin ctxMixin = (GuiGraphicsMixin) ctx;
+        ctxMixin.getStack().pushMatrix();
+        //?}
+        barStack.translate(HUD_THEME.sizes.columnX, HUD_THEME.bar.y/*? 1.21.1 >> ');'*//*, 1*/);
         ctx.fill(0, HUD_THEME.bar.progressY, lerpedAmount, HUD_THEME.bar.progressY + HUD_THEME.bar.sizeY, HUD_THEME.colors.accentColor.getRGB());
         ctx.fill(lerpedAmount, HUD_THEME.bar.progressY, HUD_THEME.bar.sizeX, HUD_THEME.bar.progressY + HUD_THEME.bar.sizeY, HUD_THEME.colors.emptyBarColor.getRGB());
-        barStack.scale(HUD_THEME.bar.textScale, HUD_THEME.bar.textScale);
-        ctx.drawText(CLIENT.textRenderer, Utils.durationToString(progress), 0, 0, HUD_THEME.colors.textColor.getRGB(), false);
-        ctx.drawText(CLIENT.textRenderer, Utils.durationToString(duration), HUD_THEME.bar.sizeX * 2 - (int) (10 / HUD_THEME.bar.textScale), 0, HUD_THEME.colors.textColor.getRGB(), false);
-        barStack.popMatrix();
+        barStack.scale(HUD_THEME.bar.textScale, HUD_THEME.bar.textScale/*? 1.21.1 >> ');'*//*, 1*/);
+        ctx.drawString(CLIENT.font, Utils.durationToString(progress), 0, 0, HUD_THEME.colors.textColor.getRGB(), false);
+        ctx.drawString(CLIENT.font, Utils.durationToString(duration), HUD_THEME.bar.sizeX * 2 - (int) (10 / HUD_THEME.bar.textScale), 0, HUD_THEME.colors.textColor.getRGB(), false);
+        //? if 1.21.1 {
+        /*barStack.popPose();
+         *///?} else {
+        ctxMixin.getStack().popMatrix();
+        //?}
 
-        Matrix3x2fStack stack = ctx.getMatrices().pushMatrix();
-        stack.translate(HUD_THEME.sizes.columnX, HUD_THEME.sizes.columnY);
+        //? if 1.21.1 {
+        /*PoseStack stack = ctx.pose();
+        stack.pushPose();
+        *///?} else {
+        Matrix3x2f stack = ctx.pose();
+        ctxMixin.getStack().pushMatrix();
+        //?}
+        stack.translate(HUD_THEME.sizes.columnX, HUD_THEME.sizes.columnY/*? 1.21.1 >> ');'*//*, 1*/);
         this.titleMarquee.render(ctx, HUD_THEME.colors.accentColor.getRGB(), false);
-        stack.scale(HUD_THEME.text.artistsScale, HUD_THEME.text.artistsScale);
-        this.artistsMarquee.render(ctx, HUD_THEME.colors.textColor.getRGB(), false, 0, CLIENT.textRenderer.fontHeight + HUD_THEME.text.artistsOffsetY);
-        stack.popMatrix();
+        stack.scale(HUD_THEME.text.artistsScale, HUD_THEME.text.artistsScale/*? 1.21.1 >> ');'*//*, 1*/);
+        this.artistsMarquee.render(ctx, HUD_THEME.colors.textColor.getRGB(), false, 0, CLIENT.font.lineHeight + HUD_THEME.text.artistsOffsetY);
+        //? if 1.21.1 {
+        /*stack.popPose();
+         *///?} else {
+        ctxMixin.getStack().popMatrix();
+        //?}
 
         if (hovered) {
-            drawButton(ctx, 1, player.isPlaying ? 0 : 16);
-            drawButton(ctx, 0, 48);
-            drawButton(ctx, 2, 32);
+            drawButton(ctx, 1, player.isPlaying ? 0 : 32);
+            drawButton(ctx, 0, 96);
+            drawButton(ctx, 2, 64);
         }
     }
 
+    //? if fabric && 1.21.1 {
+    /*public void onMouseClicked(double x, double y) {
+        if (hovered && Utils.pointInBounds(x, y, 72, 55, 82, 65)) {
+            if (progress.toMillis() <= 4000)
+                SpotifyAPI.skipToPrevious(CONFIG.spotify.accessToken);
+            else
+                SpotifyAPI.seekToPosition(0, CONFIG.spotify.accessToken);
+            return;
+        }
+        if (hovered && Utils.pointInBounds(x, y, 84, 55, 94, 65)) {
+            if (player.isPlaying)
+                SpotifyAPI.pausePlayback(CONFIG.spotify.accessToken);
+            else
+                SpotifyAPI.startPlayback(CONFIG.spotify.accessToken);
+            return;
+        }
+        if (hovered && Utils.pointInBounds(x, y, 96, 55, 106, 65)) {
+            SpotifyAPI.skipToNext(CONFIG.spotify.accessToken);
+        }
+    }
+    *///?} else {
     public boolean onMouseClicked(double x, double y) {
         if (hovered && Utils.pointInBounds(x, y, 72, 55, 82, 65)) {
             if (progress.toMillis() <= 4000)
@@ -199,6 +266,7 @@ public class PlaybackHUD {
         }
         return false;
     }
+    //?}
 
     public void getPlayer() {
         getPlayer(false);
@@ -212,7 +280,7 @@ public class PlaybackHUD {
         if (!firstRun && (CONFIG.spotify.accessToken.isEmpty())) {
             if (CONFIG.spotify.refreshToken.isEmpty()) {
                 LOGGER.error("tried to go to api without refresh token");
-                ClientUtils.sendClientSideMessage(Text.of("Please login, before trying to access anything"));
+                ClientUtils.sendClientSideMessage(Component.literal("Please login, before trying to access anything"));
                 return;
             }
             if (SpotifyAuth.refreshTokens())
@@ -243,11 +311,23 @@ public class PlaybackHUD {
                 });
     }
 
-    private void drawButton(DrawContext ctx, int ordinal, int u) {
-        ctx.drawTexture(RenderPipelines.GUI_TEXTURED, PLAYER_ICONS, HUD_THEME.buttons.x + ordinal * (HUD_THEME.buttons.size + HUD_THEME.buttons.offset) + 1,
-                HUD_THEME.buttons.y + 1, u, 0,
-                HUD_THEME.buttons.size - 2, HUD_THEME.buttons.size - 2, 16, 16, 64, 64);
-        ctx.drawBorder(HUD_THEME.buttons.x + ordinal * (HUD_THEME.buttons.size + HUD_THEME.buttons.offset), HUD_THEME.buttons.y,
-                HUD_THEME.buttons.size, HUD_THEME.buttons.size, HUD_THEME.colors.activeBorderColor.getRGB());
+    private void drawButton(GuiGraphics ctx, int ordinal, int u) {
+        //? if 1.21.1 {
+        /*ctx.blit(PLAYER_ICONS,
+                HUD_THEME.buttons.x + ordinal * (HUD_THEME.buttons.size + HUD_THEME.buttons.offset) + 1, HUD_THEME.buttons.y + 1,
+                HUD_THEME.buttons.size - 2, HUD_THEME.buttons.size - 2,
+                u, 0,
+                32, 32,
+                128, 128);
+        *///?} else {
+        ctx.blit(RenderPipelines.GUI_TEXTURED, PLAYER_ICONS,
+                HUD_THEME.buttons.x + ordinal * (HUD_THEME.buttons.size + HUD_THEME.buttons.offset) + 1, HUD_THEME.buttons.y + 1,
+                u, 0,
+                HUD_THEME.buttons.size - 2, HUD_THEME.buttons.size - 2,
+                32, 32,
+                128, 128);
+        //?}
+        DrawingUtils.drawBorder(ctx, HUD_THEME.buttons.x + ordinal * (HUD_THEME.buttons.size + HUD_THEME.buttons.offset), HUD_THEME.buttons.y,
+                HUD_THEME.buttons.size, HUD_THEME.buttons.size, HUD_THEME.colors.activeBorderColor.getRGB(), 1);
     }
 }

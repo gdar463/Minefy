@@ -20,7 +20,7 @@ package com.gdar463.minefy.config.builders;
 import com.demonwav.mcdev.annotations.Translatable;
 import dev.isxander.yacl3.api.OptionDescription;
 import dev.isxander.yacl3.api.OptionGroup;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 public class OptionGroupBuilder {
     public static OptionGroup.Builder create(@Translatable String nameKey,
@@ -32,8 +32,8 @@ public class OptionGroupBuilder {
                                              @Translatable String descriptionKey,
                                              boolean collapsed) {
         return OptionGroup.createBuilder()
-                .name(Text.translatable(nameKey))
-                .description(OptionDescription.of(Text.translatable(descriptionKey)))
+                .name(Component.translatable(nameKey))
+                .description(OptionDescription.of(Component.translatable(descriptionKey)))
                 .collapsed(collapsed);
     }
 }

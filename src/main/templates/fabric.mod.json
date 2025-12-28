@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "id": "${mod_id}",
+  "name": "${mod_name}",
+  "version": "${mod_version}",
+  "description": "${mod_description}",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.gdar463.minefy.MinefyBootstrap"
+    ],
+    "modmenu": [
+      "com.gdar463.minefy.config.ModMenuIntegration"
+    ]
+  }
+}

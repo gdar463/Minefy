@@ -18,22 +18,23 @@
 package com.gdar463.minefy.util;
 
 import com.gdar463.minefy.MinefyClient;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.text.Text;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import org.slf4j.Logger;
 
 import java.util.Arrays;
 
 public class ClientUtils {
     private static final Logger LOGGER = MinefyClient.LOGGER;
-    private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
+    private static final Minecraft CLIENT = Minecraft.getInstance();
 
-    public static void sendClientSideMessage(Text message) {
-        sendClientSideMessage(message, false);
-    }
-
-    public static void sendClientSideMessage(Text message, boolean overlay) {
-        if (CLIENT.player != null) CLIENT.player.sendMessage(message, overlay);
+    public static void sendClientSideMessage(Component message) {
+        if (CLIENT.player != null)
+            //? if 1.21.1 {
+            /*CLIENT.player.sendSystemMessage(message);
+             *///?} else {
+            CLIENT.player.displayClientMessage(message, false);
+        //?}
     }
 
     public static void logError(Throwable e) {

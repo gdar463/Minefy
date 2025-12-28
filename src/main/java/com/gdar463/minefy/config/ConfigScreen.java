@@ -20,13 +20,13 @@ package com.gdar463.minefy.config;
 import com.gdar463.minefy.config.categories.HudConfigCategory;
 import com.gdar463.minefy.config.categories.SpotifyConfigCategory;
 import dev.isxander.yacl3.api.YetAnotherConfigLib;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.network.chat.Component;
 
 public class ConfigScreen {
     public static Screen generate(Screen parent) {
         return YetAnotherConfigLib.create(ConfigManager.HANDLER, ((defaults, config, builder) -> builder
-                        .title(Text.translatable("text.minefy.config.title"))
+                        .title(Component.translatable("text.minefy.config.title"))
                         .category(HudConfigCategory.create(config))
                         .category(SpotifyConfigCategory.create(config))
                         .save(ConfigManager::save)))

@@ -31,7 +31,7 @@ import com.gdar463.minefy.util.Utils;
 import dev.isxander.yacl3.api.ButtonOption;
 import dev.isxander.yacl3.api.ConfigCategory;
 import dev.isxander.yacl3.gui.YACLScreen;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 import org.slf4j.Logger;
 
 public class SpotifyConfigCategory {
@@ -39,7 +39,7 @@ public class SpotifyConfigCategory {
 
     public static ConfigCategory create(MinefyConfig config) {
         return ConfigCategory.createBuilder()
-                .name(Text.translatable("text.minefy.config.category.spotify"))
+                .name(Component.translatable("text.minefy.config.category.spotify"))
                 .group(OptionGroupBuilder.create("text.minefy.config.spotify.general.name",
                                 "text.minefy.config.spotify.general.description", false)
                         .option(IntegerFieldOptionBuilder.create("text.minefy.config.spotify.general.interval.name",

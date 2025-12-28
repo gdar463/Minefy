@@ -17,10 +17,10 @@
 
 package com.gdar463.minefy.util;
 
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.GuiGraphics;
 
 public class DrawingUtils {
-    public static void drawBorder(DrawContext ctx, int x, int y, int width, int height, int color, int size) {
+    public static void drawBorder(GuiGraphics ctx, int x, int y, int width, int height, int color, int size) {
         ctx.fill(x, y, x + width, y + size, color);
         ctx.fill(x, y + height - size, x + width, y + height, color);
         ctx.fill(x, y + size, x + size, y + height - size, color);

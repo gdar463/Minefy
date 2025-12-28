@@ -15,6 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+//? if fabric {
 package com.gdar463.minefy.config;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
@@ -26,3 +27,4 @@ public class ModMenuIntegration implements ModMenuApi {
         return ConfigScreen::generate;
     }
 }
+//?}

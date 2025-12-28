@@ -21,13 +21,13 @@ import com.gdar463.minefy.config.MinefyConfig;
 import com.gdar463.minefy.config.builders.*;
 import com.gdar463.minefy.config.presets.CoordsPresetsEnum;
 import dev.isxander.yacl3.api.ConfigCategory;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 
 public class HudConfigCategory {
     public static ConfigCategory create(MinefyConfig config) {
         return ConfigCategory.createBuilder()
-                .name(Text.translatable("text.minefy.config.category.hud"))
+                .name(Component.translatable("text.minefy.config.category.hud"))
                 .group(OptionGroupBuilder.create("text.minefy.config.hud.general.name",
                                 "text.minefy.config.hud.general.description", false)
                         .option(BooleanOptionBuilder.create("text.minefy.config.hud.general.enabled.name",
@@ -36,8 +36,8 @@ public class HudConfigCategory {
                                 .build())
                         .option(EnumOptionBuilder.create("text.minefy.config.hud.general.coords_preset.name",
                                         "text.minefy.config.hud.general.coords_preset.description",
-                                        v -> Text.translatable("text.minefy.config.hud.general.coords_preset." + v.name().toLowerCase())
-                                                .append(config.hud.theme.coords_preset_modified ? Text.literal("*").formatted(Formatting.BOLD, Formatting.GREEN) : Text.of("")),
+                                        v -> Component.translatable("text.minefy.config.hud.general.coords_preset." + v.name().toLowerCase())
+                                                .append(config.hud.theme.coords_preset_modified ? Component.literal("*").withStyle(ChatFormatting.BOLD, ChatFormatting.GREEN) : Component.literal("")),
                                         CoordsPresetsEnum.class)
                                 .binding(config.hud.theme.coords_preset, () -> config.hud.theme.coords_preset, val -> {
                                     config.hud.theme.coords_preset = val;

@@ -20,26 +20,35 @@ package com.gdar463.minefy;
 import com.gdar463.minefy.config.ConfigManager;
 import com.gdar463.minefy.spotify.models.SpotifyUser;
 import com.gdar463.minefy.ui.PlaybackHUD;
-import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.minecraft.client.gui.screen.Screen;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+//? if fabric {
+import net.minecraft.client.gui.screens.Screen;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientLifecycleEvents;
+//?} elif neoforge {
+/*import net.neoforged.neoforge.client.event.ScreenEvent;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
+import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
+import com.gdar463.minefy.util.PlayerScheduler;
+import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
+import com.gdar463.minefy.events.HudRenderEvents;
+*///?}
 
-@Environment(EnvType.CLIENT)
-public class MinefyClient implements ClientModInitializer {
+public class MinefyClient {
     public static final String MOD_ID = "minefy";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
+    //? if fabric {
     public static Screen toOpen;
     public static int screenTicks = 0;
+    //?}
 
-    @Override
-    public void onInitializeClient() {
+    public static void onInitializeClient() {
         LOGGER.debug("Initializing MinefyClient");
+        ConfigManager.init();
+
+        //? if fabric {
         ClientTickEvents.START_CLIENT_TICK.register(client -> {
             if (toOpen != null) {
                 screenTicks++;
@@ -50,12 +59,32 @@ public class MinefyClient implements ClientModInitializer {
                 }
             }
         });
-        ConfigManager.init();
-
         ClientLifecycleEvents.CLIENT_STARTED.register(client -> PlaybackHUD.init());
+        //?}
 
-        MinefyCommand.init();
         SpotifyUser.init();
         LOGGER.info("MinefyClient initialized");
     }
+
+    //? if neoforge {
+    /*public static void onClientLoggingIn(ClientPlayerNetworkEvent.LoggingIn event) {
+        PlaybackHUD.init();
+    }
+
+    public static void onClientLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
+        PlayerScheduler.stopAll();
+    }
+
+    public static void onRenderGuiLayerPost(RenderGuiLayerEvent.Post event) {
+        if (event.getName() == VanillaGuiLayers.BOSS_OVERLAY) {
+            HudRenderEvents.AFTER_MAIN_HUD.onRender(event.getGuiGraphics(), event.getPartialTick());
+        }
+    }
+
+    public static boolean onScreenMouseClickedPre(ScreenEvent.MouseButtonPressed.Pre event) {
+        if (event.getButton() == 0 && PlaybackHUD.INSTANCE != null && PlaybackHUD.INSTANCE.player != null)
+            return PlaybackHUD.INSTANCE.onMouseClicked(event.getMouseX(), event.getMouseY());
+        return false;
+    }
+    *///?}
 }

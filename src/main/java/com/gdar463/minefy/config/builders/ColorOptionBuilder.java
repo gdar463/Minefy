@@ -21,7 +21,7 @@ import com.demonwav.mcdev.annotations.Translatable;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.OptionDescription;
 import dev.isxander.yacl3.api.controller.ColorControllerBuilder;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 import java.awt.*;
 
@@ -35,8 +35,8 @@ public class ColorOptionBuilder {
                                                @Translatable String descriptionKey,
                                                boolean hasAlpha) {
         return Option.<Color>createBuilder()
-                .name(Text.translatable(nameKey))
-                .description(OptionDescription.of(Text.translatable(descriptionKey)))
+                .name(Component.translatable(nameKey))
+                .description(OptionDescription.of(Component.translatable(descriptionKey)))
                 .controller(opt -> ColorControllerBuilder.create(opt)
                         .allowAlpha(hasAlpha));
     }

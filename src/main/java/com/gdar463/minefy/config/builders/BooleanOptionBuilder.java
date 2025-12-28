@@ -21,14 +21,14 @@ import com.demonwav.mcdev.annotations.Translatable;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.OptionDescription;
 import dev.isxander.yacl3.api.controller.TickBoxControllerBuilder;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 public class BooleanOptionBuilder {
     public static Option.Builder<Boolean> create(@Translatable String nameKey,
                                                  @Translatable String descriptionKey) {
         return Option.<Boolean>createBuilder()
-                .name(Text.translatable(nameKey))
-                .description(OptionDescription.of(Text.translatable(descriptionKey)))
+                .name(Component.translatable(nameKey))
+                .description(OptionDescription.of(Component.translatable(descriptionKey)))
                 .controller(TickBoxControllerBuilder::create);
     }
 }

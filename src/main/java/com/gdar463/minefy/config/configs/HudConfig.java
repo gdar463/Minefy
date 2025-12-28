@@ -106,7 +106,7 @@ public class HudConfig {
             @SerialEntry
             public float artistsScale = 0.75F;
             @SerialEntry
-            public int titleMarqueeCap = 20,
+            public int titleMarqueeCap = 19,
                     titleMarqueeSpaces = 4,
                     titleMarqueeTicks = 25;
             @SerialEntry

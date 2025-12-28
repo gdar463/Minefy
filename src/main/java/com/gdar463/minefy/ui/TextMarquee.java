@@ -17,12 +17,12 @@
 
 package com.gdar463.minefy.ui;
 
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
-import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.Font;
 
 public class TextMarquee {
-    private static final TextRenderer TEXT_RENDERER = MinecraftClient.getInstance().textRenderer;
+    private static final Font TEXT_RENDERER = Minecraft.getInstance().font;
 
     private final String text;
     private final int textLength;
@@ -40,20 +40,20 @@ public class TextMarquee {
         this.maxTicks = maxTicks;
     }
 
-    public void render(DrawContext ctx, int color, boolean shadow) {
+    public void render(GuiGraphics ctx, int color, boolean shadow) {
         render(ctx, color, shadow, 0, 0);
     }
 
-    public void render(DrawContext ctx, int color, boolean shadow, int x, int y) {
+    public void render(GuiGraphics ctx, int color, boolean shadow, int x, int y) {
         if (this.textLength <= this.maxSize) {
-            ctx.drawText(TEXT_RENDERER, this.text, x, y, color, shadow);
+            ctx.drawString(TEXT_RENDERER, this.text, x, y, color, shadow);
         } else {
             if (this.ticks >= maxTicks) {
                 char first = marquee.charAt(0);
                 marquee = marquee.substring(1) + first;
                 this.ticks = 0;
             }
-            ctx.drawText(TEXT_RENDERER, marquee.substring(0, this.maxSize), x, y, color, shadow);
+            ctx.drawString(TEXT_RENDERER, marquee.substring(0, this.maxSize), x, y, color, shadow);
             this.ticks++;
         }
     }

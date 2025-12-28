@@ -19,17 +19,11 @@ package com.gdar463.minefy.util;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class PlayerScheduler {
-    private static final ScheduledExecutorService SCHEDULER = Executors.newScheduledThreadPool(1,
-            new ThreadFactoryBuilder()
-                    .setNameFormat("PlayerThread-%d")
-                    .build());
+    private static ScheduledExecutorService SCHEDULER = newScheduler();
     private static final AtomicBoolean running = new AtomicBoolean(false);
 
     @SuppressWarnings("UnusedReturnValue")
@@ -43,5 +37,17 @@ public class PlayerScheduler {
                 }
             }
         }, delay, unit);
+    }
+
+    public static void stopAll() {
+        SCHEDULER.close();
+        SCHEDULER = newScheduler();
+    }
+
+    public static ScheduledExecutorService newScheduler() {
+        return Executors.newScheduledThreadPool(1,
+                new ThreadFactoryBuilder()
+                        .setNameFormat("PlayerThread-%d")
+                        .build());
     }
 }

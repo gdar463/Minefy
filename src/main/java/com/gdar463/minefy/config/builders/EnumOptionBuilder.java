@@ -22,7 +22,7 @@ import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.OptionDescription;
 import dev.isxander.yacl3.api.controller.EnumControllerBuilder;
 import dev.isxander.yacl3.api.controller.ValueFormatter;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 public class EnumOptionBuilder {
     public static <T extends Enum<T>> Option.Builder<T> create(@Translatable String nameKey,
@@ -30,8 +30,8 @@ public class EnumOptionBuilder {
                                                                ValueFormatter<T> valueFormatter,
                                                                Class<T> clazz) {
         return Option.<T>createBuilder()
-                .name(Text.translatable(nameKey))
-                .description(OptionDescription.of(Text.translatable(descriptionKey)))
+                .name(Component.translatable(nameKey))
+                .description(OptionDescription.of(Component.translatable(descriptionKey)))
                 .controller(o -> EnumControllerBuilder.create(o)
                         .enumClass(clazz)
                         .formatValue(valueFormatter));

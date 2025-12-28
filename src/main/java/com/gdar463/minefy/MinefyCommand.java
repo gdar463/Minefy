@@ -17,6 +17,8 @@
 
 package com.gdar463.minefy;
 
+//? if fabric {
+
 import com.gdar463.minefy.config.ConfigManager;
 import com.gdar463.minefy.config.ConfigScreen;
 import com.gdar463.minefy.spotify.SpotifyAPI;
@@ -27,7 +29,7 @@ import com.mojang.brigadier.context.CommandContext;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandManager;
 import net.fabricmc.fabric.api.client.command.v2.ClientCommandRegistrationCallback;
 import net.fabricmc.fabric.api.client.command.v2.FabricClientCommandSource;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 public class MinefyCommand {
     public static void init() {
@@ -65,7 +67,66 @@ public class MinefyCommand {
     private static int seekToPosition(CommandContext<FabricClientCommandSource> ctx) {
         SpotifyAPI.seekToPosition(IntegerArgumentType.getInteger(ctx, "positionMs"),
                         ConfigManager.get().spotify.accessToken)
-                .thenAccept(res -> ctx.getSource().sendFeedback(Text.of(res ? "Seeked to position" : "Failed to seek")));
+                .thenAccept(res -> ctx.getSource().sendFeedback(Component.literal(res ? "Seeked to position" : "Failed to seek")));
         return 0;
     }
 }
+//?} elif neoforge {
+/*import com.gdar463.minefy.config.ConfigManager;
+import com.gdar463.minefy.config.ConfigScreen;
+import com.gdar463.minefy.spotify.SpotifyAPI;
+import com.gdar463.minefy.spotify.SpotifyAuth;
+import com.gdar463.minefy.ui.PlaybackHUD;
+import com.mojang.brigadier.arguments.IntegerArgumentType;
+import com.mojang.brigadier.context.CommandContext;
+import net.minecraft.client.Minecraft;
+import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.Component;
+import net.neoforged.neoforge.client.event.RegisterClientCommandsEvent;
+
+class MinefyCommand {
+    public static void onClientCommandRegistration(RegisterClientCommandsEvent event) {
+        event.getDispatcher().register(Commands.literal("minefy")
+                .executes(MinefyCommand::openConfigScreen)
+                .then(Commands.literal("login")
+                        .executes(MinefyCommand::loginToSpotify))
+                .then(Commands.literal("config")
+                        .executes(MinefyCommand::openConfigScreen))
+                .then(Commands.literal("reload_player")
+                        .executes(MinefyCommand::reloadPlayer))
+                .then(Commands.literal("debug")
+                        .then(Commands.literal("seek")
+                                .then(Commands.argument("positionMs", IntegerArgumentType.integer())
+                                        .executes(MinefyCommand::seekToPosition)))));
+    }
+
+    private static int openConfigScreen(CommandContext<CommandSourceStack> ctx) {
+        Minecraft.getInstance().setScreen(ConfigScreen.generate(Minecraft.getInstance().screen));
+        return 0;
+    }
+
+    private static int loginToSpotify(CommandContext<CommandSourceStack> ctx) {
+        SpotifyAuth.startAuthProcess();
+        return 0;
+    }
+
+    private static int reloadPlayer(CommandContext<CommandSourceStack> ctx) {
+        PlaybackHUD.INSTANCE.getPlayer();
+        return 0;
+    }
+
+    private static int seekToPosition(CommandContext<CommandSourceStack> ctx) {
+        SpotifyAPI.seekToPosition(IntegerArgumentType.getInteger(ctx, "positionMs"),
+                        ConfigManager.get().spotify.accessToken)
+                .thenAccept(res -> {
+                    if (res) {
+                        ctx.getSource().sendSuccess(() -> Component.literal("Seeked to position"), false);
+                    } else {
+                        ctx.getSource().sendFailure(Component.literal("Failed to seek"));
+                    }
+                });
+        return 0;
+    }
+}
+*///?}

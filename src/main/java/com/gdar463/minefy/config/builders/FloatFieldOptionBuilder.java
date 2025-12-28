@@ -21,7 +21,7 @@ import com.demonwav.mcdev.annotations.Translatable;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.OptionDescription;
 import dev.isxander.yacl3.api.controller.FloatFieldControllerBuilder;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 public class FloatFieldOptionBuilder {
     public static Option.Builder<Float> create(@Translatable String nameKey,
@@ -29,10 +29,10 @@ public class FloatFieldOptionBuilder {
                                                float min,
                                                float max) {
         return Option.<Float>createBuilder()
-                .name(Text.translatable(nameKey))
-                .description(OptionDescription.of(Text.translatable(descriptionKey)))
+                .name(Component.translatable(nameKey))
+                .description(OptionDescription.of(Component.translatable(descriptionKey)))
                 .controller(opt -> FloatFieldControllerBuilder.create(opt)
                         .range(min, max)
-                        .formatValue(value -> Text.of(value.toString())));
+                        .formatValue(value -> Component.literal(value.toString())));
     }
 }

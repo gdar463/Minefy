@@ -17,10 +17,8 @@
 
 package com.gdar463.minefy.events;
 
-import net.fabricmc.fabric.api.event.Event;
-import net.fabricmc.fabric.api.event.EventFactory;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.render.RenderTickCounter;
+import net.minecraft.client.DeltaTracker;
+import net.minecraft.client.gui.GuiGraphics;
 
 /*
  All credits to the Skyblocker Mod Contributers on GitHub
@@ -28,30 +26,22 @@ import net.minecraft.client.render.RenderTickCounter;
 
  All the following code is under the LGPL-3.0-only license
  available at: https://github.com/SkyblockerMod/Skyblocker/blob/fa9e6b7663c6f81e08e6e3cc1cf25907522ae82a/LICENSE
+
+ 2025-12-27 gdar463: ported to 1.21.11
 */
 public class HudRenderEvents {
     /**
      * Called after the hotbar, status bars, and experience bar have been rendered.
      */
-    public static final Event<HudRenderStage> AFTER_MAIN_HUD = createEventForStage();
-
-    /**
-     * Called before the {@link net.minecraft.client.gui.hud.ChatHud} is rendered.
-     */
-    public static final Event<HudRenderStage> BEFORE_CHAT = createEventForStage();
-
-    /**
-     * Called after the entire HUD is rendered.
-     */
-    public static final Event<HudRenderStage> LAST = createEventForStage();
-
-    private static Event<HudRenderStage> createEventForStage() {
-        return EventFactory.createArrayBacked(HudRenderStage.class, listeners -> (context, tickDelta) -> {
-            for (HudRenderStage listener : listeners) {
-                listener.onRender(context, tickDelta);
+    public static final HudRenderStage AFTER_MAIN_HUD = new HudRenderStage() {
+        @Override
+        public void onRender(GuiGraphics context, DeltaTracker tickCounter) {
+            if (afterMainHudToRun != null) {
+                afterMainHudToRun.onRender(context, tickCounter);
             }
-        });
-    }
+        }
+    };
+    public static HudRenderStage afterMainHudToRun = null;
 
     /**
      * @implNote Similar to Fabric's {@link net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback}
@@ -61,9 +51,9 @@ public class HudRenderEvents {
         /**
          * Called sometime during a specific HUD render stage.
          *
-         * @param context     The {@link DrawContext} instance
-         * @param tickCounter The {@link RenderTickCounter} instance
+         * @param context     The {@link GuiGraphics} instance
+         * @param tickCounter The {@link DeltaTracker} instance
          */
-        void onRender(DrawContext context, RenderTickCounter tickCounter);
+        void onRender(GuiGraphics context, DeltaTracker tickCounter);
     }
 }

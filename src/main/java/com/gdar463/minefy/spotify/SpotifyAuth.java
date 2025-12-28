@@ -28,7 +28,7 @@ import com.gdar463.minefy.ui.PlaybackHUD;
 import com.gdar463.minefy.util.DesktopUtils;
 import com.gdar463.minefy.util.Utils;
 import com.google.gson.JsonObject;
-import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.Minecraft;
 import org.slf4j.Logger;
 
 import java.net.URI;
@@ -62,7 +62,7 @@ public class SpotifyAuth {
     private static final int SPOTIFY_CALLBACK_PORT;
 
     private static final Logger LOGGER = MinefyClient.LOGGER;
-    private static final MinecraftClient CLIENT = MinecraftClient.getInstance();
+    private static final Minecraft CLIENT = Minecraft.getInstance();
     private static final MinefyConfig CONFIG = ConfigManager.get();
     private static final SpotifyPKCE PKCE_INSTANCE = new SpotifyPKCE();
     private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()

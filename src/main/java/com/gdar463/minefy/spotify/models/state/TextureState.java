@@ -20,5 +20,7 @@ package com.gdar463.minefy.spotify.models.state;
 public enum TextureState {
     NOT_READY,
     TEXTURIZING,
-    READY
+    READY,
+    ERROR,
+    NULL
 }

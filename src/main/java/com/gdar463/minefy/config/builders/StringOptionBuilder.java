@@ -22,7 +22,7 @@ import com.gdar463.minefy.config.controllers.HiddenStringControllerBuilder;
 import dev.isxander.yacl3.api.Option;
 import dev.isxander.yacl3.api.OptionDescription;
 import dev.isxander.yacl3.api.controller.StringControllerBuilder;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 public class StringOptionBuilder {
     public static Option.Builder<String> create(@Translatable String nameKey,
@@ -34,8 +34,8 @@ public class StringOptionBuilder {
                                                 @Translatable String descriptionKey,
                                                 boolean hidden) {
         return Option.<String>createBuilder()
-                .name(Text.translatable(nameKey))
-                .description(OptionDescription.of(Text.translatable(descriptionKey)))
+                .name(Component.translatable(nameKey))
+                .description(OptionDescription.of(Component.translatable(descriptionKey)))
                 .controller(hidden
                         ? HiddenStringControllerBuilder::create
                         : StringControllerBuilder::create);

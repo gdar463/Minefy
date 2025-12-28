@@ -20,7 +20,7 @@ package com.gdar463.minefy.spotify.server;
 import com.gdar463.minefy.util.ClientUtils;
 import com.gdar463.minefy.util.Scheduler;
 import com.sun.net.httpserver.HttpServer;
-import net.minecraft.text.Text;
+import net.minecraft.network.chat.Component;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -44,7 +44,7 @@ public class LoginServer {
             }
         } catch (IOException e) {
             ClientUtils.logError(e);
-            ClientUtils.sendClientSideMessage(Text.of("Failed to start Callback Server"));
+            ClientUtils.sendClientSideMessage(Component.literal("Failed to start Callback Server"));
         }
     }
 
