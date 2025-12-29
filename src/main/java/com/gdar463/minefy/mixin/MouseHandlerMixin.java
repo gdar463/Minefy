@@ -26,11 +26,13 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 //? if !=1.21.1 {
+import org.spongepowered.asm.mixin.Shadow;
 import net.minecraft.client.input.MouseButtonInfo;
+import com.mojang.blaze3d.platform.Window;
 //? }
 
 @Mixin(MouseHandler.class)
-public class MouseHandlerMixin {
+public abstract class MouseHandlerMixin {
     //? if 1.21.1 {
     /*@Inject(method = "onPress", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/Screen;afterMouseAction()V"))
     void minefy$onMouseButton(long window, int button, int action, int mods, CallbackInfo ci, @Local(name = "d") double x, @Local(name = "e") double y) {
@@ -39,10 +41,16 @@ public class MouseHandlerMixin {
         }
     }
     *///?} else {
+    @Shadow
+    public abstract double getScaledXPos(Window par1);
+
+    @Shadow
+    public abstract double getScaledYPos(Window par1);
+
     @Inject(method = "onButton", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/screens/Screen;mouseClicked(Lnet/minecraft/client/input/MouseButtonEvent;Z)Z"), cancellable = true)
-    void minefy$onMouseButton(long window, MouseButtonInfo buttonInfo, int action, CallbackInfo ci, @Local(name = "d") double x, @Local(name = "e") double y) {
+    void minefy$onMouseButton(long window, MouseButtonInfo buttonInfo, int action, CallbackInfo ci, @Local Window window2) {
         if (buttonInfo.button() == 0 && PlaybackHUD.INSTANCE.player != null) {
-            if (PlaybackHUD.INSTANCE.onMouseClicked(x, y))
+            if (PlaybackHUD.INSTANCE.onMouseClicked(getScaledXPos(window2), getScaledYPos(window2)))
                 ci.cancel();
         }
     }
