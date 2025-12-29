@@ -121,4 +121,16 @@ public class SpotifyAPI {
 
         return HTTP_CLIENT.sendAsync(request, spotifyAccessToken).thenApply(HttpResponse::body);
     }
+
+    public static CompletableFuture<Boolean> addToPlaylist(String playlistId, String uri, String spotifyAccessToken) {
+        HttpRequest.Builder request = HttpRequest.newBuilder()
+                .uri(URI.create(API_BASE + "/playlists/" + playlistId + "/tracks"))
+                .header("Content-Type", "application/json")
+                .POST(HttpRequest.BodyPublishers.ofString("{" +
+                        "\"uris\": [" +
+                        "\"" + uri + "\"" +
+                        "]}"));
+
+        return HTTP_CLIENT.sendAsync(request, spotifyAccessToken).thenApply(s -> true);
+    }
 }
