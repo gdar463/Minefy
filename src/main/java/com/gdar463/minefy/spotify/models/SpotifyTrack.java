@@ -28,7 +28,7 @@ import java.util.Objects;
 public class SpotifyTrack {
     public static final SpotifyTrack EMPTY = new SpotifyTrack();
 
-    public String id;
+    public String uri;
     public String name;
     public String[] artists;
     public Duration duration;
@@ -47,7 +47,7 @@ public class SpotifyTrack {
     }
 
     public void fromJson(JsonObject json) {
-        this.id = json.get("uri").getAsString();
+        this.uri = json.get("uri").getAsString();
         this.name = json.get("name").getAsString();
         this.artists = getArtistsFromJson(json.get("artists").getAsJsonArray());
         this.duration = Duration.ofMillis(json.get("duration_ms").getAsLong());
@@ -57,7 +57,7 @@ public class SpotifyTrack {
         String coverUrl = albumImages.get(albumImages.size() - 1).getAsJsonObject()
                 .get("url").getAsString();
         if (!Objects.equals(coverUrl, this.albumCover.url))
-            this.albumCover.fromJson(json.get("album").getAsJsonObject().get("images").getAsJsonArray(), this.id);
+            this.albumCover.fromJson(json.get("album").getAsJsonObject().get("images").getAsJsonArray(), this.uri);
     }
 
     @Override
@@ -67,7 +67,7 @@ public class SpotifyTrack {
 
     public String toString(String padding) {
         return "SpotifyTrack {\n" + padding +
-                "\tid: " + id + "\n" + padding +
+                "\tid: " + uri + "\n" + padding +
                 "\tname: " + name + "\n" + padding +
                 "\tartists: " + artistsToString() + "\n" + padding +
                 "\tduration: " + duration.toMillis() + "\n" + padding +

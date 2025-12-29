@@ -294,8 +294,8 @@ public class PlaybackHUD {
                         this.durationSource = DurationSource.PLAYER;
                         this.duration = player.track.duration;
                         this.progress = Duration.of(player.progressMs, ChronoUnit.MILLIS);
-                        if (!Objects.equals(player.track.id, this.trackId)) {
-                            this.trackId = player.track.id;
+                        if (!Objects.equals(player.track.uri, this.trackId)) {
+                            this.trackId = player.track.uri;
                             this.titleMarquee = new TextMarquee(player.track.name,
                                     HUD_THEME.text.titleMarqueeSpaces,
                                     HUD_THEME.text.titleMarqueeCap,
