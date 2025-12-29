@@ -44,11 +44,11 @@ import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 //? if 1.21.1 {
 /*import com.mojang.blaze3d.vertex.PoseStack;
- *///?} else {
+*///? } else {
+import com.gdar463.minefy.mixin.GuiGraphicsMixin;
 import net.minecraft.client.renderer.RenderPipelines;
 import org.joml.Matrix3x2f;
-import com.gdar463.minefy.mixin.GuiGraphicsMixin;
-//?}
+//? }
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
