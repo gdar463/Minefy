@@ -67,3 +67,6 @@ hs_err_*.log
 replay_*.log
 *.hprof
 *.jfr
+
+# git commit with stonecutter reset
+versions/previous
