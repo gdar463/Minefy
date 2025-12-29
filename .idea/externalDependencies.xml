@@ -2,5 +2,6 @@
 <project version="4">
   <component name="ExternalDependencies">
     <plugin id="dev.kikugie.stonecutter" />
+    <plugin id="com.github.lppedd.idea-conventional-commit" />
   </component>
 </project>
