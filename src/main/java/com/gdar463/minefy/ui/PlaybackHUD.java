@@ -25,6 +25,7 @@ import com.gdar463.minefy.events.HudRenderEvents;
 import com.gdar463.minefy.spotify.SpotifyAPI;
 import com.gdar463.minefy.spotify.SpotifyAuth;
 import com.gdar463.minefy.spotify.models.SpotifyPlayer;
+import com.gdar463.minefy.spotify.models.state.SpotifyContextType;
 import com.gdar463.minefy.spotify.models.state.SpotifyPlayerState;
 import com.gdar463.minefy.spotify.models.state.TextureState;
 import com.gdar463.minefy.ui.state.DurationSource;
@@ -32,14 +33,14 @@ import com.gdar463.minefy.util.ClientUtils;
 import com.gdar463.minefy.util.DrawingUtils;
 import com.gdar463.minefy.util.PlayerScheduler;
 import com.gdar463.minefy.util.Utils;
+import com.mojang.blaze3d.platform.Window;
+import net.minecraft.ChatFormatting;
 import net.minecraft.Util;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import com.mojang.blaze3d.platform.Window;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.ChatFormatting;
 import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 //? if 1.21.1 {
@@ -218,9 +219,11 @@ public class PlaybackHUD {
         //?}
 
         if (hovered) {
-            drawButton(ctx, 1, player.isPlaying ? 0 : 32);
-            drawButton(ctx, 0, 96);
-            drawButton(ctx, 2, 64);
+            drawButton(ctx, 1, player.isPlaying ? 0 : 1, 0);
+            drawButton(ctx, 0, 3, 0);
+            drawButton(ctx, 2, 2, 0);
+            if (player.context != null && player.context.type == SpotifyContextType.PLAYLIST)
+                drawButton(ctx, 3, 0, 1);
         }
     }
 
@@ -243,6 +246,19 @@ public class PlaybackHUD {
         if (hovered && Utils.pointInBounds(x, y, 96, 55, 106, 65)) {
             SpotifyAPI.skipToNext(CONFIG.spotify.accessToken);
         }
+        if (player.context != null && player.context.type == SpotifyContextType.PLAYLIST) {
+            if (hovered && Utils.pointInBounds(x, y, 108, 55, 118, 65)) {
+                SpotifyAPI.addToPlaylist(player.context.uri, player.track.uri, CONFIG.spotify.accessToken)
+                        .thenAcceptAsync(s -> {
+                            if (s) {
+                                ClientUtils.sendClientSideMessage(Component.literal("Added \"" + player.track.name + "\" to current playlist"));
+                            } else {
+                                ClientUtils.sendClientSideMessage(Component.literal("Failed to add track to current playlist")
+                                        .withStyle(ChatFormatting.RED));
+                            }
+                        });
+            }
+        }
     }
     *///?} else {
     public boolean onMouseClicked(double x, double y) {
@@ -263,6 +279,20 @@ public class PlaybackHUD {
         if (hovered && Utils.pointInBounds(x, y, 96, 55, 106, 65)) {
             SpotifyAPI.skipToNext(CONFIG.spotify.accessToken);
             return true;
+        }
+        if (player.context != null && player.context.type == SpotifyContextType.PLAYLIST) {
+            if (hovered && Utils.pointInBounds(x, y, 108, 55, 118, 65)) {
+                SpotifyAPI.addToPlaylist(player.context.uri, player.track.uri, CONFIG.spotify.accessToken)
+                        .thenAcceptAsync(s -> {
+                            if (s) {
+                                ClientUtils.sendClientSideMessage(Component.literal("Added \"" + player.track.name + "\" to current playlist"));
+                            } else {
+                                ClientUtils.sendClientSideMessage(Component.literal("Failed to add track to current playlist")
+                                        .withStyle(ChatFormatting.RED));
+                            }
+                        });
+                return true;
+            }
         }
         return false;
     }
@@ -311,18 +341,18 @@ public class PlaybackHUD {
                 });
     }
 
-    private void drawButton(GuiGraphics ctx, int ordinal, int u) {
+    private void drawButton(GuiGraphics ctx, int ordinal, int u, int v) {
         //? if 1.21.1 {
         /*ctx.blit(PLAYER_ICONS,
                 HUD_THEME.buttons.x + ordinal * (HUD_THEME.buttons.size + HUD_THEME.buttons.offset) + 1, HUD_THEME.buttons.y + 1,
                 HUD_THEME.buttons.size - 2, HUD_THEME.buttons.size - 2,
-                u, 0,
+                u * 32, v * 32,
                 32, 32,
                 128, 128);
         *///?} else {
         ctx.blit(RenderPipelines.GUI_TEXTURED, PLAYER_ICONS,
                 HUD_THEME.buttons.x + ordinal * (HUD_THEME.buttons.size + HUD_THEME.buttons.offset) + 1, HUD_THEME.buttons.y + 1,
-                u, 0,
+                u * 32, v * 32,
                 HUD_THEME.buttons.size - 2, HUD_THEME.buttons.size - 2,
                 32, 32,
                 128, 128);
