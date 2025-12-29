@@ -31,6 +31,7 @@ public class SpotifyPlayer {
     public SpotifyPlayerState state = SpotifyPlayerState.NULL;
     public int disallows = 0;
 
+    public SpotifyContext context = SpotifyContext.EMPTY;
     public SpotifyTrack track = SpotifyTrack.EMPTY;
 
     public SpotifyPlayer() {
@@ -72,6 +73,8 @@ public class SpotifyPlayer {
         String trackUri = json.get("item").getAsJsonObject().get("uri").getAsString();
         if (!Objects.equals(trackUri, this.track.uri))
             this.track.fromJson(json.get("item").getAsJsonObject());
+
+        this.context.fromJson(json.get("context").getAsJsonObject());
         return this;
     }
 
