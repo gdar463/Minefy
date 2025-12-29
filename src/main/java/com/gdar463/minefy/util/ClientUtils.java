@@ -29,11 +29,15 @@ public class ClientUtils {
     private static final Minecraft CLIENT = Minecraft.getInstance();
 
     public static void sendClientSideMessage(Component message) {
+        sendClientSideMessage(message, false);
+    }
+
+    public static void sendClientSideMessage(Component message, boolean actionBar) {
         if (CLIENT.player != null)
             //? if 1.21.1 {
             /*CLIENT.player.sendSystemMessage(message);
              *///?} else {
-            CLIENT.player.displayClientMessage(message, false);
+            CLIENT.player.displayClientMessage(message, actionBar);
         //?}
     }
 
