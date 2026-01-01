@@ -22,6 +22,7 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 public class CallbackPage implements HttpHandler {
     @Override
@@ -30,7 +31,10 @@ public class CallbackPage implements HttpHandler {
         if (query != null && query.contains("code")) {
             SpotifyAuth.processCode(query);
         }
-        exchange.sendResponseHeaders(query != null && query.contains("code") ? 200 : 400, 0);
+        boolean containsCode = query != null && query.contains("code");
+        exchange.sendResponseHeaders(containsCode ? 200 : 400, 0);
+        exchange.getResponseBody().write((containsCode ? "Code received successfully."
+                : "Failed to receive code. Retry to login.").getBytes(StandardCharsets.UTF_8));
         exchange.close();
         exchange.getHttpContext().getServer().stop(5);
         LoginServer.destroyServer();
