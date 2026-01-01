@@ -24,20 +24,26 @@ import com.gdar463.minefy.spotify.models.state.SpotifySubscriptionType;
 import com.gdar463.minefy.util.Utils;
 import com.google.gson.JsonObject;
 
+import java.util.ArrayList;
+import java.util.List;
 
 public class SpotifyUser {
     public static final SpotifyUser INSTANCE = new SpotifyUser();
     private static final MinefyConfig CONFIG = ConfigManager.get();
+
     public String email;
     public SpotifySubscriptionType type;
+    public List<SpotifyPlaylist> playlists = new ArrayList<>(10);
 
     public SpotifyUser() {
     }
 
     public static void init() {
-        if (!CONFIG.spotify.accessToken.isEmpty())
+        if (!CONFIG.spotify.accessToken.isEmpty()) {
             SpotifyAPI.getUserProfile(CONFIG.spotify.accessToken)
-                    .thenApply(s -> SpotifyUser.INSTANCE.fromJson(Utils.convertToJsonObject(s)));
+                    .thenApply(s -> SpotifyUser.INSTANCE.fromJson(Utils.convertToJsonObject(s)))
+                    .thenAccept(u -> SpotifyUser.INSTANCE.getPlaylists());
+        }
     }
 
     public SpotifyUser fromJson(JsonObject json) {
@@ -51,6 +57,15 @@ public class SpotifyUser {
         }
 
         return this;
+    }
+
+    public void getPlaylists() {
+        playlists.add(new SpotifyPlaylist());
+        SpotifyAPI.getCurrentUsersPlaylist(CONFIG.spotify.accessToken)
+                .thenAccept(array -> array.forEach(e -> {
+                    JsonObject item = e.getAsJsonObject();
+                    playlists.add(new SpotifyPlaylist(item));
+                }));
     }
 
     @Override

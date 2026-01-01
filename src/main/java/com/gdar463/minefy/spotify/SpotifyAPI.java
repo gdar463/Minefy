@@ -22,12 +22,16 @@ import com.gdar463.minefy.spotify.models.SpotifyUser;
 import com.gdar463.minefy.spotify.models.state.SpotifyPlayerDisallows;
 import com.gdar463.minefy.spotify.models.state.SpotifySubscriptionType;
 import com.gdar463.minefy.ui.PlaybackHUD;
+import com.gdar463.minefy.util.Utils;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 import java.net.URI;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.concurrent.CompletableFuture;
 
+@SuppressWarnings("UnusedReturnValue")
 public class SpotifyAPI {
     public static final String API_BASE = "https://api.spotify.com/v1";
 
@@ -131,6 +135,41 @@ public class SpotifyAPI {
                         "\"" + uri + "\"" +
                         "]}"));
 
-        return HTTP_CLIENT.sendAsync(request, spotifyAccessToken).thenApply(s -> true);
+        return HTTP_CLIENT.sendAsync(request, spotifyAccessToken)
+                .thenApply(res -> res.statusCode() != 403);
+    }
+
+    public static CompletableFuture<Boolean> saveTrack(String id, String spotifyAccessToken) {
+        HttpRequest.Builder request = HttpRequest.newBuilder()
+                .uri(URI.create(API_BASE + "/me/tracks"))
+                .header("Content-Type", "application/json")
+                .PUT(HttpRequest.BodyPublishers.ofString("{" +
+                        "\"ids\": [" +
+                        "\"" + id + "\"" +
+                        "]}"));
+
+        return HTTP_CLIENT.sendAsync(request, spotifyAccessToken)
+                .thenApply(s -> true);
+    }
+
+    public static CompletableFuture<JsonArray> getCurrentUsersPlaylist(String spotifyAccessToken) {
+        return getCurrentUsersPlaylist(0, spotifyAccessToken);
+    }
+
+    public static CompletableFuture<JsonArray> getCurrentUsersPlaylist(int offset, String spotifyAccessToken) {
+        HttpRequest.Builder request = HttpRequest.newBuilder()
+                .uri(URI.create(API_BASE + "/me/playlists?limit=50&offset=" + offset))
+                .header("Content-Type", "application/json")
+                .GET();
+
+        return HTTP_CLIENT.sendAsync(request, spotifyAccessToken).thenApply(HttpResponse::body)
+                .thenCompose(s -> {
+                    JsonObject json = Utils.convertToJsonObject(s);
+                    JsonArray items = json.get("items").getAsJsonArray();
+                    if (!json.get("next").isJsonNull()) {
+                        items.addAll(getCurrentUsersPlaylist(offset + 50, spotifyAccessToken).join());
+                    }
+                    return CompletableFuture.completedStage(items);
+                });
     }
 }
