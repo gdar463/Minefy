@@ -27,7 +27,7 @@ import com.gdar463.minefy.spotify.SpotifyAuth;
 import com.gdar463.minefy.spotify.models.SpotifyPlayer;
 import com.gdar463.minefy.spotify.models.state.SpotifyContextType;
 import com.gdar463.minefy.spotify.models.state.SpotifyPlayerState;
-import com.gdar463.minefy.spotify.models.state.TextureState;
+import com.gdar463.minefy.api.TextureState;
 import com.gdar463.minefy.ui.state.DurationSource;
 import com.gdar463.minefy.util.ClientUtils;
 import com.gdar463.minefy.util.DrawingUtils;
@@ -45,7 +45,7 @@ import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
 //? if 1.21.1 {
 /*import com.mojang.blaze3d.vertex.PoseStack;
-*///? } else {
+ *///? } else {
 import com.gdar463.minefy.mixin.GuiGraphicsMixin;
 import net.minecraft.client.renderer.RenderPipelines;
 import org.joml.Matrix3x2f;
@@ -157,9 +157,6 @@ public class PlaybackHUD {
                         player.track.albumCover.width, player.track.albumCover.height,
                         player.track.albumCover.width, player.track.albumCover.height);
                 //?}
-                break;
-            case TextureState.NOT_READY:
-                player.track.albumCover.texturize();
                 break;
             case TextureState.ERROR:
                 ctx.fill(HUD_THEME.cover.x, HUD_THEME.cover.y,

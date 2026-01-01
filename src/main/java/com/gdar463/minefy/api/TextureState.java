@@ -15,7 +15,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package com.gdar463.minefy.spotify.models.state;
+package com.gdar463.minefy.api;
 
 public enum TextureState {
     NOT_READY,
