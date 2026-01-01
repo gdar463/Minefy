@@ -44,7 +44,7 @@ import static com.gdar463.minefy.util.Utils.convertToJsonObject;
 public class SpotifyAuth {
     // For Auth Url
     private static final String SPOTIFY_AUTH_URL = "https://accounts.spotify.com/authorize";
-    private static final String SPOTIFY_SCOPE = "user-read-currently-playing%20user-modify-playback-state%20user-read-playback-state%20user-read-private%20user-read-email%20playlist-modify-public%20playlist-modify-private";
+    private static final String SPOTIFY_SCOPE = "user-read-currently-playing%20user-modify-playback-state%20user-read-playback-state%20user-read-private%20user-read-email%20playlist-modify-public%20playlist-modify-private%20user-library-modify";
     private static final String SPOTIFY_RESPONSE_TYPE = "code";
     private static final String SPOTIFY_CODE_METHOD = "S256";
 
