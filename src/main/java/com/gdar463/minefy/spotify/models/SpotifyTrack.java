@@ -24,7 +24,6 @@ import com.google.gson.JsonObject;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.Objects;
 
 public class SpotifyTrack {
     public static final SpotifyTrack EMPTY = new SpotifyTrack();
@@ -53,12 +52,7 @@ public class SpotifyTrack {
         this.artists = getArtistsFromJson(json.get("artists").getAsJsonArray());
         this.duration = Duration.ofMillis(json.get("duration_ms").getAsLong());
 
-        JsonArray albumImages = json.get("album").getAsJsonObject().get("images")
-                .getAsJsonArray();
-        String coverUrl = albumImages.get(albumImages.size() - 1).getAsJsonObject()
-                .get("url").getAsString();
-        if (!Objects.equals(coverUrl, this.albumCover.url))
-            this.albumCover.fromJson(json.get("album").getAsJsonObject().get("images").getAsJsonArray(), this.uri.getUri());
+        this.albumCover.fromJson(json.get("album").getAsJsonObject().get("images").getAsJsonArray(), this.uri.getUri());
     }
 
     @Override

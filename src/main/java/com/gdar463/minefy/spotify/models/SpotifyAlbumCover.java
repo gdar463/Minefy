@@ -24,10 +24,11 @@ import com.gdar463.minefy.util.Utils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
+import java.util.Objects;
+
 public class SpotifyAlbumCover extends TextureRenderable {
     public static final SpotifyAlbumCover EMPTY = new SpotifyAlbumCover();
 
-    public String url;
     public String trackId;
     public String id;
 
@@ -37,11 +38,12 @@ public class SpotifyAlbumCover extends TextureRenderable {
     public void fromJson(JsonArray json, String trackId) {
         JsonObject lastCover = json.get(json.size() - 2).getAsJsonObject();
 
-        this.trackId = Utils.sanitizeURI(trackId);
-        this.url = lastCover.get("url").getAsString();
-        this.textureState = TextureState.NOT_READY;
-        this.id = MinefyClient.MOD_ID + "/" + this.trackId;
-        this.createTexture(url, id);
+        if (!Objects.equals(this.trackId, trackId)) {
+            this.trackId = trackId;
+            this.textureState = TextureState.NOT_READY;
+            this.id = MinefyClient.MOD_ID + "/" + Utils.sanitizeURI(trackId);
+            this.createTexture(lastCover.get("url").getAsString(), id);
+        }
     }
 
     @Override

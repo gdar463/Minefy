@@ -36,7 +36,7 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 
 public class TextureRenderable {
-    private static final Minecraft CLIENT = Minecraft.getInstance();
+    protected static final Minecraft CLIENT = Minecraft.getInstance();
     private static final HttpClient HTTP_CLIENT = HttpClient.newBuilder()
             .version(HttpClient.Version.HTTP_1_1)
             .connectTimeout(Duration.ofSeconds(30))
@@ -66,7 +66,7 @@ public class TextureRenderable {
                         /*DynamicTexture texture = new DynamicTexture(image);
                         if (this.textureId != null)
                             CLIENT.getTextureManager().release(this.textureId);
-                        this.textureId = CLIENT.getTextureManager().register(id, texture);
+                        this.textureId = CLIENT.getTextureManager().register(MinefyClient.MOD_ID + "/" + id, texture);
                         texture.upload();
                         *///?} else {
                         ResourceLocation texId = ResourceLocation.fromNamespaceAndPath(MinefyClient.MOD_ID, id);
