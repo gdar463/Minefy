@@ -28,6 +28,7 @@ import com.gdar463.minefy.spotify.models.SpotifyPlayer;
 import com.gdar463.minefy.spotify.models.state.SpotifyContextType;
 import com.gdar463.minefy.spotify.models.state.SpotifyPlayerState;
 import com.gdar463.minefy.api.TextureState;
+import com.gdar463.minefy.spotify.util.SpotifyURI;
 import com.gdar463.minefy.ui.state.DurationSource;
 import com.gdar463.minefy.util.ClientUtils;
 import com.gdar463.minefy.util.DrawingUtils;
@@ -71,7 +72,7 @@ public class PlaybackHUD {
     private Duration duration;
     private long lastMeasure = 0;
     private Duration progress;
-    private String trackId = "";
+    private SpotifyURI trackUri;
 
     private TextMarquee titleMarquee;
     private TextMarquee artistsMarquee;
@@ -321,8 +322,8 @@ public class PlaybackHUD {
                         this.durationSource = DurationSource.PLAYER;
                         this.duration = player.track.duration;
                         this.progress = Duration.of(player.progressMs, ChronoUnit.MILLIS);
-                        if (!Objects.equals(player.track.uri, this.trackId)) {
-                            this.trackId = player.track.uri;
+                        if (!Objects.equals(player.track.uri, this.trackUri)) {
+                            this.trackUri = player.track.uri;
                             this.titleMarquee = new TextMarquee(player.track.name,
                                     HUD_THEME.text.titleMarqueeSpaces,
                                     HUD_THEME.text.titleMarqueeCap,

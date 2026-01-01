@@ -18,6 +18,7 @@
 package com.gdar463.minefy.spotify.models;
 
 import com.gdar463.minefy.spotify.models.state.SpotifyContextType;
+import com.gdar463.minefy.spotify.util.SpotifyURI;
 import com.google.gson.JsonObject;
 import org.jetbrains.annotations.Nullable;
 
@@ -25,7 +26,7 @@ public class SpotifyContext {
     public static final SpotifyContext EMPTY = new SpotifyContext();
 
     public SpotifyContextType type;
-    public String uri;
+    public SpotifyURI uri;
 
     public SpotifyContext() {
     }
@@ -42,7 +43,7 @@ public class SpotifyContext {
             case "show" -> SpotifyContextType.SHOW;
             default -> SpotifyContextType.OTHER;
         };
-        this.uri = json.get("uri").getAsString();
+        this.uri = new SpotifyURI(json.get("uri").getAsString());
 
         return this;
     }

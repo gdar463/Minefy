@@ -17,6 +17,7 @@
 
 package com.gdar463.minefy.spotify.models;
 
+import com.gdar463.minefy.spotify.util.SpotifyURI;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -28,7 +29,7 @@ import java.util.Objects;
 public class SpotifyTrack {
     public static final SpotifyTrack EMPTY = new SpotifyTrack();
 
-    public String uri;
+    public SpotifyURI uri;
     public String name;
     public String[] artists;
     public Duration duration;
@@ -47,7 +48,7 @@ public class SpotifyTrack {
     }
 
     public void fromJson(JsonObject json) {
-        this.uri = json.get("uri").getAsString();
+        this.uri = new SpotifyURI(json.get("uri").getAsString());
         this.name = json.get("name").getAsString();
         this.artists = getArtistsFromJson(json.get("artists").getAsJsonArray());
         this.duration = Duration.ofMillis(json.get("duration_ms").getAsLong());
@@ -57,7 +58,7 @@ public class SpotifyTrack {
         String coverUrl = albumImages.get(albumImages.size() - 1).getAsJsonObject()
                 .get("url").getAsString();
         if (!Objects.equals(coverUrl, this.albumCover.url))
-            this.albumCover.fromJson(json.get("album").getAsJsonObject().get("images").getAsJsonArray(), this.uri);
+            this.albumCover.fromJson(json.get("album").getAsJsonObject().get("images").getAsJsonArray(), this.uri.getUri());
     }
 
     @Override
