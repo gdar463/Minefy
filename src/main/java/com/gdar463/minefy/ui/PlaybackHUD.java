@@ -239,10 +239,12 @@ public class PlaybackHUD {
                 SpotifyAPI.pausePlayback(CONFIG.spotify.accessToken);
             else
                 SpotifyAPI.startPlayback(CONFIG.spotify.accessToken);
+            player.isPlaying = !player.isPlaying;
             return;
         }
         if (hovered && Utils.pointInBounds(x, y, 96, 55, 106, 65)) {
             SpotifyAPI.skipToNext(CONFIG.spotify.accessToken);
+            return;
         }
         if (player.context != null && player.context.type == SpotifyContextType.PLAYLIST) {
             if (hovered && Utils.pointInBounds(x, y, 108, 55, 118, 65)) {
@@ -272,6 +274,7 @@ public class PlaybackHUD {
                 SpotifyAPI.pausePlayback(CONFIG.spotify.accessToken);
             else
                 SpotifyAPI.startPlayback(CONFIG.spotify.accessToken);
+            player.isPlaying = !player.isPlaying;
             return true;
         }
         if (hovered && Utils.pointInBounds(x, y, 96, 55, 106, 65)) {
