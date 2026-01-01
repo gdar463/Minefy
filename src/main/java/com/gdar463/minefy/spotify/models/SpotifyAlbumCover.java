@@ -20,6 +20,7 @@ package com.gdar463.minefy.spotify.models;
 import com.gdar463.minefy.MinefyClient;
 import com.gdar463.minefy.api.TextureRenderable;
 import com.gdar463.minefy.api.TextureState;
+import com.gdar463.minefy.util.Utils;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -36,7 +37,7 @@ public class SpotifyAlbumCover extends TextureRenderable {
     public void fromJson(JsonArray json, String trackId) {
         JsonObject lastCover = json.get(json.size() - 2).getAsJsonObject();
 
-        this.trackId = trackId.replace(":", "/").replaceAll("([A-Z])", "$1$1").toLowerCase();
+        this.trackId = Utils.sanitizeURI(trackId);
         this.url = lastCover.get("url").getAsString();
         this.textureState = TextureState.NOT_READY;
         this.id = MinefyClient.MOD_ID + "/" + this.trackId;

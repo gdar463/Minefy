@@ -44,4 +44,8 @@ public class Utils {
     public static double getScaledY(Window window, double y) {
         return y * (double) window.getGuiScaledHeight() / (double) window.getHeight();
     }
+
+    public static String sanitizeURI(String uri) {
+        return uri.replace(":", "/").replaceAll("([A-Z])", "$1$1").toLowerCase();
+    }
 }
