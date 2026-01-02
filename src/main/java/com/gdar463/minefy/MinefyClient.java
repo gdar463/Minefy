@@ -85,10 +85,10 @@ public class MinefyClient {
         }
     }
 
-    public static boolean onScreenMouseClickedPre(ScreenEvent.MouseButtonPressed.Pre event) {
+    public static void onScreenMouseClickedPre(ScreenEvent.MouseButtonPressed.Pre event) {
         if (event.getButton() == 0 && PlaybackHUD.INSTANCE != null && PlaybackHUD.INSTANCE.player != null)
-            return PlaybackHUD.INSTANCE.onMouseClicked(event.getMouseX(), event.getMouseY());
-        return false;
+            if (PlaybackHUD.INSTANCE.onMouseClicked(event.getMouseX(), event.getMouseY()))
+                event.setCanceled(true);
     }
     *///?}
 }
