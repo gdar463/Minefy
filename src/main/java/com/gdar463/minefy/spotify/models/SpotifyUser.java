@@ -32,6 +32,7 @@ public class SpotifyUser {
     private static final MinefyConfig CONFIG = ConfigManager.get();
 
     public String email;
+    public String displayName;
     public SpotifySubscriptionType type;
     public List<SpotifyPlaylist> playlists = new ArrayList<>(10);
 
@@ -49,6 +50,7 @@ public class SpotifyUser {
     public SpotifyUser fromJson(JsonObject json) {
         if (json.isEmpty()) return this;
         this.email = json.get("email").getAsString();
+        this.displayName = json.get("display_name").getAsString();
 
         switch (json.get("product").getAsString()) {
             case "free" -> this.type = SpotifySubscriptionType.FREE;
@@ -72,6 +74,7 @@ public class SpotifyUser {
     public String toString() {
         return "SpotifyUser {\n" +
                 "\temail: " + email + "\n" +
+                "\tdisplayName: " + displayName + "\n" +
                 "\ttype: " + type + "\n" +
                 "}";
     }

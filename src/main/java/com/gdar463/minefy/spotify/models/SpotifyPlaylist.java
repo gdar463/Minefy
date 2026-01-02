@@ -33,11 +33,14 @@ public class SpotifyPlaylist extends TextureRenderable {
 
     public SpotifyURI uri;
     public String name;
+    public String owner;
     public int tracksTotal;
     public SpotifyPlaylistType type = SpotifyPlaylistType.WRITABLE;
 
     public SpotifyPlaylist() {
+        this.name = "Liked Songs";
         this.type = SpotifyPlaylistType.LIBRARY;
+        this.owner = SpotifyUser.INSTANCE.displayName;
 
         this.textureState = TextureState.NOT_READY;
         CLIENT.execute(() -> this.createTexture(LIBRARY_ICON_URL, "playlist/library"));
@@ -46,6 +49,7 @@ public class SpotifyPlaylist extends TextureRenderable {
     public SpotifyPlaylist(JsonObject json) {
         this.uri = new SpotifyURI(json.get("uri").getAsString());
         this.name = json.get("name").getAsString();
+        this.owner = json.get("owner").getAsJsonObject().get("display_name").getAsString();
         this.tracksTotal = json.get("tracks").getAsJsonObject().get("total").getAsInt();
 
         if (this.textureState == TextureState.NULL) {
