@@ -17,6 +17,7 @@
 
 package com.gdar463.minefy.spotify.models;
 
+import com.gdar463.minefy.api.QuickJsonObject;
 import com.gdar463.minefy.api.TextureRenderable;
 import com.gdar463.minefy.api.TextureState;
 import com.gdar463.minefy.config.ConfigManager;
@@ -26,7 +27,6 @@ import com.gdar463.minefy.spotify.models.state.SpotifyPlaylistType;
 import com.gdar463.minefy.spotify.util.SpotifyURI;
 import com.gdar463.minefy.util.ClientUtils;
 import com.gdar463.minefy.util.Utils;
-import com.google.gson.JsonObject;
 import net.minecraft.network.chat.Component;
 
 public class SpotifyPlaylist extends TextureRenderable {
@@ -48,15 +48,15 @@ public class SpotifyPlaylist extends TextureRenderable {
         CLIENT.execute(() -> this.createTexture(LIBRARY_ICON_URL, "playlist/library"));
     }
 
-    public SpotifyPlaylist(JsonObject json) {
-        this.uri = new SpotifyURI(json.get("uri").getAsString());
-        this.name = json.get("name").getAsString();
-        this.owner = json.get("owner").getAsJsonObject().get("display_name").getAsString();
-        this.tracksTotal = json.get("tracks").getAsJsonObject().get("total").getAsInt();
+    public SpotifyPlaylist(QuickJsonObject json) {
+        this.uri = new SpotifyURI(json.getString("uri"));
+        this.name = json.getString("name");
+        this.owner = json.getJsonObject("owner").getString("display_name");
+        this.tracksTotal = json.getJsonObject("tracks").getInt("total");
 
         if (this.textureState == TextureState.NULL) {
             this.textureState = TextureState.NOT_READY;
-            String url = json.get("images").getAsJsonArray().get(0).getAsJsonObject().get("url").getAsString();
+            String url = json.getJsonArray("images").get(0).getAsJsonObject().get("url").getAsString();
             CLIENT.execute(() -> this.createTexture(url, Utils.sanitizeURI(this.uri.getUri())));
         }
     }

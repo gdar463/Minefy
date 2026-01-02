@@ -17,12 +17,12 @@
 
 package com.gdar463.minefy.spotify.models;
 
+import com.gdar463.minefy.api.QuickJsonObject;
 import com.gdar463.minefy.config.ConfigManager;
 import com.gdar463.minefy.config.MinefyConfig;
 import com.gdar463.minefy.spotify.SpotifyAPI;
 import com.gdar463.minefy.spotify.models.state.SpotifySubscriptionType;
 import com.gdar463.minefy.util.Utils;
-import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,12 +47,12 @@ public class SpotifyUser {
         }
     }
 
-    public SpotifyUser fromJson(JsonObject json) {
+    public SpotifyUser fromJson(QuickJsonObject json) {
         if (json.isEmpty()) return this;
-        this.email = json.get("email").getAsString();
-        this.displayName = json.get("display_name").getAsString();
+        this.email = json.getString("email");
+        this.displayName = json.getString("display_name");
 
-        switch (json.get("product").getAsString()) {
+        switch (json.getString("product")) {
             case "free" -> this.type = SpotifySubscriptionType.FREE;
             case "premium" -> this.type = SpotifySubscriptionType.PREMIUM;
             default -> this.type = SpotifySubscriptionType.OTHER;
@@ -64,10 +64,7 @@ public class SpotifyUser {
     public void getPlaylists() {
         playlists.add(new SpotifyPlaylist());
         SpotifyAPI.getCurrentUsersPlaylist(CONFIG.spotify.accessToken)
-                .thenAccept(array -> array.forEach(e -> {
-                    JsonObject item = e.getAsJsonObject();
-                    playlists.add(new SpotifyPlaylist(item));
-                }));
+                .thenAccept(array -> array.forEach(e -> playlists.add(new SpotifyPlaylist(new QuickJsonObject(e.getAsJsonObject())))));
     }
 
     @Override

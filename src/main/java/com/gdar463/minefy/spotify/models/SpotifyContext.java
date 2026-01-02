@@ -17,9 +17,9 @@
 
 package com.gdar463.minefy.spotify.models;
 
+import com.gdar463.minefy.api.QuickJsonObject;
 import com.gdar463.minefy.spotify.models.state.SpotifyContextType;
 import com.gdar463.minefy.spotify.util.SpotifyURI;
-import com.google.gson.JsonObject;
 import org.jetbrains.annotations.Nullable;
 
 public class SpotifyContext {
@@ -33,17 +33,17 @@ public class SpotifyContext {
 
     @SuppressWarnings("UnusedReturnValue")
     @Nullable
-    public SpotifyContext fromJson(JsonObject json) {
+    public SpotifyContext fromJson(QuickJsonObject json) {
         if (json.isEmpty()) return null;
 
-        this.type = switch (json.get("type").getAsString()) {
+        this.type = switch (json.getString("type")) {
             case "artist" -> SpotifyContextType.ARTIST;
             case "playlist" -> SpotifyContextType.PLAYLIST;
             case "album" -> SpotifyContextType.ALBUM;
             case "show" -> SpotifyContextType.SHOW;
             default -> SpotifyContextType.OTHER;
         };
-        this.uri = new SpotifyURI(json.get("uri").getAsString());
+        this.uri = new SpotifyURI(json.getString("uri"));
 
         return this;
     }

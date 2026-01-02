@@ -17,9 +17,9 @@
 
 package com.gdar463.minefy.spotify.models;
 
+import com.gdar463.minefy.api.QuickJsonObject;
 import com.gdar463.minefy.spotify.models.state.SpotifyPlayerDisallows;
 import com.gdar463.minefy.spotify.models.state.SpotifyPlayerState;
-import com.google.gson.JsonObject;
 
 import java.util.Objects;
 
@@ -37,16 +37,16 @@ public class SpotifyPlayer {
     public SpotifyPlayer() {
     }
 
-    public SpotifyPlayer fromJson(JsonObject json) {
+    public SpotifyPlayer fromJson(QuickJsonObject json) {
         if (json.isEmpty()) return this;
         this.state = SpotifyPlayerState.PARSING;
 
-        this.isPlaying = json.get("is_playing").getAsBoolean();
-        this.progressMs = json.get("progress_ms").getAsLong();
+        this.isPlaying = json.getBoolean("is_playing");
+        this.progressMs = json.getLong("progress_ms");
 
-        JsonObject actions = json.get("actions").getAsJsonObject().get("disallows").getAsJsonObject();
+        QuickJsonObject actions = json.getJsonObject("actions").getJsonObject("disallows");
         this.disallows = 0;
-        actions.asMap().forEach((key, val) -> {
+        actions.forEach((key, val) -> {
             boolean valBool = val.getAsBoolean();
             switch (key) {
                 case "interrupting_playback" ->
@@ -70,11 +70,11 @@ public class SpotifyPlayer {
             }
         });
 
-        String trackUri = json.get("item").getAsJsonObject().get("uri").getAsString();
-        if (!Objects.equals(trackUri, this.track.uri))
-            this.track.fromJson(json.get("item").getAsJsonObject());
+        String trackUri = json.getJsonObject("item").getString("uri");
+        if (!Objects.equals(trackUri, this.track.uri.getUri()))
+            this.track.fromJson(json.getJsonObject("item"));
 
-        this.context.fromJson(json.get("context").getAsJsonObject());
+        this.context.fromJson(json.getJsonObject("context"));
         return this;
     }
 

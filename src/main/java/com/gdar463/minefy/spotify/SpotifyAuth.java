@@ -18,6 +18,7 @@
 package com.gdar463.minefy.spotify;
 
 import com.gdar463.minefy.MinefyClient;
+import com.gdar463.minefy.api.QuickJsonObject;
 import com.gdar463.minefy.config.ConfigManager;
 import com.gdar463.minefy.config.MinefyConfig;
 import com.gdar463.minefy.spotify.exceptions.NoTokenSuppliedException;
@@ -27,7 +28,6 @@ import com.gdar463.minefy.spotify.server.LoginServer;
 import com.gdar463.minefy.ui.PlaybackHUD;
 import com.gdar463.minefy.util.DesktopUtils;
 import com.gdar463.minefy.util.Utils;
-import com.google.gson.JsonObject;
 import net.minecraft.client.Minecraft;
 import org.slf4j.Logger;
 
@@ -118,9 +118,9 @@ public class SpotifyAuth {
     }
 
     private static void processTokens(String response) {
-        JsonObject jsonObject = convertToJsonObject(response);
-        CONFIG.spotify.accessToken = jsonObject.get("access_token").getAsString();
-        CONFIG.spotify.refreshToken = jsonObject.get("refresh_token").getAsString();
+        QuickJsonObject jsonObject = convertToJsonObject(response);
+        CONFIG.spotify.accessToken = jsonObject.getString("access_token");
+        CONFIG.spotify.refreshToken = jsonObject.getString("refresh_token");
         ConfigManager.save();
         SpotifyAPI.getUserProfile(CONFIG.spotify.accessToken)
                 .thenApply(s -> SpotifyUser.INSTANCE.fromJson(Utils.convertToJsonObject(s)));

@@ -17,15 +17,15 @@
 
 package com.gdar463.minefy.util;
 
-import com.google.gson.JsonObject;
+import com.gdar463.minefy.api.QuickJsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.blaze3d.platform.Window;
 
 import java.time.Duration;
 
 public class Utils {
-    public static JsonObject convertToJsonObject(String json) {
-        return JsonParser.parseString(json).getAsJsonObject();
+    public static QuickJsonObject convertToJsonObject(String json) {
+        return new QuickJsonObject(JsonParser.parseString(json).getAsJsonObject());
     }
 
     public static String durationToString(Duration dur) {

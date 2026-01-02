@@ -44,9 +44,6 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
-//? if !=1.21.1 {
-import net.minecraft.client.renderer.RenderPipelines;
-        //? }
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
@@ -138,28 +135,15 @@ public class PlaybackHUD {
         }
 
         switch (player.track.albumCover.textureState) {
-            case TextureState.READY:
-                //? if 1.21.1 {
-                /*ctx.blit(player.track.albumCover.textureId,
-                        HUD_THEME.cover.x, HUD_THEME.cover.y,
-                        HUD_THEME.cover.size, HUD_THEME.cover.size,
-                        0, 0,
-                        player.track.albumCover.width, player.track.albumCover.height,
-                        player.track.albumCover.width, player.track.albumCover.height);
-                *///?} else {
-                ctx.blit(RenderPipelines.GUI_TEXTURED, player.track.albumCover.textureId,
-                        HUD_THEME.cover.x, HUD_THEME.cover.y,
-                        0, 0,
-                        HUD_THEME.cover.size, HUD_THEME.cover.size,
-                        player.track.albumCover.width, player.track.albumCover.height,
-                        player.track.albumCover.width, player.track.albumCover.height);
-                //?}
-                break;
-            case TextureState.ERROR:
-                ctx.fill(HUD_THEME.cover.x, HUD_THEME.cover.y,
-                        HUD_THEME.cover.x + HUD_THEME.cover.size, HUD_THEME.cover.y + HUD_THEME.cover.size,
-                        0xFFFF0000);
-                break;
+            case TextureState.READY -> DrawingUtils.blit(ctx, player.track.albumCover.textureId,
+                    HUD_THEME.cover.x, HUD_THEME.cover.y,
+                    0, 0,
+                    HUD_THEME.cover.size, HUD_THEME.cover.size,
+                    player.track.albumCover.width, player.track.albumCover.height,
+                    player.track.albumCover.width, player.track.albumCover.height);
+            case TextureState.ERROR -> ctx.fill(HUD_THEME.cover.x, HUD_THEME.cover.y,
+                    HUD_THEME.cover.x + HUD_THEME.cover.size, HUD_THEME.cover.y + HUD_THEME.cover.size,
+                    0xFFFF0000);
         }
 
         if (durationSource == DurationSource.DELTA_TIME &&
@@ -202,56 +186,60 @@ public class PlaybackHUD {
 
     //? if fabric && 1.21.1 {
     /*public void onMouseClicked(double x, double y) {
-        if (hovered && Utils.pointInBounds(x, y, 72, 55, 82, 65)) {
-            if (progress.toMillis() <= 4000)
-                SpotifyAPI.skipToPrevious(CONFIG.spotify.accessToken);
-            else
-                SpotifyAPI.seekToPosition(0, CONFIG.spotify.accessToken);
-            return;
-        }
-        if (hovered && Utils.pointInBounds(x, y, 84, 55, 94, 65)) {
-            if (player.isPlaying)
-                SpotifyAPI.pausePlayback(CONFIG.spotify.accessToken);
-            else
-                SpotifyAPI.startPlayback(CONFIG.spotify.accessToken);
-            player.isPlaying = !player.isPlaying;
-            return;
-        }
-        if (hovered && Utils.pointInBounds(x, y, 96, 55, 106, 65)) {
-            SpotifyAPI.skipToNext(CONFIG.spotify.accessToken);
-            return;
-        }
-        if (player.context != null && player.context.type == SpotifyContextType.PLAYLIST) {
-            if (hovered && Utils.pointInBounds(x, y, 108, 55, 118, 65)) {
-                CLIENT.setScreen(new SaveToPlaylistScreen(player.track));
+        if (hovered) {
+            if (Utils.pointInBounds(x, y, 72, 55, 82, 65)) {
+                if (progress.toMillis() <= 4000)
+                    SpotifyAPI.skipToPrevious(CONFIG.spotify.accessToken);
+                else
+                    SpotifyAPI.seekToPosition(0, CONFIG.spotify.accessToken);
+                return;
+            }
+            if (Utils.pointInBounds(x, y, 84, 55, 94, 65)) {
+                if (player.isPlaying)
+                    SpotifyAPI.pausePlayback(CONFIG.spotify.accessToken);
+                else
+                    SpotifyAPI.startPlayback(CONFIG.spotify.accessToken);
+                player.isPlaying = !player.isPlaying;
+                return;
+            }
+            if (Utils.pointInBounds(x, y, 96, 55, 106, 65)) {
+                SpotifyAPI.skipToNext(CONFIG.spotify.accessToken);
+                return;
+            }
+            if (player.context != null && player.context.type == SpotifyContextType.PLAYLIST) {
+                if (Utils.pointInBounds(x, y, 108, 55, 118, 65)) {
+                    CLIENT.setScreen(new SaveToPlaylistScreen(player.track));
+                }
             }
         }
     }
     *///?} else {
     public boolean onMouseClicked(double x, double y) {
-        if (hovered && Utils.pointInBounds(x, y, 72, 55, 82, 65)) {
-            if (progress.toMillis() <= 4000)
-                SpotifyAPI.skipToPrevious(CONFIG.spotify.accessToken);
-            else
-                SpotifyAPI.seekToPosition(0, CONFIG.spotify.accessToken);
-            return true;
-        }
-        if (hovered && Utils.pointInBounds(x, y, 84, 55, 94, 65)) {
-            if (player.isPlaying)
-                SpotifyAPI.pausePlayback(CONFIG.spotify.accessToken);
-            else
-                SpotifyAPI.startPlayback(CONFIG.spotify.accessToken);
-            player.isPlaying = !player.isPlaying;
-            return true;
-        }
-        if (hovered && Utils.pointInBounds(x, y, 96, 55, 106, 65)) {
-            SpotifyAPI.skipToNext(CONFIG.spotify.accessToken);
-            return true;
-        }
-        if (player.context != null && player.context.type == SpotifyContextType.PLAYLIST) {
-            if (hovered && Utils.pointInBounds(x, y, 108, 55, 118, 65)) {
-                CLIENT.setScreen(new SaveToPlaylistScreen(player.track));
+        if (hovered) {
+            if (Utils.pointInBounds(x, y, 72, 55, 82, 65)) {
+                if (progress.toMillis() <= 4000)
+                    SpotifyAPI.skipToPrevious(CONFIG.spotify.accessToken);
+                else
+                    SpotifyAPI.seekToPosition(0, CONFIG.spotify.accessToken);
                 return true;
+            }
+            if (Utils.pointInBounds(x, y, 84, 55, 94, 65)) {
+                if (player.isPlaying)
+                    SpotifyAPI.pausePlayback(CONFIG.spotify.accessToken);
+                else
+                    SpotifyAPI.startPlayback(CONFIG.spotify.accessToken);
+                player.isPlaying = !player.isPlaying;
+                return true;
+            }
+            if (Utils.pointInBounds(x, y, 96, 55, 106, 65)) {
+                SpotifyAPI.skipToNext(CONFIG.spotify.accessToken);
+                return true;
+            }
+            if (player.context != null && player.context.type == SpotifyContextType.PLAYLIST) {
+                if (Utils.pointInBounds(x, y, 108, 55, 118, 65)) {
+                    CLIENT.setScreen(new SaveToPlaylistScreen(player.track));
+                    return true;
+                }
             }
         }
         return false;
@@ -302,21 +290,12 @@ public class PlaybackHUD {
     }
 
     private void drawButton(GuiGraphics ctx, int ordinal, int u, int v) {
-        //? if 1.21.1 {
-        /*ctx.blit(PLAYER_ICONS,
-                HUD_THEME.buttons.x + ordinal * (HUD_THEME.buttons.size + HUD_THEME.buttons.offset) + 1, HUD_THEME.buttons.y + 1,
-                HUD_THEME.buttons.size - 2, HUD_THEME.buttons.size - 2,
-                u * 32, v * 32,
-                32, 32,
-                128, 128);
-        *///?} else {
-        ctx.blit(RenderPipelines.GUI_TEXTURED, PLAYER_ICONS,
+        DrawingUtils.blit(ctx, PLAYER_ICONS,
                 HUD_THEME.buttons.x + ordinal * (HUD_THEME.buttons.size + HUD_THEME.buttons.offset) + 1, HUD_THEME.buttons.y + 1,
                 u * 32, v * 32,
                 HUD_THEME.buttons.size - 2, HUD_THEME.buttons.size - 2,
                 32, 32,
                 128, 128);
-        //?}
         DrawingUtils.drawBorder(ctx, HUD_THEME.buttons.x + ordinal * (HUD_THEME.buttons.size + HUD_THEME.buttons.offset), HUD_THEME.buttons.y,
                 HUD_THEME.buttons.size, HUD_THEME.buttons.size, HUD_THEME.colors.activeBorderColor.getRGB(), 1);
     }

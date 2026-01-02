@@ -17,6 +17,7 @@
 
 package com.gdar463.minefy.spotify;
 
+import com.gdar463.minefy.api.QuickJsonObject;
 import com.gdar463.minefy.spotify.http.WrapperHttpClient;
 import com.gdar463.minefy.spotify.models.SpotifyUser;
 import com.gdar463.minefy.spotify.models.state.SpotifyPlayerDisallows;
@@ -24,8 +25,6 @@ import com.gdar463.minefy.spotify.models.state.SpotifySubscriptionType;
 import com.gdar463.minefy.ui.PlaybackHUD;
 import com.gdar463.minefy.util.Utils;
 import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 
 import java.net.URI;
 import java.net.http.HttpRequest;
@@ -165,10 +164,9 @@ public class SpotifyAPI {
 
         return HTTP_CLIENT.sendAsync(request, spotifyAccessToken).thenApply(HttpResponse::body)
                 .thenCompose(s -> {
-                    JsonObject json = Utils.convertToJsonObject(s);
-                    JsonArray items = json.get("items").getAsJsonArray();
-                    JsonElement next = json.get("next");
-                    if (next != null && !next.isJsonNull()) {
+                    QuickJsonObject json = Utils.convertToJsonObject(s);
+                    JsonArray items = json.getJsonArray("items");
+                    if (json.isJsonNull("next")) {
                         items.addAll(getCurrentUsersPlaylist(offset + 50, spotifyAccessToken).join());
                     }
                     return CompletableFuture.completedStage(items);

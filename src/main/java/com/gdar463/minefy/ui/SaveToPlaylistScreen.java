@@ -34,7 +34,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.Mth;
 //? if !=1.21.1 {
 import net.minecraft.client.input.MouseButtonEvent;
-import net.minecraft.client.renderer.RenderPipelines;
 //? }
 
 public class SaveToPlaylistScreen extends Screen {
@@ -88,24 +87,13 @@ public class SaveToPlaylistScreen extends Screen {
             if (playlist.type != SpotifyPlaylistType.READ_ONLY) {
                 if (!this.canScroll() || n >= this.scrollOffset && n < this.maxLength + this.scrollOffset) {
                     switch (playlist.textureState) {
-                        case TextureState.READY ->
-                            //? if 1.21.1 {
-                                /*ctx.blit(playlist.textureId,
-                                        j, k,
-                                        ICON_SIZE, ICON_SIZE,
-                                        0, 0,
-                                        playlist.width, playlist.height,
-                                        playlist.width, playlist.height
-                                );
-                        *///? } else {
-                                ctx.blit(RenderPipelines.GUI_TEXTURED, playlist.textureId,
-                                        j, k,
-                                        0, 0,
-                                        ICON_SIZE, ICON_SIZE,
-                                        playlist.width, playlist.height,
-                                        playlist.width, playlist.height
-                                );
-                        //?}
+                        case TextureState.READY -> DrawingUtils.blit(ctx, playlist.textureId,
+                                j, k,
+                                0, 0,
+                                ICON_SIZE, ICON_SIZE,
+                                playlist.width, playlist.height,
+                                playlist.width, playlist.height
+                        );
                         case TextureState.ERROR -> ctx.fill(j, k,
                                 j + ICON_SIZE, k + ICON_SIZE,
                                 0xFFFF0000);

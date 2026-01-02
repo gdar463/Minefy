@@ -18,6 +18,10 @@
 package com.gdar463.minefy.util;
 
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.resources.ResourceLocation;
+//? if !=1.21.1 {
+import net.minecraft.client.renderer.RenderPipelines;
+//? }
 
 public class DrawingUtils {
     public static void drawBorder(GuiGraphics ctx, int x, int y, int width, int height, int color, int size) {
@@ -41,5 +45,13 @@ public class DrawingUtils {
          *///? } else {
         ctx.pose().pushMatrix();
         //? }
+    }
+
+    public static void blit(GuiGraphics ctx, ResourceLocation atlas, int x, int y, int u, int v, int width, int height, int uWidth, int vHeight, int textureWidth, int textureHeight) {
+        //? if 1.21.1 {
+        /*ctx.blit(atlas, x, y, width, height, u, v, uWidth, vHeight, textureWidth, textureHeight);
+         *///?} else {
+        ctx.blit(RenderPipelines.GUI_TEXTURED, atlas, x, y, u, v, width, height, uWidth, vHeight, textureWidth, textureHeight);
+        //?}
     }
 }
