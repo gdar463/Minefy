@@ -223,15 +223,7 @@ public class PlaybackHUD {
         }
         if (player.context != null && player.context.type == SpotifyContextType.PLAYLIST) {
             if (hovered && Utils.pointInBounds(x, y, 108, 55, 118, 65)) {
-                SpotifyAPI.addToPlaylist(player.context.uri, player.track.uri, CONFIG.spotify.accessToken)
-                        .thenAcceptAsync(s -> {
-                            if (s) {
-                                ClientUtils.sendClientSideMessage(Component.literal("Added \"" + player.track.name + "\" to current playlist"));
-                            } else {
-                                ClientUtils.sendClientSideMessage(Component.literal("Failed to add track to current playlist")
-                                        .withStyle(ChatFormatting.RED));
-                            }
-                        });
+                CLIENT.setScreen(new SaveToPlaylistScreen(player.track));
             }
         }
     }
@@ -258,15 +250,7 @@ public class PlaybackHUD {
         }
         if (player.context != null && player.context.type == SpotifyContextType.PLAYLIST) {
             if (hovered && Utils.pointInBounds(x, y, 108, 55, 118, 65)) {
-                SpotifyAPI.addToPlaylist(player.context.uri, player.track.uri, CONFIG.spotify.accessToken)
-                        .thenAcceptAsync(s -> {
-                            if (s) {
-                                ClientUtils.sendClientSideMessage(Component.literal("Added \"" + player.track.name + "\" to current playlist"));
-                            } else {
-                                ClientUtils.sendClientSideMessage(Component.literal("Failed to add track to current playlist")
-                                        .withStyle(ChatFormatting.RED));
-                            }
-                        });
+                CLIENT.setScreen(new SaveToPlaylistScreen(player.track));
                 return true;
             }
         }

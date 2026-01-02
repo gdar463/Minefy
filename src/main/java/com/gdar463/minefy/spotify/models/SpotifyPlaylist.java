@@ -24,8 +24,10 @@ import com.gdar463.minefy.config.MinefyConfig;
 import com.gdar463.minefy.spotify.SpotifyAPI;
 import com.gdar463.minefy.spotify.models.state.SpotifyPlaylistType;
 import com.gdar463.minefy.spotify.util.SpotifyURI;
+import com.gdar463.minefy.util.ClientUtils;
 import com.gdar463.minefy.util.Utils;
 import com.google.gson.JsonObject;
+import net.minecraft.network.chat.Component;
 
 public class SpotifyPlaylist extends TextureRenderable {
     private static final MinefyConfig CONFIG = ConfigManager.get();
@@ -67,8 +69,10 @@ public class SpotifyPlaylist extends TextureRenderable {
                             .thenAccept(b -> {
                                 if (b) {
                                     this.tracksTotal++;
+                                    ClientUtils.sendClientSideMessage(Component.literal("Added track to \"" + this.name + "\""));
                                 } else {
                                     this.type = SpotifyPlaylistType.READ_ONLY;
+                                    ClientUtils.sendClientSideMessage(Component.literal("Couldn't add track to \"" + this.name + "\" as you aren't allowed to add to it"));
                                 }
                             });
         }

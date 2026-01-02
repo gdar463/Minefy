@@ -48,4 +48,12 @@ public class Utils {
     public static String sanitizeURI(String uri) {
         return uri.replace(":", "/").replaceAll("([A-Z])", "$1$1").toLowerCase();
     }
+
+    public static String cutoffString(String s, int cutoff) {
+        String a = s.substring(0, Math.min(s.length(), cutoff));
+        if (a.length() != s.length()) {
+            a = a.trim() + "...";
+        }
+        return a;
+    }
 }
