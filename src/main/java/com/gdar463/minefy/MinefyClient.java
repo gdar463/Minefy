@@ -33,6 +33,7 @@ import net.neoforged.neoforge.client.event.RenderGuiLayerEvent;
 import com.gdar463.minefy.util.PlayerScheduler;
 import net.neoforged.neoforge.client.gui.VanillaGuiLayers;
 import com.gdar463.minefy.events.HudRenderEvents;
+import com.gdar463.minefy.spotify.models.state.SpotifyPlayerState;
 *///?}
 
 public class MinefyClient {
@@ -72,7 +73,10 @@ public class MinefyClient {
     }
 
     public static void onClientLoggingOut(ClientPlayerNetworkEvent.LoggingOut event) {
-        PlayerScheduler.stopAll();
+        if (PlaybackHUD.INSTANCE != null) {
+            PlayerScheduler.stopAll();
+            PlaybackHUD.INSTANCE.player.state = SpotifyPlayerState.NULL;
+        }
     }
 
     public static void onRenderGuiLayerPost(RenderGuiLayerEvent.Post event) {
