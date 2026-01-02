@@ -27,21 +27,19 @@ import net.minecraft.client.gui.GuiGraphics;
  All the following code is under the LGPL-3.0-only license
  available at: https://github.com/SkyblockerMod/Skyblocker/blob/fa9e6b7663c6f81e08e6e3cc1cf25907522ae82a/LICENSE
 
- 2025-12-27 gdar463: ported to 1.21.11
+ 2025-12-27 gdar463: ported to 1.21.10 and MojMaps
 */
 public class HudRenderEvents {
+    public static HudRenderStage afterMainHudToRun = null;
+
     /**
      * Called after the hotbar, status bars, and experience bar have been rendered.
      */
-    public static final HudRenderStage AFTER_MAIN_HUD = new HudRenderStage() {
-        @Override
-        public void onRender(GuiGraphics context, DeltaTracker tickCounter) {
-            if (afterMainHudToRun != null) {
-                afterMainHudToRun.onRender(context, tickCounter);
-            }
+    public static final HudRenderStage AFTER_MAIN_HUD = (context, tickCounter) -> {
+        if (afterMainHudToRun != null) {
+            afterMainHudToRun.onRender(context, tickCounter);
         }
     };
-    public static HudRenderStage afterMainHudToRun = null;
 
     /**
      * @implNote Similar to Fabric's {@link net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback}

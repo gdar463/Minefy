@@ -4,10 +4,7 @@ on:
     inputs:
       version:
         required: true
-        description: "Release version (i.e. v0.1.2)"
-      message:
-        required: true
-        description: "Release description (i.e. Magical update)"
+        description: "Release version (i.e. 0.1.2)"
 
 jobs:
   build:
@@ -18,24 +15,18 @@ jobs:
       - name: Setup JDK
         uses: actions/setup-java@v4
         with:
-          java-version: "21"
-          distribution: "microsoft"
+          java-version: "25"
+          distribution: "temurin"
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v5
-      - name: Cache Loom project cache
-        uses: actions/cache@v4
-        with:
-          key: "loom-${{ runner.os }}-${{ hashFiles('**/*.gradle*', 'gradle/libs.versions.toml') }}"
-          path: ".gradle/loom-cache"
       - name: Ensure gradlew is executable
         run: chmod +x ./gradlew
       - name: Build
-        run: ./gradlew build
+        run: ./gradlew build -P"mod.version"=${{ inputs.version }}
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
         with:
-          if-no-files-found: error
-          path: build/libs/*.jar
+          path: versions/**/build/libs/*.jar
 
   release:
     runs-on: ubuntu-latest
@@ -62,7 +53,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git config user.signingkey $GPG_KEY_ID
           git config gpg.program /tmp/gpg.sh
-          git tag -a ${{ inputs.version }} -m "${{ inputs.message }}" -s
+          git tag -a v${{ inputs.version }} -s
         env:
           GPG_KEY_ID: ${{ secrets.GPG_KEY_ID }}
           GPG_PASSPHRASE: ${{ secrets.GPG_KEY_PASSPHRASE }}
@@ -73,13 +64,15 @@ jobs:
       - name: Commit Changelog
         run: |
           git add CHANGELOG.md
-          git commit -m "chore(release): update changelog for ${{ inputs.version }}" -S -s || echo "no changes"
-          git push origin master
+          git commit -m "chore(release): update changelog for v${{ inputs.version }}" -S -s || echo "no changes"
+      - name: Commit Version Change to properties
+        run: |
+          sed -i 's/^mod.version=.*/mod.version=${{ inputs.version }}/' gradle.properties
       - name: Recreate Git Tag and Push
         run: |
-          git tag -d ${{ inputs.version }}
-          git tag -a ${{ inputs.version }} -m "${{ inputs.message }}" -S -s
-          git push origin ${{ inputs.version }}
+          git tag -d v${{ inputs.version }}
+          git tag -a v${{ inputs.version }} -S -s
+          git push origin v${{ inputs.version }}
       - name: Generate latest release notes
         uses: orhun/git-cliff-action@v4
         id: cliff-latest
@@ -93,7 +86,7 @@ jobs:
       - name: Create Github Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ inputs.version }}
-          name: "Release ${{ inputs.version }}"
+          tag_name: "v${{ inputs.version }}"
+          name: "v${{ inputs.version }}"
           body: ${{ steps.cliff-latest.outputs.content }}
           files: build/libs/*.jar

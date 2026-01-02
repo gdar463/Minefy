@@ -1,7 +1,7 @@
 # Contributing
 
 To contribute to this repo, you implictly agree to the [Code of Conduct](CODE_OF_CONDUCT.md) and to sign off every commit
-with name and email to affirm that your commit complies with the [Developer Certificate of Origin](DOC.md).
+with your name and email to affirm that your commit complies with the [Developer Certificate of Origin](DOC.md).
 
 This repo follows the [Conventional Commits](https://www.conventionalcommits.org/) standard,
 to allow better descriptions of changes and automatic CHANGELOG generation.

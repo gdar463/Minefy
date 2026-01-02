@@ -3,12 +3,38 @@ plugins {
     id("it.nicolasfarabegoli.conventional-commits") version "3.1.3"
 }
 
-fun prop(name: String, consumer: (prop: String) -> Unit) {
-    (findProperty(name) as? String?)
-        ?.let(consumer)
+val id = m("id")
+val v = m("version")
+val minecraft = stonecutter.current.version
+val loader = name.substringAfter("-")
+
+/*
+ All credits to the ChatPatches Contributers on GitHub
+ Link: https://github.com/mrbuilder1961/ChatPatches/blob/0f6103578418203e059b157324de7f00a7a09244/build.gradle.kts
+
+ All of the code until the next comment is under the LGPLv3.0 license
+ available at: https://github.com/mrbuilder1961/ChatPatches/blob/0f6103578418203e059b157324de7f00a7a09244/LICENSE
+*/
+fun p(name: String, fallback: String? = null): String {
+    val p = findProperty(name) as String?
+    return when {
+        p != null -> p
+        fallback != null -> fallback
+        else -> error("Property `$name` not set.")
+    }
 }
 
-val minecraft = property("deps.minecraft") as String;
+fun prop(name: String, consumer: (prop: String) -> Unit) {
+    val p = p(name, "")
+    if (p.isNotEmpty()) p.let(consumer)
+}
+
+fun d(name: String, fallback: String? = null): String = p("deps.$name", fallback)
+fun dep(name: String, consumer: (prop: String) -> Unit) = prop("deps.$name", consumer)
+fun m(name: String, fallback: String? = null): String = p("mod.$name", fallback)
+/*
+ Copied code ends here
+*/
 
 conventionalCommits {
     successMessage = null
@@ -23,34 +49,24 @@ modstitch {
     // If parchment doesn't exist for a version, yet you can safely
     // omit the "deps.parchment" property from your versioned gradle.properties
     parchment {
-        prop("deps.parchment") { mappingsVersion = it }
+        dep("parchment") { mappingsVersion = it }
     }
 
     // This metadata is used to fill out the information inside
     // the metadata files found in the templates folder.
     metadata {
-        modId = "minefy"
-        modName = "Minefy"
-        modVersion = "0.2.1"
-        modGroup = "com.gdar463.minefy"
-        modAuthor = "gdar463"
+        modId = id
+        modName = m("name")
+        modVersion = v
+        modGroup = m("group")
+        modAuthor = m("author")
+        modLicense = m("license")
 
         val props = mapOf(
             // You can put any other replacement properties/metadata here that
             // modstitch doesn't initially support. Some examples below.
-            "mod_license" to "GPL-3.0-only",
-            "mod_issue_tracker" to "https://github.com/gdar463/minefy/issues",
-            "pack_format" to when (property("deps.minecraft")) {
-                "1.21.1" -> 34
-                "1.21.10" -> 69.0
-                else -> throw IllegalArgumentException(
-                    "Please store the resource pack version for ${
-                        property(
-                            "deps.minecraft"
-                        )
-                    } in build.gradle.kts! https://minecraft.wiki/w/Pack_format"
-                )
-            }.toString()
+            "mod_sources" to m("sources"),
+            "mod_issue_tracker" to m("issue_tracker")
         )
 
         replacementProperties.set(props)
@@ -70,7 +86,7 @@ modstitch {
 
     // ModDevGradle (NeoForge, Forge, Forgelike)
     moddevgradle {
-        prop("deps.neoforge") { neoForgeVersion = it }
+        dep("neoforge") { neoForgeVersion = it }
 
         // Configures client and server runs for MDG, it is not done by default
         defaultRuns()
@@ -89,15 +105,14 @@ modstitch {
         // true, it will automatically be generated.
         addMixinsToModManifest = true
 
-        configs.register("minefy")
-        if (isLoom) configs.register("minefy-fabric")
-//        if (isModDevGradleRegular) configs.register("minefy-neoforge")
+        configs.register(id)
+        if (isLoom) configs.register("$id-fabric")
+//        if (isModDevGradleRegular) configs.register("$id-neoforge")
     }
 }
 
 // Stonecutter constants for mod loaders.
 // See https://stonecutter.kikugie.dev/stonecutter/guide/comments#condition-constants
-var constraint: String = name.split("-")[1]
 stonecutter {
     constants {
         put("fabric", modstitch.isLoom)
@@ -115,16 +130,24 @@ dependencies {
     /// Fabric
     if (modstitch.isLoom) {
         // FabricAPI
-        modstitchModImplementation("net.fabricmc.fabric-api:fabric-api:${property("deps.fabric_api")}")
+        modstitchModImplementation("net.fabricmc.fabric-api:fabric-api:${d("fabric_api")}")
 
         // ModMenu
-        modstitchModImplementation("com.terraformersmc:modmenu:${property("deps.modmenu")}")
+        modstitchModImplementation("com.terraformersmc:modmenu:${d("modmenu")}")
     }
 
     /// All Platforms
     // MCDev Annotations for Idea
-    modstitchModCompileOnly("com.demonwav.mcdev:annotations:${property("deps.mcdev_annotations")}")
+    modstitchModCompileOnly("com.demonwav.mcdev:annotations:${d("mcdev_annotations")}")
 
     // YACL
-    modstitchModImplementation("dev.isxander:yet-another-config-lib:${property("deps.yacl")}")
+    modstitchModImplementation("dev.isxander:yet-another-config-lib:${d("yacl")}")
+}
+
+tasks {
+    modstitch.finalJarTask {
+        archiveBaseName.set(id)
+        archiveVersion.set("$v+$minecraft")
+        archiveClassifier.set(loader)
+    }
 }

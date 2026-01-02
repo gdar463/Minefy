@@ -2,6 +2,11 @@
 
 A Minecraft Mod to control Spotify (and see its playback state)
 
+## Building
+
+This mod uses [Modstitch](https://github.com/isXander/modstitch) and [Stonecutter](https://stonecutter.kikugie.dev/) to allow multi-version
+and multi-loader build support, all in a single branch.
+
 ## Contributing
 
 If you want to contribute, please check out [CONTRIBUTING](CONTRIBUTING.md) for more information.
@@ -17,7 +22,9 @@ This project uses code from the following projects:
 - [Skyblocker](https://github.com/SkyblockerMod/Skyblocker), licensed under [LGPLv3.0](https://github.com/SkyblockerMod/Skyblocker/blob/fa9e6b7663c6f81e08e6e3cc1cf25907522ae82a/LICENSE)
   - Copied code found in the following files:
     - [HudRenderEvents](src/main/java/com/gdar463/minefy/events/HudRenderEvents.java)
-    - [InGameHudMixin](src/main/java/com/gdar463/minefy/mixin/InGameHudMixin.java)
+- [ChatPatche](https://github.com/mrbuilder1961/ChatPatches), licensed under [LGPLv3.0](https://github.com/mrbuilder1961/ChatPatches/blob/0f6103578418203e059b157324de7f00a7a09244/LICENSE)
+  - Copied code found in the following files:
+    - [build.gradle.kts](build.gradle.kts)
 
 This project uses the following third-party libraries:
 

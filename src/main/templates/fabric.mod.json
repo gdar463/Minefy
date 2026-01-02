@@ -3,7 +3,13 @@
   "id": "${mod_id}",
   "name": "${mod_name}",
   "version": "${mod_version}",
-  "description": "${mod_description}",
+  "authors": [
+    "${mod_author}"
+  ],
+  "contact": {
+    "issues": "${mod_issue_tracker}",
+    "sources": "${mod_sources}"
+  },
   "environment": "client",
   "entrypoints": {
     "client": [
