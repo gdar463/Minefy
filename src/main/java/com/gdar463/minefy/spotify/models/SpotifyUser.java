@@ -43,7 +43,7 @@ public class SpotifyUser {
         if (!CONFIG.spotify.accessToken.isEmpty()) {
             SpotifyAPI.getUserProfile(CONFIG.spotify.accessToken)
                     .thenApply(s -> SpotifyUser.INSTANCE.fromJson(Utils.convertToJsonObject(s)))
-                    .thenAccept(u -> SpotifyUser.INSTANCE.getPlaylists());
+                    .thenRun(SpotifyUser.INSTANCE::getPlaylists);
         }
     }
 
