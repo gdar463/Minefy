@@ -300,7 +300,7 @@ public class PlaybackHUD {
                         this.durationSource = DurationSource.PLAYER;
                         this.duration = player.track.duration;
                         this.progress = Duration.of(player.progressMs, ChronoUnit.MILLIS);
-                        if (!Objects.equals(player.track.uri, this.trackUri)) {
+                        if (this.trackUri == null || !Objects.equals(player.track.uri.id, this.trackUri.id)) {
                             this.trackUri = player.track.uri;
                             this.titleMarquee = new TextMarquee(player.track.name,
                                     HUD_THEME.text.titleMarqueeSpaces,
