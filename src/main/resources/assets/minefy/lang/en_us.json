@@ -1,6 +1,12 @@
 {
+  "text.minefy.chat.debug.seek.success": "Seeked to position",
+  "text.minefy.chat.debug.seek.failed": "Failed to seek",
   "text.minefy.chat.loggedout.head": "Looks like you still have to login with Spotify.\nRun ",
   "text.minefy.chat.loggedout.end": " to link Minefy to your Spotify account.",
+  "text.minefy.chat.login_required": "Please login before trying to access anything",
+  "text.minefy.chat.playlist.add.success": "Added track to \"%s\"",
+  "text.minefy.chat.playlist.add.read_only": "Couldn't add track to \"%s\" as you aren't allowed to add to it",
+  "text.minefy.chat.server.failed_to_start": "Failed to start Callback Server",
   "text.minefy.config.title": "Minefy Config",
   "text.minefy.config.category.hud": "Hud",
   "text.minefy.config.hud.general.name": "General",
@@ -122,5 +128,8 @@
   "text.minefy.config.spotify.debug.next.name": "Test Next",
   "text.minefy.config.spotify.debug.next.description": "Check console for log afterwards.",
   "text.minefy.config.spotify.debug.prev.name": "Test Prev",
-  "text.minefy.config.spotify.debug.prev.description": "Check console for log afterwards."
+  "text.minefy.config.spotify.debug.prev.description": "Check console for log afterwards.",
+  "text.minefy.gui.save_to_playlist.save": "Save \"%s\"",
+  "text.minefy.gui.save_to_playlist.subtitle": "by %s - %s track(s)",
+  "text.minefy.gui.save_to_playlist.subtitle_library": "by %s"
 }

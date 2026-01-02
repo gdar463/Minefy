@@ -44,7 +44,7 @@ public class LoginServer {
             }
         } catch (IOException e) {
             ClientUtils.logError(e);
-            ClientUtils.sendClientSideMessage(Component.literal("Failed to start Callback Server"));
+            ClientUtils.sendClientSideMessage(Component.translatable("text.minefy.chat.server.failed_to_start"));
         }
     }
 

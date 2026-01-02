@@ -25,9 +25,11 @@ import com.gdar463.minefy.events.HudRenderEvents;
 import com.gdar463.minefy.spotify.SpotifyAPI;
 import com.gdar463.minefy.spotify.SpotifyAuth;
 import com.gdar463.minefy.spotify.models.SpotifyPlayer;
+import com.gdar463.minefy.spotify.models.SpotifyUser;
 import com.gdar463.minefy.spotify.models.state.SpotifyContextType;
 import com.gdar463.minefy.spotify.models.state.SpotifyPlayerState;
 import com.gdar463.minefy.api.TextureState;
+import com.gdar463.minefy.spotify.models.state.SpotifySubscriptionType;
 import com.gdar463.minefy.spotify.util.SpotifyURI;
 import com.gdar463.minefy.ui.state.DurationSource;
 import com.gdar463.minefy.util.ClientUtils;
@@ -56,8 +58,8 @@ public class PlaybackHUD {
     private static final MinefyConfig CONFIG = ConfigManager.get();
     private static final HudConfig.HudThemeConfig HUD_THEME = CONFIG.hud.theme;
     private static final ResourceLocation PLAYER_ICONS = ResourceLocation.fromNamespaceAndPath(MinefyClient.MOD_ID, "textures/gui/player.png");
-
     public static PlaybackHUD INSTANCE;
+    private static Boolean IS_PREMIUM = null;
     private static Window WINDOW = CLIENT.getWindow();
     public SpotifyPlayer player = SpotifyPlayer.EMPTY;
 
@@ -110,6 +112,8 @@ public class PlaybackHUD {
         if (!CONFIG.hud.enabled) return;
         if (WINDOW == null)
             WINDOW = CLIENT.getWindow();
+        if (IS_PREMIUM == null)
+            IS_PREMIUM = SpotifyUser.INSTANCE.type == SpotifySubscriptionType.PREMIUM;
 
         ctx.fill(HUD_THEME.sizes.x, HUD_THEME.sizes.y,
                 HUD_THEME.sizes.x + HUD_THEME.sizes.width,
@@ -177,10 +181,12 @@ public class PlaybackHUD {
 
         if (hovered) {
             drawButton(ctx, 1, player.isPlaying ? 0 : 1, 0);
-            drawButton(ctx, 0, 3, 0);
-            drawButton(ctx, 2, 2, 0);
+            if (IS_PREMIUM) {
+                drawButton(ctx, 0, 3, 0);
+                drawButton(ctx, 2, 2, 0);
+            }
             if (player.context != null && player.context.type == SpotifyContextType.PLAYLIST)
-                drawButton(ctx, 3, 0, 1);
+                drawButton(ctx, IS_PREMIUM ? 3 : 2, 0, 1);
         }
     }
 
@@ -216,7 +222,7 @@ public class PlaybackHUD {
     *///?} else {
     public boolean onMouseClicked(double x, double y) {
         if (hovered) {
-            if (Utils.pointInBounds(x, y, 72, 55, 82, 65)) {
+            if (IS_PREMIUM && Utils.pointInBounds(x, y, 72, 55, 82, 65)) {
                 if (progress.toMillis() <= 4000)
                     SpotifyAPI.skipToPrevious(CONFIG.spotify.accessToken);
                 else
@@ -231,12 +237,12 @@ public class PlaybackHUD {
                 player.isPlaying = !player.isPlaying;
                 return true;
             }
-            if (Utils.pointInBounds(x, y, 96, 55, 106, 65)) {
+            if (IS_PREMIUM && Utils.pointInBounds(x, y, 96, 55, 106, 65)) {
                 SpotifyAPI.skipToNext(CONFIG.spotify.accessToken);
                 return true;
             }
             if (player.context != null && player.context.type == SpotifyContextType.PLAYLIST) {
-                if (Utils.pointInBounds(x, y, 108, 55, 118, 65)) {
+                if (Utils.pointInBounds(x, y, IS_PREMIUM ? 108 : 96, 55, IS_PREMIUM ? 118 : 106, 65)) {
                     CLIENT.setScreen(new SaveToPlaylistScreen(player.track));
                     return true;
                 }
@@ -258,7 +264,7 @@ public class PlaybackHUD {
         if (!firstRun && (CONFIG.spotify.accessToken.isEmpty())) {
             if (CONFIG.spotify.refreshToken.isEmpty()) {
                 LOGGER.error("tried to go to api without refresh token");
-                ClientUtils.sendClientSideMessage(Component.literal("Please login, before trying to access anything"));
+                ClientUtils.sendClientSideMessage(Component.translatable("text.minefy.chat.login_required"));
                 return;
             }
             if (SpotifyAuth.refreshTokens())

@@ -79,7 +79,7 @@ public class SaveToPlaylistScreen extends Screen {
         int k = this.y + BORDER_OFFSET;
 
         DrawingUtils.drawBorder(ctx, this.x, this.y, this.newWidth, this.newHeight, HUD_THEME.colors.activeBorderColor.getRGB(), 1);
-        ctx.drawString(this.font, "Save \"" + this.trackName + "\"", j, k, HUD_THEME.colors.textColor.getRGB(), true);
+        ctx.drawString(this.font, Component.translatable("text.minefy.gui.save_to_playlist.save", this.trackName), j, k, HUD_THEME.colors.textColor.getRGB(), true);
 
         k += this.font.lineHeight + TEXT_OFFSET;
         int n = 0;
@@ -102,10 +102,9 @@ public class SaveToPlaylistScreen extends Screen {
                     ctx.drawString(this.font, playlist.name, j + ICON_SIZE + 4, k + 4, 0xFFFFFFFF, true);
                     DrawingUtils.pushMatrix(ctx);
                     ctx.pose().scale(0.8f, 0.8f/*? 1.21.1 >> ');'*//*, 1*/);
-                    String subtitle = "by " + playlist.owner;
-                    if (playlist.type != SpotifyPlaylistType.LIBRARY) {
-                        subtitle += " - " + playlist.tracksTotal + " track(s)";
-                    }
+                    Component subtitle = playlist.type != SpotifyPlaylistType.LIBRARY
+                            ? Component.translatable("text.minefy.gui.save_to_playlist.subtitle", playlist.owner, playlist.tracksTotal)
+                            : Component.translatable("text.minefy.gui.save_to_playlist.subtitle_library", playlist.owner);
                     ctx.drawString(this.font, subtitle,
                             (int) ((j + ICON_SIZE + 4) * (1 / 0.8f)), (int) ((k + 4 + this.font.lineHeight + 2) * (1 / 0.8f)),
                             0xFFEEEEEE, true);

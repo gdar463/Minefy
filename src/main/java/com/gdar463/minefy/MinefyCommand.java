@@ -67,7 +67,7 @@ public class MinefyCommand {
     private static int seekToPosition(CommandContext<FabricClientCommandSource> ctx) {
         SpotifyAPI.seekToPosition(IntegerArgumentType.getInteger(ctx, "positionMs"),
                         ConfigManager.get().spotify.accessToken)
-                .thenAccept(res -> ctx.getSource().sendFeedback(Component.literal(res ? "Seeked to position" : "Failed to seek")));
+                .thenAccept(res -> ctx.getSource().sendFeedback(Component.translatable(res ? "text.minefy.chat.debug.seek.success" : "text.minefy.chat.debug.seek.failed")));
         return 0;
     }
 }
@@ -121,9 +121,9 @@ class MinefyCommand {
                         ConfigManager.get().spotify.accessToken)
                 .thenAccept(res -> {
                     if (res) {
-                        ctx.getSource().sendSuccess(() -> Component.literal("Seeked to position"), false);
+                        ctx.getSource().sendSuccess(() -> Component.translatable("text.minefy.chat.debug.seek.success"), false);
                     } else {
-                        ctx.getSource().sendFailure(Component.literal("Failed to seek"));
+                        ctx.getSource().sendFailure(Component.translatable("text.minefy.chat.debug.seek.failed"));
                     }
                 });
         return 0;

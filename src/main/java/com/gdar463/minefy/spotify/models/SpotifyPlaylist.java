@@ -69,10 +69,10 @@ public class SpotifyPlaylist extends TextureRenderable {
                             .thenAccept(b -> {
                                 if (b) {
                                     this.tracksTotal++;
-                                    ClientUtils.sendClientSideMessage(Component.literal("Added track to \"" + this.name + "\""));
+                                    ClientUtils.sendClientSideMessage(Component.translatable("text.minefy.chat.playlist.add.success", this.name));
                                 } else {
                                     this.type = SpotifyPlaylistType.READ_ONLY;
-                                    ClientUtils.sendClientSideMessage(Component.literal("Couldn't add track to \"" + this.name + "\" as you aren't allowed to add to it"));
+                                    ClientUtils.sendClientSideMessage(Component.translatable("text.minefy.chat.playlist.add.read_only", this.name));
                                 }
                             });
         }
