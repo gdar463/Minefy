@@ -6,7 +6,5 @@
     "defaultRequire": 1
   },
   "compatibilityLevel": "JAVA_21",
-  "client": [
-    "GuiGraphicsMixin"
-  ]
+  "client": []
 }

@@ -44,13 +44,9 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.slf4j.Logger;
-//? if 1.21.1 {
-/*import com.mojang.blaze3d.vertex.PoseStack;
- *///? } else {
-import com.gdar463.minefy.mixin.GuiGraphicsMixin;
+//? if !=1.21.1 {
 import net.minecraft.client.renderer.RenderPipelines;
-import org.joml.Matrix3x2f;
-//? }
+        //? }
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
@@ -179,42 +175,21 @@ public class PlaybackHUD {
 
         int lerpedAmount = Math.toIntExact(progress.toMillis() * HUD_THEME.bar.sizeX / this.duration.toMillis());
 
-        //? if 1.21.1 {
-        /*PoseStack barStack = ctx.pose();
-        barStack.pushPose();
-        *///?} else {
-        Matrix3x2f barStack = ctx.pose();
-        GuiGraphicsMixin ctxMixin = (GuiGraphicsMixin) ctx;
-        ctxMixin.getStack().pushMatrix();
-        //?}
-        barStack.translate(HUD_THEME.sizes.columnX, HUD_THEME.bar.y/*? 1.21.1 >> ');'*//*, 1*/);
+        DrawingUtils.pushMatrix(ctx);
+        ctx.pose().translate(HUD_THEME.sizes.columnX, HUD_THEME.bar.y/*? 1.21.1 >> ');'*//*, 1*/);
         ctx.fill(0, HUD_THEME.bar.progressY, lerpedAmount, HUD_THEME.bar.progressY + HUD_THEME.bar.sizeY, HUD_THEME.colors.accentColor.getRGB());
         ctx.fill(lerpedAmount, HUD_THEME.bar.progressY, HUD_THEME.bar.sizeX, HUD_THEME.bar.progressY + HUD_THEME.bar.sizeY, HUD_THEME.colors.emptyBarColor.getRGB());
-        barStack.scale(HUD_THEME.bar.textScale, HUD_THEME.bar.textScale/*? 1.21.1 >> ');'*//*, 1*/);
+        ctx.pose().scale(HUD_THEME.bar.textScale, HUD_THEME.bar.textScale/*? 1.21.1 >> ');'*//*, 1*/);
         ctx.drawString(CLIENT.font, Utils.durationToString(progress), 0, 0, HUD_THEME.colors.textColor.getRGB(), false);
         ctx.drawString(CLIENT.font, Utils.durationToString(duration), HUD_THEME.bar.sizeX * 2 - (int) (10 / HUD_THEME.bar.textScale), 0, HUD_THEME.colors.textColor.getRGB(), false);
-        //? if 1.21.1 {
-        /*barStack.popPose();
-         *///?} else {
-        ctxMixin.getStack().popMatrix();
-        //?}
+        DrawingUtils.popMatrix(ctx);
 
-        //? if 1.21.1 {
-        /*PoseStack stack = ctx.pose();
-        stack.pushPose();
-        *///?} else {
-        Matrix3x2f stack = ctx.pose();
-        ctxMixin.getStack().pushMatrix();
-        //?}
-        stack.translate(HUD_THEME.sizes.columnX, HUD_THEME.sizes.columnY/*? 1.21.1 >> ');'*//*, 1*/);
+        DrawingUtils.pushMatrix(ctx);
+        ctx.pose().translate(HUD_THEME.sizes.columnX, HUD_THEME.sizes.columnY/*? 1.21.1 >> ');'*//*, 1*/);
         this.titleMarquee.render(ctx, HUD_THEME.colors.accentColor.getRGB(), false);
-        stack.scale(HUD_THEME.text.artistsScale, HUD_THEME.text.artistsScale/*? 1.21.1 >> ');'*//*, 1*/);
+        ctx.pose().scale(HUD_THEME.text.artistsScale, HUD_THEME.text.artistsScale/*? 1.21.1 >> ');'*//*, 1*/);
         this.artistsMarquee.render(ctx, HUD_THEME.colors.textColor.getRGB(), false, 0, CLIENT.font.lineHeight + HUD_THEME.text.artistsOffsetY);
-        //? if 1.21.1 {
-        /*stack.popPose();
-         *///?} else {
-        ctxMixin.getStack().popMatrix();
-        //?}
+        DrawingUtils.popMatrix(ctx);
 
         if (hovered) {
             drawButton(ctx, 1, player.isPlaying ? 0 : 1, 0);

@@ -26,4 +26,20 @@ public class DrawingUtils {
         ctx.fill(x, y + size, x + size, y + height - size, color);
         ctx.fill(x + width - size, y + size, x + width, y + height - size, color);
     }
+
+    public static void pushMatrix(GuiGraphics ctx) {
+        //? if 1.21.1 {
+        /*ctx.pose().pushPose();
+         *///? } else {
+        ctx.pose().pushMatrix();
+        //? }
+    }
+
+    public static void popMatrix(GuiGraphics ctx) {
+        //? if 1.21.1 {
+        /*ctx.pose().popPose();
+         *///? } else {
+        ctx.pose().pushMatrix();
+        //? }
+    }
 }
