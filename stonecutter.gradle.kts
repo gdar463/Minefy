@@ -1,4 +1,5 @@
 plugins {
+    base
     id("dev.kikugie.stonecutter")
     id("fabric-loom") version "1.13-SNAPSHOT" apply false
 }
@@ -13,4 +14,8 @@ allprojects {
         maven("https://maven.isxander.dev/releases")
         maven("https://maven.terraformersmc.com/")
     }
+}
+
+tasks.clean {
+    delete(layout.buildDirectory.dir("finalJars"))
 }

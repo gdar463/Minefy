@@ -29,7 +29,15 @@ stonecutter {
     kotlinController = true
     centralScript = "build.gradle.kts"
 
-    create(rootProject, file("versions/versions.json5"))
+    val ciSingleBuild: String? = System.getenv("CI_SINGLE_BUILD")
+    if (ciSingleBuild != null) {
+        val split = ciSingleBuild.split(":")
+        create(rootProject) {
+            version(split[0], split[1])
+        }
+    } else {
+        create(rootProject, file("versions/versions.json5"))
+    }
 }
 
 rootProject.name = "Minefy"
