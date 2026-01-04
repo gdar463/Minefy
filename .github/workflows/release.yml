@@ -61,17 +61,18 @@ jobs:
         uses: orhun/git-cliff-action@v4
         with:
           args: --output CHANGELOG.md
-      - name: Commit Changelog
-        run: |
-          git add CHANGELOG.md
-          git commit -m "chore(release): update changelog for v${{ inputs.version }}" -S -s || echo "no changes"
-      - name: Commit Version Change to properties
+      - name: Version Change for Gradle
         run: |
           sed -i 's/^mod.version=.*/mod.version=${{ inputs.version }}/' gradle.properties
+      - name: Commit Changelog and gradle.properties
+        run: |
+          git add CHANGELOG.md
+          git add gradle.properties
+          git commit -m "chore(release): bumped version to v${{ inputs.version }}" -S -s || echo "no changes"
       - name: Recreate Git Tag and Push
         run: |
           git tag -d v${{ inputs.version }}
-          git tag -a v${{ inputs.version }} -S -s
+          git tag -a v${{ inputs.version }} -m "" -s
           git push origin v${{ inputs.version }}
       - name: Generate latest release notes
         uses: orhun/git-cliff-action@v4
