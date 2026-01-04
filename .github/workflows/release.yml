@@ -8,25 +8,9 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout Repo
-        uses: actions/checkout@v4
-      - name: Setup JDK
-        uses: actions/setup-java@v4
-        with:
-          java-version: "25"
-          distribution: "temurin"
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@v5
-      - name: Ensure gradlew is executable
-        run: chmod +x ./gradlew
-      - name: Build
-        run: ./gradlew build -P"mod.version"=${{ inputs.version }}
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          path: versions/**/build/libs/*.jar
+    uses: ./.github/workflows/build.yml
+    with:
+      new-version: ${{ inputs.version }}
 
   release:
     runs-on: ubuntu-latest
@@ -34,9 +18,35 @@ jobs:
     needs: build
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           fetch-depth: 0
+      - name: Prepare Artifacts IDs
+        id: prepare-ids
+        uses: actions/github-script@v8
+        env:
+          RUN_ID: ${{ needs.build.outputs.run_id }}
+        with:
+          script: |
+            const {
+                owner, repo
+            } = context.repo();
+            const artifactsRes = github.rest.actions.listWorkflowRunArtifacts({
+                owner,
+                repo,
+                run_id: process.env.RUN_ID
+            });
+            const artifacts: Object[] = artifactsRes["artifact"];
+            let ids = [];
+            for (const artifact of artifacts) {
+                ids.push(artifact["id"]);
+            }
+            return ids.join(",");
+      - name: Download Artifacts
+        uses: actions/download-artifact@v7
+        with:
+          artifact-ids: ${{ steps.prepare-ids.outputs.result }}
+          path: build/finalJars/.
       - name: Setup GPG key
         run: |
           echo $GPG_PRIVATE_KEY | base64 --decode | gpg --batch --import
@@ -61,7 +71,7 @@ jobs:
         uses: orhun/git-cliff-action@v4
         with:
           args: --output CHANGELOG.md
-      - name: Version Change for Gradle
+      - name: Change Mod Version for Gradle
         run: |
           sed -i 's/^mod.version=.*/mod.version=${{ inputs.version }}/' gradle.properties
       - name: Commit Changelog and gradle.properties
@@ -69,6 +79,7 @@ jobs:
           git add CHANGELOG.md
           git add gradle.properties
           git commit -m "chore(release): bumped version to v${{ inputs.version }}" -S -s || echo "no changes"
+          git push origin master
       - name: Recreate Git Tag and Push
         run: |
           git tag -d v${{ inputs.version }}
@@ -80,14 +91,10 @@ jobs:
         with:
           args: --latest
           config: "cliff-release.toml"
-      - name: Download Artifacts
-        uses: actions/download-artifact@v5
-        with:
-          path: build/libs/.
       - name: Create Github Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: "v${{ inputs.version }}"
           name: "v${{ inputs.version }}"
           body: ${{ steps.cliff-latest.outputs.content }}
-          files: build/libs/*.jar
+          files: build/finalJars/*.jar
