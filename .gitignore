@@ -70,3 +70,6 @@ replay_*.log
 
 # git commit with stonecutter reset
 versions/previous
+
+# Idea temp files for images
+*~
