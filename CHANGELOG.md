@@ -3,6 +3,51 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 ---
+## [0.3.0](https://github.com/gdar463/Minefy/compare/v0.2.0..v0.3.0) - 2026-01-05
+
+### Bug Fixes
+
+- **(neoforge)** fixed MouseClicked event not getting cancelled ([b1b0464](https://github.com/gdar463/Minefy/commit/b1b0464ad4ca6951b68db7147c2cf5185acff95c)) - @gdar463
+- readded missing imports for 1.21.1 in PlaybackHUD ([71336b6](https://github.com/gdar463/Minefy/commit/71336b67bc6ac5610fdd76e5763557131cbf3d80)) - @gdar463
+- fixed failed mixin injection incompatibility in MouseHandlerMixin ([ce0471e](https://github.com/gdar463/Minefy/commit/ce0471eb72814e014aa7f59795cbad418033dbd3)) - @gdar463
+- ensured TextureRenderable doesn't recreate the texture every call ([875211d](https://github.com/gdar463/Minefy/commit/875211d77ccec216b99b2404a9b4cd39e97a008a)) - @gdar463
+- made pause/play button invert isPlaying status ([9ae4223](https://github.com/gdar463/Minefy/commit/9ae422335c09d777846f7932119fffe573c2ddc3)) - @gdar463
+- fixed crash on neoforge on logging back in ([8588b38](https://github.com/gdar463/Minefy/commit/8588b3886bf3a330bbccab987865af1f4477bfb3)) - @gdar463
+- fixed random exception in SpotifyAPI when parsing playlists ([6ecff31](https://github.com/gdar463/Minefy/commit/6ecff31e4fec9eccc5468edc299e55050347c3dc)) - @gdar463
+- added util for push/pop matrix and deleted obsolete mixin ([09cf9b7](https://github.com/gdar463/Minefy/commit/09cf9b7f19a8f9f181d607b2b7ae032180b8a7e6)) - @gdar463
+- fixed crash on weird track state in PlaybackHUD ([ba48d21](https://github.com/gdar463/Minefy/commit/ba48d2146136b035a3f79e2d5cf4b4a5e1f29fcd)) - @gdar463
+- fixed getPlaylists not getting ran in SpotifyUser ([d44b18b](https://github.com/gdar463/Minefy/commit/d44b18bd7d2c9fefbc9c90426d411e65f45f8ecc)) - @gdar463
+- fixed release workflow js script ([5072485](https://github.com/gdar463/Minefy/commit/50724854120fb56fdd14a5985987f43fb42ab7b5)) - @gdar463
+
+### Chores
+
+- added library modify scope for auth ([d498a71](https://github.com/gdar463/Minefy/commit/d498a711902854c446cca0ec4f1f4ff271b123c0)) - @gdar463
+- added translation keys for all messages ([04f7a71](https://github.com/gdar463/Minefy/commit/04f7a7165e57a140437c1089f46c1fd38b498a6c)) - @gdar463
+
+### Features
+
+- **(sp-api)** added support to add tracks to playlist ([76fedec](https://github.com/gdar463/Minefy/commit/76fedec25d1c27b24509f764482231b6c9258bf1)) - @gdar463
+- moved project to stonecutter with modstitch ([2f53ab6](https://github.com/gdar463/Minefy/commit/2f53ab6e3affc0a33b4b4aada08c165d2e2b8f0d)) - @gdar463
+- readded actionBar param in ClientUtils sendClientSideMessage ([a67d32e](https://github.com/gdar463/Minefy/commit/a67d32e41d9d2f7677672dee8bea1b91025d5b02)) - @gdar463
+- added context to SpotifyPlayer ([c33367a](https://github.com/gdar463/Minefy/commit/c33367af14202f741e737e05c94be8af1c50e6ea)) - @gdar463
+- added button to add track to currently playing playlist (for smart shuffle) ([d012070](https://github.com/gdar463/Minefy/commit/d0120707540b7f859783d3b91e25870a4a65da40)) - @gdar463
+- added body to login callback page ([54231e6](https://github.com/gdar463/Minefy/commit/54231e6b254436e02e24180424d6af7ce71a8992)) - @gdar463
+- abstracted the dynamic texture and download system ([d753507](https://github.com/gdar463/Minefy/commit/d75350773fafcf8b36ca1fa60663142d287f902b)) - @gdar463
+- added spotify uri sanitization for ids in Utils ([9c155b2](https://github.com/gdar463/Minefy/commit/9c155b22bc7699be3a461fe30a102505230ef604)) - @gdar463
+- abstracted the spotify uri ([1776878](https://github.com/gdar463/Minefy/commit/177687857a423af2384d02cbd56f3b0feefe155e)) - @gdar463
+- added playlist support ([c40d245](https://github.com/gdar463/Minefy/commit/c40d2459bc08f89560cfc06e372124bc4a2c5760)) - @gdar463
+- added displayName prop on user and playlist ([9eb8325](https://github.com/gdar463/Minefy/commit/9eb8325c775e932a761ea1ee0daeadde5c955d0b)) - @gdar463
+- added SaveToPlaylistScreen ([bc1e299](https://github.com/gdar463/Minefy/commit/bc1e299f888993ad3217de620f2be04a8e173d59)) - @gdar463
+
+### Refactors
+
+- made several DX changes ([8672f5e](https://github.com/gdar463/Minefy/commit/8672f5ef10c21e8b8c074f0ff3d5529bf8062d53)) - @gdar463
+
+### Style
+
+- changed SpotifyTrack id to uri ([58e1963](https://github.com/gdar463/Minefy/commit/58e19631b15dcba6a94ffec1c68c765dcc13cd03)) - @gdar463
+
+---
 ## [0.2.0](https://github.com/gdar463/Minefy/compare/v0.1.0..v0.2.0) - 2025-11-10
 
 Player Buttons Update
